@@ -1,0 +1,21 @@
+{
+	"editor.codeActionsOnSave": {
+		"source.organizeImports": "never",
+		"source.fixAll": "never"
+	},
+	"editor.defaultFormatter": "esbenp.prettier-vscode",
+	"editor.formatOnSave": true,
+	"typescript.tsdk": "node_modules\\typescript\\lib",
+	"json.schemas": [
+		{
+			"fileMatch": ["/process.json"],
+			"url": "https://raw.githubusercontent.com/edosssa/pm2-config/master/pm2config.json"
+		}
+	],
+	"[prisma]": {
+		"editor.defaultFormatter": "Prisma.prisma"
+	},
+	"[typescript]": {
+		"editor.defaultFormatter": "vscode.typescript-language-features"
+	}
+}

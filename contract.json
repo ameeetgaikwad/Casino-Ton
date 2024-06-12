@@ -1,0 +1,11 @@
+{
+	"networkName": "BSC-TESTNET",
+	"deployedNetwork": 97,
+	"contractAddress": "0xAACFC4515093Ca7a40fF6F9EcddA22af4c6e616c",
+	"abi": [
+		"event GameResult(uint8 side)",
+		"function flipit(uint8 guess) returns (bool value)",
+		"function getGameCount() view returns (uint8 value)",
+		"function getGameEntry(uint index) public view returns(address addr, uint amountBet, uint8 guess, bool winner, uint ethInJackpot)"
+	]
+}
