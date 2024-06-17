@@ -16,8 +16,8 @@ export const siteConfig: SiteConfig = {
 }; */
 
 export const siteConfig: SiteConfig = {
-  name: "Flipya | ONLY BUY AT TELEGRAM @PLOTBSC",
-  description: "Flipya - ONLY BUY AT TELEGRAM @PLOTBSC",
+  name: "Goldrush",
+  description: "Goldrush",
   url: "https://flipya.xyz",  // Assuming the correct base URL for your site
   ogImage: "https://flipya.xyz/img/flipya.jpg",  // Use the direct image URL
   links: {

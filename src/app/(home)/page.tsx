@@ -16,7 +16,7 @@ export default async function Home() {
 					}))}
 				/>
 				<h1 className="text-6xl font-heading text-primary mt-4 mb-4">
-					COINFLIP | ONLY BUY AT TELEGRAM @PLOTBSC
+					COINFLIP
 				</h1>
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-8 h-full ">
 					<BetForm fiatRate={Number(ethRate['USD'] ?? 200)} />
@@ -25,7 +25,7 @@ export default async function Home() {
 					<TransactionHistory records={transactionHistory} />
 				)}
 			</main>
-			<h1 className="md:hidden block">Mobile View Not Supported | ONLY BUY AT TELEGRAM @PLOTBSC</h1>
+			<h1 className="md:hidden block">Mobile View Not Supported</h1>
 		</Fragment>
 	);
 }
