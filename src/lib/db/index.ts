@@ -11,3 +11,4 @@ export * from "drizzle-orm";
 
 export const sql = postgres(process.env.DATABASE_URL!);
 export const db = drizzle(sql, { schema });
+

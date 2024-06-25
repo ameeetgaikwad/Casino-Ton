@@ -14,26 +14,25 @@ import {
 } from '@rainbow-me/rainbowkit/wallets';
 import merge from 'lodash.merge';
 import * as React from 'react';
-import { bscTestnet } from 'viem/chains';
 import { Chain, WagmiConfig, configureChains, createConfig } from 'wagmi';
 import { publicProvider } from 'wagmi/providers/public';
 // @ts-ignore
-const bsc: Chain = {
-	name: 'Binance Smart Chain Mainnet',
+const vitruveo: Chain = {
+	name: 'vitruveo',
 	nativeCurrency: {
-		name: 'BNB',
+		name: 'VTRU',
 		decimals: 2,
-		symbol: 'BNB',
+		symbol: 'VTRU',
 	},
 	rpcUrls: {
-		public: { http: ['https://bsc-rpc.publicnode.com'] },
-		default: { http: ['https://bsc-rpc.publicnode.com'] },
+		public: { http: ['https://rpc.vitruveo.xyz/'] },
+		default: { http: ['https://rpc.vitruveo.xyz/'] },
 	},
-	id: 56,
+	id: 1490,
 	testnet: true,
 };
 const { chains, publicClient, webSocketPublicClient } = configureChains(
-	[bscTestnet, bsc],
+	[vitruveo],
 	[publicProvider()]
 );
 
@@ -62,7 +61,7 @@ const connectors = connectorsForWallets([
 ]);
 
 const wagmiConfig = createConfig({
-	autoConnect: false,
+	autoConnect: true,
 	connectors,
 	publicClient,
 	webSocketPublicClient,
