@@ -4,10 +4,10 @@ import { addDynamicIconSelectors } from '@iconify/tailwind'
 export default {
   darkMode: ["class"],
   content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
+    './pages/**/*.{js,jsx,ts,tsx}',
+    './components/**/*.{js,jsx,ts,tsx}',
+    './app/**/*.{js,jsx,ts,tsx}',
+    './src/**/*.{js,jsx,ts,tsx}',
   ],
   prefix: "",
   theme: {
@@ -19,7 +19,9 @@ export default {
       },
     },
     extend: {
+
       colors: {
+
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -77,6 +79,16 @@ export default {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+      },
+      aspectRatio: {
+        '1/3': '1 / 3',
+        2: '2.21',
+        4: '4.64',
+      },
+      gridTemplateColumns: {
+        gamesGrid: "repeat( auto-fill, minmax(210px, 1fr) )",
+        cardsGrid: "repeat( auto-fill, minmax(180px, 1fr) )",
+        13: 'repeat(13, minmax(0, 1fr))',
       },
     },
   },

@@ -1,11 +1,420 @@
 {
-	"networkName": "BSC-TESTNET",
-	"deployedNetwork": 97,
-	"contractAddress": "0xAACFC4515093Ca7a40fF6F9EcddA22af4c6e616c",
-	"abi": [
-		"event GameResult(uint8 side)",
-		"function flipit(uint8 guess) returns (bool value)",
-		"function getGameCount() view returns (uint8 value)",
-		"function getGameEntry(uint index) public view returns(address addr, uint amountBet, uint8 guess, bool winner, uint ethInJackpot)"
-	]
+	"networkName": "VITRUVEO",
+	"deployedNetwork": 1490,
+	"Game": {
+		"COIN": {
+			"contractAddress": "0x1aE6bc5210361C2a33be8f80360042911DfAbf62",
+			"abi": [
+				{
+					"type": "constructor",
+					"stateMutability": "nonpayable",
+					"payable": false,
+					"inputs": [
+						{
+							"type": "address",
+							"name": "_houseWallet",
+							"internalType": "address payable"
+						}
+					]
+				},
+				{
+					"type": "event",
+					"name": "DetailedGameResult",
+					"inputs": [
+						{
+							"type": "address",
+							"name": "player",
+							"internalType": "address",
+							"indexed": false
+						},
+						{
+							"type": "uint256",
+							"name": "amountBet",
+							"internalType": "uint256",
+							"indexed": false
+						},
+						{
+							"type": "uint8",
+							"name": "guess",
+							"internalType": "uint8",
+							"indexed": false
+						},
+						{
+							"type": "bool",
+							"name": "winner",
+							"internalType": "bool",
+							"indexed": false
+						},
+						{
+							"type": "uint256",
+							"name": "totalPayout",
+							"internalType": "uint256",
+							"indexed": false
+						},
+						{
+							"type": "int256",
+							"name": "totalProfit",
+							"internalType": "int256",
+							"indexed": false
+						}
+					],
+					"anonymous": false
+				},
+				{
+					"type": "event",
+					"name": "GameResult",
+					"inputs": [
+						{
+							"type": "uint8",
+							"name": "side",
+							"internalType": "uint8",
+							"indexed": false
+						}
+					],
+					"anonymous": false
+				},
+				{ "type": "fallback", "stateMutability": "payable", "payable": true },
+				{
+					"type": "function",
+					"stateMutability": "payable",
+					"payable": true,
+					"outputs": [{ "type": "bool", "name": "", "internalType": "bool" }],
+					"name": "flipit",
+					"inputs": [
+						{ "type": "uint8", "name": "guess", "internalType": "uint8" }
+					],
+					"constant": false
+				},
+				{
+					"type": "function",
+					"stateMutability": "view",
+					"payable": false,
+					"outputs": [
+						{ "type": "uint256", "name": "", "internalType": "uint256" }
+					],
+					"name": "getGameCount",
+					"inputs": [],
+					"constant": true
+				},
+				{
+					"type": "function",
+					"stateMutability": "view",
+					"payable": false,
+					"outputs": [
+						{ "type": "address", "name": "addr", "internalType": "address" },
+						{
+							"type": "uint256",
+							"name": "amountBet",
+							"internalType": "uint256"
+						},
+						{ "type": "uint8", "name": "guess", "internalType": "uint8" },
+						{ "type": "bool", "name": "winner", "internalType": "bool" },
+						{
+							"type": "uint256",
+							"name": "totalPayout",
+							"internalType": "uint256"
+						},
+						{
+							"type": "int256",
+							"name": "totalProfit",
+							"internalType": "int256"
+						}
+					],
+					"name": "getGameEntry",
+					"inputs": [
+						{ "type": "uint256", "name": "index", "internalType": "uint256" }
+					],
+					"constant": true
+				},
+				{
+					"type": "function",
+					"stateMutability": "view",
+					"payable": false,
+					"outputs": [
+						{ "type": "string", "name": "", "internalType": "string" }
+					],
+					"name": "name",
+					"inputs": [],
+					"constant": true
+				},
+				{
+					"type": "function",
+					"stateMutability": "nonpayable",
+					"payable": false,
+					"outputs": [],
+					"name": "setHouseWallet",
+					"inputs": [
+						{
+							"type": "address",
+							"name": "newHouseWallet",
+							"internalType": "address payable"
+						}
+					],
+					"constant": false
+				},
+				{
+					"type": "function",
+					"stateMutability": "nonpayable",
+					"payable": false,
+					"outputs": [],
+					"name": "transferOwnership",
+					"inputs": [
+						{
+							"type": "address",
+							"name": "newOwner",
+							"internalType": "address payable"
+						}
+					],
+					"constant": false
+				},
+				{
+					"type": "function",
+					"stateMutability": "nonpayable",
+					"payable": false,
+					"outputs": [],
+					"name": "withdraw",
+					"inputs": [
+						{ "type": "uint256", "name": "amount", "internalType": "uint256" }
+					],
+					"constant": false
+				},
+				{
+					"type": "function",
+					"stateMutability": "nonpayable",
+					"payable": false,
+					"outputs": [],
+					"name": "withdrawAll",
+					"inputs": [],
+					"constant": false
+				}
+			]
+		},
+		"ROULETTE": {
+			"contractAddress": "0x7d47a43C0D8b042AEFaF79c94D6C7854A45dfdf1",
+			"abi": [
+				{
+					"type": "constructor",
+					"stateMutability": "nonpayable",
+					"payable": false,
+					"inputs": [
+						{
+							"type": "address",
+							"name": "_houseWallet",
+							"internalType": "address payable"
+						}
+					]
+				},
+				{
+					"type": "event",
+					"name": "FinalResult",
+					"inputs": [
+						{
+							"type": "uint8",
+							"name": "side",
+							"internalType": "uint8",
+							"indexed": false
+						},
+						{
+							"type": "address",
+							"name": "player",
+							"internalType": "address",
+							"indexed": false
+						},
+						{
+							"type": "uint256",
+							"name": "totalPayout",
+							"internalType": "uint256",
+							"indexed": false
+						},
+						{
+							"type": "uint256",
+							"name": "totalBetAmounts",
+							"internalType": "uint256",
+							"indexed": false
+						},
+						{
+							"type": "bool",
+							"name": "isWon",
+							"internalType": "bool",
+							"indexed": false
+						},
+						{
+							"type": "int256",
+							"name": "totalProfit",
+							"internalType": "int256",
+							"indexed": false
+						}
+					],
+					"anonymous": false
+				},
+				{
+					"type": "event",
+					"name": "GameResult",
+					"inputs": [
+						{
+							"type": "uint8",
+							"name": "side",
+							"internalType": "uint8",
+							"indexed": false
+						},
+						{
+							"type": "uint8",
+							"name": "guessType",
+							"internalType": "enum Roulette.GuessType",
+							"indexed": false
+						},
+						{
+							"type": "bool",
+							"name": "won",
+							"internalType": "bool",
+							"indexed": false
+						},
+						{
+							"type": "uint256",
+							"name": "payout",
+							"internalType": "uint256",
+							"indexed": false
+						}
+					],
+					"anonymous": false
+				},
+				{ "type": "fallback", "stateMutability": "payable", "payable": true },
+				{
+					"type": "function",
+					"stateMutability": "view",
+					"payable": false,
+					"outputs": [
+						{ "type": "address", "name": "", "internalType": "address payable" }
+					],
+					"name": "houseWallet",
+					"inputs": [],
+					"constant": true
+				},
+				{
+					"type": "function",
+					"stateMutability": "view",
+					"payable": false,
+					"outputs": [
+						{ "type": "address", "name": "addr", "internalType": "address" },
+						{
+							"type": "uint256",
+							"name": "amountBet",
+							"internalType": "uint256"
+						},
+						{ "type": "uint8", "name": "guess", "internalType": "uint8" },
+						{ "type": "bool", "name": "winner", "internalType": "bool" },
+						{
+							"type": "uint256",
+							"name": "ethInJackpot",
+							"internalType": "uint256"
+						},
+						{
+							"type": "uint8",
+							"name": "guessType",
+							"internalType": "enum Roulette.GuessType"
+						},
+						{ "type": "uint256", "name": "payout", "internalType": "uint256" }
+					],
+					"name": "lastPlayedGames",
+					"inputs": [
+						{ "type": "uint256", "name": "", "internalType": "uint256" }
+					],
+					"constant": true
+				},
+				{
+					"type": "function",
+					"stateMutability": "view",
+					"payable": false,
+					"outputs": [
+						{ "type": "string", "name": "", "internalType": "string" }
+					],
+					"name": "name",
+					"inputs": [],
+					"constant": true
+				},
+				{
+					"type": "function",
+					"stateMutability": "view",
+					"payable": false,
+					"outputs": [
+						{ "type": "address", "name": "", "internalType": "address payable" }
+					],
+					"name": "owner",
+					"inputs": [],
+					"constant": true
+				},
+				{
+					"type": "function",
+					"stateMutability": "payable",
+					"payable": true,
+					"outputs": [{ "type": "bool", "name": "", "internalType": "bool" }],
+					"name": "roulette",
+					"inputs": [
+						{ "type": "uint8[]", "name": "guesses", "internalType": "uint8[]" },
+						{
+							"type": "uint8[]",
+							"name": "guessTypes",
+							"internalType": "enum Roulette.GuessType[]"
+						},
+						{
+							"type": "uint256[]",
+							"name": "betAmounts",
+							"internalType": "uint256[]"
+						}
+					],
+					"constant": false
+				},
+				{
+					"type": "function",
+					"stateMutability": "nonpayable",
+					"payable": false,
+					"outputs": [],
+					"name": "setHouseWallet",
+					"inputs": [
+						{
+							"type": "address",
+							"name": "newHouseWallet",
+							"internalType": "address payable"
+						}
+					],
+					"constant": false
+				},
+				{
+					"type": "function",
+					"stateMutability": "nonpayable",
+					"payable": false,
+					"outputs": [],
+					"name": "transferOwnership",
+					"inputs": [
+						{
+							"type": "address",
+							"name": "newOwner",
+							"internalType": "address payable"
+						}
+					],
+					"constant": false
+				},
+				{
+					"type": "function",
+					"stateMutability": "nonpayable",
+					"payable": false,
+					"outputs": [],
+					"name": "withdraw",
+					"inputs": [
+						{ "type": "uint256", "name": "amount", "internalType": "uint256" }
+					],
+					"constant": false
+				},
+				{
+					"type": "function",
+					"stateMutability": "nonpayable",
+					"payable": false,
+					"outputs": [],
+					"name": "withdrawAll",
+					"inputs": [],
+					"constant": false
+				}
+			]
+		}
+	}
 }

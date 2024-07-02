@@ -57,3 +57,10 @@
 		@apply bg-background text-foreground;
 	}
 }
+
+@layer utilities {
+	.number-hover {
+		border: 1px solid white !important;
+		box-shadow: inset 0px 0px 5px #fff, inset 0 0 5px #fff;
+	}
+}

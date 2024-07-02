@@ -7,6 +7,8 @@ import type { Metadata } from 'next';
 import LocalFont from 'next/font/local';
 import './globals.css';
 import { Toaster } from '@/components/ui/sonner';
+//import { Provider } from '@/contexts/provider';
+//import { ReduxContext } from '@/contexts/ReduxContext';
 
 const fontSans = LocalFont({
 	src: [

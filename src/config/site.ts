@@ -16,8 +16,8 @@ export const siteConfig: SiteConfig = {
 }; */
 
 export const siteConfig: SiteConfig = {
-  name: "Goldrush",
-  description: "Goldrush",
+  name: "Flipya",
+  description: "Flipya - Vitruveo Blockchain Gaming",
   url: "https://flipya.xyz",  // Assuming the correct base URL for your site
   ogImage: "https://flipya.xyz/img/flipya.jpg",  // Use the direct image URL
   links: {
