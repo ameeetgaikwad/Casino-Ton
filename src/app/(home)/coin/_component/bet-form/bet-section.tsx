@@ -34,7 +34,7 @@ export const BetSelection = ({ form, fiatRate }: BetSelectionProps) => {
 		smartContract
 	);
 
-	const contractAddress = '0x1aE6bc5210361C2a33be8f80360042911DfAbf62';
+	const contractAddress = '0xcF9900b18cfddA9D0c7F414084480ca134C77Eb9';
 	const { contractBalance } = useGetContractBalance(contractAddress);
 
 	const onSubmit = async (value: Schema) => {

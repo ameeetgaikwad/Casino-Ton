@@ -1,9 +1,9 @@
 {
-	"networkName": "Binance Smart Chain Testnet",
-	"deployedNetwork": 97,
+	"networkName": "VITRUVEO",
+	"deployedNetwork": 1490,
 	"Game": {
 		"COIN": {
-			"contractAddress": "0xcF9900b18cfddA9D0c7F414084480ca134C77Eb9",
+			"contractAddress": "0x1aE6bc5210361C2a33be8f80360042911DfAbf62",
 			"abi": [
 				{
 					"type": "constructor",
