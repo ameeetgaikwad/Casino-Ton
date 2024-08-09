@@ -13,7 +13,7 @@ export const Sidenav = () => {
 			<aside className=" hidden md:flex h-[744px]  rounded-2xl flex-col space-y-4 p-4 transform bg-shade transition-transform duration-150 ease-in md:translate-x-0 md:shadow-md">
 				<div className=" w-32 h-32 flex justify-center items-center">
 					<Image
-						src="/svg/logo.svg"
+						src="/svg/logo2.svg"
 						width={75}
 						height={75}
 						className="w-full h-full"
