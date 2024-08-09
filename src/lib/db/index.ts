@@ -9,6 +9,6 @@ export { pgTable as tableCreator } from "./schema/_table";
 export * from "drizzle-orm";
 
 
-export const sql = postgres(process.env.DATABASE_URL!);
+export const sql = postgres(process.env.NEXT_PUBLIC_DATABASE_URL!);
 export const db = drizzle(sql, { schema });
 
