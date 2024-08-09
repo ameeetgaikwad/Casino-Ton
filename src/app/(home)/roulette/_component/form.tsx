@@ -26,7 +26,7 @@ import { useRoulette } from './store';
 import { useRouletteSound } from '@/hooks/use-roulette-sound';
 
 // Define the RPC endpoint
-const rpcEndpoint = 'https://rpc.vitruveo.xyz/';
+const rpcEndpoint = 'https://bsc-testnet-rpc.publicnode.com/';
 
 // Create an instance of the Ethereum provider
 const provider = new ethers.providers.JsonRpcProvider(rpcEndpoint);

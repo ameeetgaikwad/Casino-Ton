@@ -30,6 +30,25 @@ export const useContract = (gameType: keyof typeof Game) => {
     }
     loadWeb3()
   }, [])
+
+  // useEffect(() => {
+  //   async function loadWeb3() {
+  //     const bscTestnet = (window as any).bscTestnet
+  //     var provider: Web3Provider | null = null
+  //     if (bscTestnet) {
+  //       await bscTestnet.enable();
+  //       provider = new ethers.providers.Web3Provider(bscTestnet)
+
+  //       setProvider(provider)
+  //     }
+  //     if (provider) {
+  //       console.log("Inside provider");
+  //       loadBlockchainData(provider);
+  //     }
+  //   }
+  //   loadWeb3()
+  // }, [])
+
   const getBalance = useCallback(async (targetAddress?: string) => {
     const addressToCheck = targetAddress || address || Game[gameType].contractAddress; // Use user address if available, otherwise, use the contract address
 
