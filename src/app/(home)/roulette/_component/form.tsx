@@ -62,7 +62,7 @@ export const Form = observer(() => {
 				throw new Error(`Contract not initialized`);
 			}
 			if (store.totalWager > Number(maxWager)) {
-				throw new Error(`Wager not greater than ${maxWager}`);
+				throw new Error(`Wager cannot be greater than ${maxWager}`);
 			}
 			// Fetch current gas price
             const currentGasPriceInWei = await provider.getGasPrice();
@@ -144,7 +144,7 @@ export const Form = observer(() => {
 									<span className="text-white">
 										{store.totalWager.toString()}
 									</span>
-									&nbsp;VTRU
+									&nbsp;BNB
 								</div>
 							</div>
 
@@ -161,7 +161,7 @@ export const Form = observer(() => {
 									className="absolute right-2 top-2"
 								/>
 								<div className="text-red-500 text-sm mt-1">
-									Max allowable wager: {maxWager} VTRU
+									Max allowable wager: {maxWager} BNB
 								</div>
 							</div>
 
