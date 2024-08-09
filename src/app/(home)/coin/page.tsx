@@ -17,7 +17,7 @@ export default async function Home() {
 				}))}
 			/>
 			<h1 className="text-6xl font-heading text-primary mt-4 mb-4">
-				COINFLIP BY @PLOTBSC
+				COINFLIP
 			</h1>
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-8 h-full ">
 				<BetForm fiatRate={Number(ethRate['USD'] ?? 200)} />

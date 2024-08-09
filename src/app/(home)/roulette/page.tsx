@@ -18,7 +18,7 @@ export default async function Home() {
 					}))}
 				/>
 				<h1 className="text-6xl font-heading text-primary mt-4 mb-4">
-					ROULETTE BY @PLOTBSC
+					ROULETTE
 				</h1>
 				<Roulette />
 			</RouletteProvider>
