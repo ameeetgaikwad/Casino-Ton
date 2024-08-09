@@ -34,13 +34,13 @@ export class Store {
 
 
   getImage = (chip: string) => {
-    return chip === '1'
+    return chip === '0.001'
       ? '/assets/imgs/roulette/wager-1.png'
-      : chip === '5'
+      : chip === '0.005'
         ? '/assets/imgs/roulette/wager-2.png'
-        : chip === '10'
+        : chip === '0.010'
           ? '/assets/imgs/roulette/wager-3.png'
-          : chip === '20'
+          : chip === '0.020'
             ? '/assets/imgs/roulette/wager-4.png'
             : '/assets/imgs/roulette/wager-5.png'
   }
