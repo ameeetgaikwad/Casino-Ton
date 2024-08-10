@@ -43,6 +43,7 @@ export const Form = observer(() => {
 			contractBalance ? (parseFloat(contractBalance) * 0.09).toFixed(4) : 0,
 		[contractBalance]
 	);
+
 	const { isPending } = useRouletteContractListener(
 		address as string,
 		smartContract
@@ -52,6 +53,7 @@ export const Form = observer(() => {
 		let transactionFinished = false;
 		try {
 			const { amount, guess, guessType } = store.result;
+			console.log("here 1");
 			if (!amount.length) {
 				throw new Error('At least one bet.');
 			}
@@ -64,6 +66,7 @@ export const Form = observer(() => {
 			if (store.totalWager > Number(maxWager)) {
 				throw new Error(`Wager cannot be greater than ${maxWager}`);
 			}
+			console.log("here 2");
 			// Fetch current gas price
             const currentGasPriceInWei = await provider.getGasPrice();
             const currentGasPriceInGwei = ethers.utils.formatUnits(currentGasPriceInWei, 'gwei');
@@ -74,6 +77,7 @@ export const Form = observer(() => {
                 value: ethers.utils.parseEther(store.totalWager.toString()),
             };
 			const tx = await smartContract.roulette(guess, guessType, amount, option);
+			console.log(tx);
 			statusDialogRefFunc.toggleModal(true, 'ROULETTE');
 			// Start playing the sound
 			audioRef?.play();
@@ -81,6 +85,7 @@ export const Form = observer(() => {
 	
 			// Check if transaction is finished
 			await tx.wait();
+			console.log(tx);
 			transactionFinished = true;
 		} catch (err: Error | any) {
 			toast.error((err as Error)?.message ?? "An error occurred");
@@ -98,6 +103,7 @@ export const Form = observer(() => {
 	
 				// Stop the loop when the condition is met
 				const checkModalInterval = setInterval(() => {
+					console.log("hfhfhfhf");
 					if (statusDialogRef.current?.isOpen('ROULETTE')) {
 						clearInterval(loopInterval);
 						clearInterval(checkModalInterval);

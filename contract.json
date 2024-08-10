@@ -190,7 +190,7 @@
 			]
 		},
 		"ROULETTE": {
-			"contractAddress": "0xFCc4E7Fd522502E2De3c7BB044E1865D758877d9",
+			"contractAddress": "0x9d0fbd64ea750a35c948311a9c8af4753892f257",
 			"abi": [
 				{
 					"type": "constructor",

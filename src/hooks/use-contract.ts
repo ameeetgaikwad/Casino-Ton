@@ -68,6 +68,7 @@ export const useContract = (gameType: keyof typeof Game) => {
     if (activeNetwork.chainId !== deployedNetwork) {
       setError(`Please switch to ${networkName} in order to play`);
     }
+    console.log("lulu", contractAddress);
     setSmartContract(new ethers.Contract(contractAddress, abi, provider.getSigner()));
 
   }, [contract])

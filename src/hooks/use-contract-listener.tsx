@@ -9,9 +9,15 @@ export const useCoinContractListener = (
 	address: string,
 	contract: Contract | undefined
 ) => {
+	console.log("Inside useCoinContractListener");
+	console.log("Address: ", address);
+	console.log("Contract: ", contract);
 	const [isPending, startTransaction] = useTransition();
 	useEffect(() => {
+		console.log("Inside useCoinContractListener useEffect");
+		console.log(contract);
 		if (!contract) return;
+		console.log("DEFINING CB FUNCTION");
 		const cb = (
 			playerAddress: string,
 			_totalBetAmounts: BigNumber,
@@ -21,10 +27,13 @@ export const useCoinContractListener = (
 			_totalProfit: BigNumber,
 			event: any
 		) => {
+			console.log("Triggered cb contract coin");
+			
 			const totalPayout = Number(BigNumber(_totalPayout).toString()) / 1e18;
 			const totalBetAmounts =
 				Number(BigNumber(_totalBetAmounts).toString()) / 1e18;
 			const totalProfit = Number(BigNumber(_totalProfit).toString()) / 1e18;
+			console.log(isWin);
 			isWin
 				? statusDialogRefFunc.updateStatus('win', totalPayout)
 				: statusDialogRefFunc.updateStatus('lose', totalBetAmounts);
@@ -47,10 +56,19 @@ export const useCoinContractListener = (
 			}
 		};
 		contract.addListener('DetailedGameResult', cb);
+		console.log("DEFAULT COIN EVENT LISTENER ADDED");
 		return () => {
 			contract.removeListener('DetailedGameResult', cb);
 		};
 	}, [contract, address]);
+
+	useEffect(() => {
+		console.log("Contract changed");
+	}, [contract]);
+
+	useEffect(() => {
+		console.log("Address changed");
+	}, [address]);
 
 	return {
 		isPending,
@@ -61,9 +79,21 @@ export const useRouletteContractListener = (
 	address: string,
 	contract: Contract | undefined
 ) => {
+	console.log("Inside useRouletteContractListener");
+	console.log("Address: ", address);
+	console.log("Contract: ", contract);
 	const [isPending, startTransition] = useTransition();
+		console.log("REACHED HERE 1");
+
 	useEffect(() => {
+		console.log("Inside useRouletteContractListener useEffect");
+		console.log(contract);
+
+		console.log("REACHED HERE 2");
+		
 		if (!contract) return;
+		console.log("DEFINING CB FUNCTION FOR ROULETTE");
+
 		const cb = (
 			guess: number,
 			playerAddress: string,
@@ -73,10 +103,13 @@ export const useRouletteContractListener = (
 			_totalProfit: BigNumber,
 			event: any
 		) => {
+			console.log("Triggered cb contract roulette");
 			const totalPayout = Number(BigNumber(_totalPayout).toString()) / 1e18;
 			const totalBetAmounts =
 				Number(BigNumber(_totalBetAmounts).toString()) / 1e18;
 			const totalProfit = Number(BigNumber(_totalProfit).toString()) / 1e18;
+
+			console.log(isWin);
 
 			isWin
 				? statusDialogRefFunc.updateStatus('win', totalPayout, guess.toString())
@@ -103,11 +136,39 @@ export const useRouletteContractListener = (
 				});
 			}
 		};
+		const helper = (event: any) => {
+			console.log("Triggered cb contract roulette helper");
+			console.log(event);
+			console.log("event.args", event.args);
+			console.log("GAMERESULT  TRIGGERED");
+		}
+
+		const helperForFinal = (event: any) => {
+			console.log("Triggered cb roulett WORKINGGGG AHAHAHA");
+			console.log(event);
+			console.log("event.args", event.args);
+			console.log("CHAL GAYA FINAL RESULT");
+		}
+		
 		contract.addListener('FinalResult', cb);
+		contract.addListener('FinalResult', helperForFinal);
+		contract.addListener('GameResult', helper);
+		
+		console.log("DEFAULT ROULETTE EVENT LISTENER ADDED");
 		return () => {
 			contract.removeListener('FinalResult', cb);
+			contract.removeListener('FinalResult', helperForFinal);
+			contract.removeListener('GameResult', helper);
 		};
 	}, [contract, address]);
+
+	useEffect(() => {
+		console.log("Contract changed");
+	}, [contract]);
+
+	useEffect(() => {
+		console.log("Address changed");
+	}, [address]);
 
 	return {
 		isPending,

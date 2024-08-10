@@ -28,12 +28,14 @@ export const StatusDialog = forwardRef((_, ref) => {
 	useImperativeHandle(ref, () => {
 		return {
 			updateStatus: (status: Status, value?: number, outcome?: string) => {
+				console.log("Updating to " + status + " value: " + value + " outcome: " + outcome);
 				setStatus(status);
 				setValue(value);
 				setOutcome(outcome ?? '');
 			},
 
 			toggleModal: (state: boolean, gameType: GameType) => {
+				console.log("Toggling to " + state + " gameType: " + gameType);
 				setShowModal(state);
 				setGameType(gameType);
 				setStatus('pending');
@@ -41,6 +43,7 @@ export const StatusDialog = forwardRef((_, ref) => {
 		};
 	});
 	const Comp = gameType === 'COIN' ? COIN : Roulette;
+	console.log("hehe", status);
 	return (
 		<Dialog open={showModal} onOpenChange={() => setShowModal(!showModal)}>
 			<DialogContent
@@ -54,6 +57,7 @@ export const StatusDialog = forwardRef((_, ref) => {
 				className="sm:max-w-[700px] bg-transparent  border-none flex flex-col shadow-none justify-center items-center "
 			>
 				{status === 'win' ? (
+
 					<Comp.Win value={value} outcome={outcome} />
 				) : status === 'lose' ? (
 					<Comp.Lose value={value} outcome={outcome} />

@@ -56,6 +56,7 @@ export const BetSelection = ({ form, fiatRate }: BetSelectionProps) => {
 			};
 			const selection = value.coinSide === 'head' ? 0 : 1;
 			const tx = await smartContract?.flipit(selection, option);
+			console.log(tx);
 			statusDialogRefFunc.toggleModal(true, 'COIN');
 			audioRef?.play();
 		} catch (err: any) {
