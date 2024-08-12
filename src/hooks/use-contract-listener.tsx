@@ -136,8 +136,18 @@ export const useRouletteContractListener = (
 				});
 			}
 		};
-		const helper = (event: any) => {
+		// uint8 side, GuessType guessType, bool won, uint payout
+		const helper = (
+			side: number,
+			guessType: number,
+			won: boolean,
+			payout: BigNumber,
+			event: any) => {
 			console.log("Triggered cb contract roulette helper");
+			console.log(side);
+			console.log(guessType);
+			console.log(won);
+			console.log(payout);
 			console.log(event);
 			console.log("event.args", event.args);
 			console.log("GAMERESULT  TRIGGERED");
@@ -149,16 +159,36 @@ export const useRouletteContractListener = (
 			console.log("event.args", event.args);
 			console.log("CHAL GAYA FINAL RESULT");
 		}
+
+		const logDebug = (message: string, event: any) => {
+			console.log("LOGGGG");
+			console.log(message);
+			console.log(event);
+			console.log("event.args", event.args);
+		}
+
+		const logWonAny = (message: boolean, event: any) => {
+			console.log("LOGGGG WONN ANY");
+			console.log(message);
+			console.log(event);
+			console.log("event.args", event.args);
+		}
 		
 		contract.addListener('FinalResult', cb);
 		contract.addListener('FinalResult', helperForFinal);
 		contract.addListener('GameResult', helper);
+		contract.addListener('Debug', logDebug);
+		contract.addListener('WonAny', logWonAny);
 		
 		console.log("DEFAULT ROULETTE EVENT LISTENER ADDED");
 		return () => {
 			contract.removeListener('FinalResult', cb);
 			contract.removeListener('FinalResult', helperForFinal);
 			contract.removeListener('GameResult', helper);
+			contract.removeListener('Debug', logDebug);
+			contract.removeListener('WonAny', logWonAny);
+
+
 		};
 	}, [contract, address]);
 
