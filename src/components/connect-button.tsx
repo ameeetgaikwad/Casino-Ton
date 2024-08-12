@@ -80,7 +80,7 @@ export const ConnectButton = () => {
 											height={30}
 										/>
 										<span className="text-primary">
-											{(Number(contractBalance) * 100) / 100}
+											{Math.floor((Number(contractBalance) * 100)) / 100}
 										</span>
 									</div>
 									<div className="flex gap-3 justify-center items-center">

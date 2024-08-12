@@ -95,8 +95,8 @@ export const useRouletteContractListener = (
 		console.log("DEFINING CB FUNCTION FOR ROULETTE");
 
 		const cb = (
-			guess: number,
 			playerAddress: string,
+			guess: number,
 			_totalPayout: BigNumber,
 			_totalBetAmounts: BigNumber,
 			isWin: boolean,
@@ -104,6 +104,7 @@ export const useRouletteContractListener = (
 			event: any
 		) => {
 			console.log("Triggered cb contract roulette");
+			console.log("totalprofit", _totalProfit);
 			const totalPayout = Number(BigNumber(_totalPayout).toString()) / 1e18;
 			const totalBetAmounts =
 				Number(BigNumber(_totalBetAmounts).toString()) / 1e18;
@@ -118,8 +119,11 @@ export const useRouletteContractListener = (
 						totalBetAmounts,
 						guess.toString()
 				  );
+			console.log("MAINNNNN", playerAddress);
+			// console.log("MAINNNNN2", playerAddress === address);
 			if (playerAddress === address) {
 				startTransition(async () => {
+					console.log("SAVNGGG");
 					await saveTransactionData(
 						{
 							isWin,

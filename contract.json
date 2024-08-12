@@ -190,10 +190,16 @@
 			]
 		},
 		"ROULETTE": {
-			"contractAddress": "0xe7209047b7974fd8fb3ed1a6d839c34ecc30ffc4",
+			"contractAddress": "0x00b5523d5aa03747bd9ddd05b75ca1240ade5479",
 			"abi": [
 				{
-					"inputs": [],
+					"inputs": [
+						{
+							"internalType": "address payable",
+							"name": "_houseWallet",
+							"type": "address"
+						}
+					],
 					"payable": false,
 					"stateMutability": "nonpayable",
 					"type": "constructor"
@@ -214,6 +220,12 @@
 				{
 					"anonymous": false,
 					"inputs": [
+						{
+							"indexed": false,
+							"internalType": "address",
+							"name": "player",
+							"type": "address"
+						},
 						{
 							"indexed": false,
 							"internalType": "uint8",
