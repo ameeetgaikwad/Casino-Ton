@@ -171,7 +171,7 @@ export const Form = observer(() => {
 								</div>
 							</div>
 
-							<div className={cn('grid gap-3 mt-2', `grid-cols-5`)}>
+							<div className={cn('grid gap-3 mt-5', `grid-cols-5`)}>
 								{store.chip.map((chip, idx) => (
 									<div
 										key={idx}

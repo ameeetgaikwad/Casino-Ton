@@ -158,7 +158,6 @@ contract Roulette {
         );
         emit Debug("Before calculating total payout");
 
-
         // Initialize total payout
         uint totalPayout = 0;
 
@@ -193,7 +192,6 @@ contract Roulette {
                 )
             );
         }
-
 
         emit Debug("Before emitting GameResult");
 
