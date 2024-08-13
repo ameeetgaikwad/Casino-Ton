@@ -19,7 +19,7 @@ const HowItWorks = () => {
   ];
 
   return (
-    <div className="mt-12 text-white">
+    <div className="mt-12 text-white bg-shade p-4 rounded-md">
       <h2 className="text-3xl font-bold text-center mb-4">How it works</h2>
       <p className="text-center text-sm mb-8">
         If the digits on your tickets match the winning numbers in the correct order, you win a portion of the prize
@@ -27,7 +27,7 @@ const HowItWorks = () => {
       </p>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {content.map((item, index) => (
-          <div key={index} className="bg-gray-800 rounded-lg p-6">
+          <div key={index} className=" rounded-lg p-6">
             <div className="bg-yellow-400 text-black font-bold rounded-full w-24 text-center py-1 mb-4">
               Step {item.step}
             </div>
