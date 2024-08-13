@@ -16,9 +16,9 @@ export const siteConfig: SiteConfig = {
 }; */
 
 export const siteConfig: SiteConfig = {
-  name: "Flipya",
-  description: "Flipya - Vitruveo Blockchain Gaming",
-  url: "https://flipya.xyz",  // Assuming the correct base URL for your site
+  name: "GOLDRUSHLFG",
+  description: "GOLDRUSHLFG - Vitruveo Blockchain Gaming",
+  url: "https://goldrush.xyz",  // Assuming the correct base URL for your site
   ogImage: "https://flipya.xyz/img/flipya.jpg",  // Use the direct image URL
   links: {
     twitter: "",
@@ -33,7 +33,7 @@ export const siteMetadata: Metadata = {
     template: `%s | ${siteConfig.name}`,
   },
   description: siteConfig.description,
-  keywords: ["Flipya"],
+  keywords: ["goldrush"],
   openGraph: {
     type: "website",
     locale: "en_US",
