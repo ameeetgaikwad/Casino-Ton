@@ -120,10 +120,12 @@ export const useRouletteContractListener = (
 						guess.toString()
 				  );
 			console.log("MAINNNNN", playerAddress);
-			// console.log("MAINNNNN2", playerAddress === address);
+			console.log("MAINNNNN2", playerAddress === address);
+			console.log("Triggered cb roulett WORKINGGGG AHAHAHA");
+			console.log("CHAL GAYA FINAL RESULT");
 			if (playerAddress === address) {
 				startTransition(async () => {
-					console.log("SAVNGGG");
+					console.log("SAVINGGG");
 					await saveTransactionData(
 						{
 							isWin,
@@ -157,13 +159,6 @@ export const useRouletteContractListener = (
 			console.log("GAMERESULT  TRIGGERED");
 		}
 
-		const helperForFinal = (event: any) => {
-			console.log("Triggered cb roulett WORKINGGGG AHAHAHA");
-			console.log(event);
-			console.log("event.args", event.args);
-			console.log("CHAL GAYA FINAL RESULT");
-		}
-
 		const logDebug = (message: string, event: any) => {
 			console.log("LOGGGG");
 			console.log(message);
@@ -179,7 +174,6 @@ export const useRouletteContractListener = (
 		}
 		
 		contract.addListener('FinalResult', cb);
-		contract.addListener('FinalResult', helperForFinal);
 		contract.addListener('GameResult', helper);
 		contract.addListener('Debug', logDebug);
 		contract.addListener('WonAny', logWonAny);
@@ -187,12 +181,9 @@ export const useRouletteContractListener = (
 		console.log("DEFAULT ROULETTE EVENT LISTENER ADDED");
 		return () => {
 			contract.removeListener('FinalResult', cb);
-			contract.removeListener('FinalResult', helperForFinal);
 			contract.removeListener('GameResult', helper);
 			contract.removeListener('Debug', logDebug);
 			contract.removeListener('WonAny', logWonAny);
-
-
 		};
 	}, [contract, address]);
 
