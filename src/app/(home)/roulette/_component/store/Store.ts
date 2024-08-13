@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
 import { makeAutoObservable } from "mobx";
 import { Pad, pad, pad2 } from "./pad";
-const CHIP_CONFIG = ['0.001', '0.005', '0.010', '0.020', '0.050', '0.100'] as const;
+const CHIP_CONFIG = ['0.001', '0.005', '0.010', '0.020', '0.100'] as const;
 export type ChipType = (typeof CHIP_CONFIG)[number];
 export class Store {
   chip = CHIP_CONFIG;
