@@ -9,15 +9,12 @@ export const useCoinContractListener = (
 	address: string,
 	contract: Contract | undefined
 ) => {
-	console.log("Inside useCoinContractListener");
 	console.log("Address: ", address);
 	console.log("Contract: ", contract);
 	const [isPending, startTransaction] = useTransition();
 	useEffect(() => {
-		console.log("Inside useCoinContractListener useEffect");
 		console.log(contract);
 		if (!contract) return;
-		console.log("DEFINING CB FUNCTION");
 		const cb = (
 			playerAddress: string,
 			_totalBetAmounts: BigNumber,
@@ -56,19 +53,10 @@ export const useCoinContractListener = (
 			}
 		};
 		contract.addListener('DetailedGameResult', cb);
-		console.log("DEFAULT COIN EVENT LISTENER ADDED");
 		return () => {
 			contract.removeListener('DetailedGameResult', cb);
 		};
 	}, [contract, address]);
-
-	useEffect(() => {
-		console.log("Contract changed");
-	}, [contract]);
-
-	useEffect(() => {
-		console.log("Address changed");
-	}, [address]);
 
 	return {
 		isPending,
@@ -79,18 +67,11 @@ export const useRouletteContractListener = (
 	address: string,
 	contract: Contract | undefined
 ) => {
-	console.log("Inside useRouletteContractListener");
 	console.log("Address: ", address);
 	console.log("Contract: ", contract);
 	const [isPending, startTransition] = useTransition();
-		console.log("REACHED HERE 1");
 
 	useEffect(() => {
-		console.log("Inside useRouletteContractListener useEffect");
-		console.log(contract);
-
-		console.log("REACHED HERE 2");
-		
 		if (!contract) return;
 		console.log("DEFINING CB FUNCTION FOR ROULETTE");
 
@@ -119,9 +100,6 @@ export const useRouletteContractListener = (
 						totalBetAmounts,
 						guess.toString()
 				  );
-			console.log("MAINNNNN", playerAddress);
-			console.log("MAINNNNN2", playerAddress === address);
-			console.log("Triggered cb roulett WORKINGGGG AHAHAHA");
 			console.log("CHAL GAYA FINAL RESULT");
 			if (playerAddress === address) {
 				startTransition(async () => {
@@ -135,7 +113,7 @@ export const useRouletteContractListener = (
 							outcome: guess.toString(),
 							gameType: 'ROULETTE',
 							payout: totalPayout,
-							profit: totalProfit,
+							profit: isWin ? totalProfit*-1 : totalProfit,
 						},
 						'/roulette'
 					);
@@ -186,14 +164,6 @@ export const useRouletteContractListener = (
 			contract.removeListener('WonAny', logWonAny);
 		};
 	}, [contract, address]);
-
-	useEffect(() => {
-		console.log("Contract changed");
-	}, [contract]);
-
-	useEffect(() => {
-		console.log("Address changed");
-	}, [address]);
 
 	return {
 		isPending,
