@@ -7,7 +7,10 @@ import { useContract } from "@/hooks/use-contract";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Select } from "@/components/ui/select";
+import { Header } from "../(home)/raffle/_component/header";
+import { Toaster, toast } from "sonner";
+import { useAccount } from "wagmi";
+import { useRouter } from "next/navigation";
 
 interface Lottery {
   id: number;
@@ -22,8 +25,9 @@ interface Lottery {
 
 const AdminDashboard = () => {
   const { Game } = contract;
-  const { smartContract, error: contractError, address, getBalance } = useContract("LOTTERY");
-
+  const { smartContract, error: contractError, getBalance } = useContract("LOTTERY");
+  const { address } = useAccount();
+  const router = useRouter();
   const [activeLotteries, setActiveLotteries] = useState<Lottery[]>([]);
   const [selectedLottery, setSelectedLottery] = useState("");
   const [prizePool, setPrizePool] = useState("");
@@ -31,7 +35,28 @@ const AdminDashboard = () => {
   const [totalTickets, setTotalTickets] = useState("");
   const [newAdminWallet, setNewAdminWallet] = useState("");
   const [contractBalance, setContractBalance] = useState("0");
-  console.log("selectedLottery", selectedLottery);
+  const [isOwner, setIsOwner] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const checkOwner = async () => {
+    if (smartContract && address) {
+      console.log("insid here");
+
+      try {
+        const owner = await smartContract.owner();
+        if (owner.toLowerCase() !== address.toLowerCase()) {
+          router.push("/");
+        }
+      } catch (error) {
+        console.error("Error checking owner:", error);
+      }
+      setIsLoading(false);
+    }
+  };
+
+  // useEffect(() => {
+  //   checkOwner();
+  // }, [address, smartContract]);
 
   useEffect(() => {
     const fetchActiveLotteries = async () => {
@@ -66,10 +91,10 @@ const AdminDashboard = () => {
         totalTickets
       );
       await tx.wait();
-      alert("Lottery started successfully!");
+      toast.success("Lottery started successfully!");
     } catch (error) {
+      toast.error((error as any)?.data?.message || "An error occurred");
       console.error("Error starting lottery:", error);
-      alert("Failed to start lottery. Check console for details.");
     }
   };
 
@@ -77,10 +102,10 @@ const AdminDashboard = () => {
     try {
       const tx = await smartContract?.runLottery(selectedLottery);
       await tx.wait();
-      alert("Lottery run successfully!");
+      toast.success("Lottery run successfully!");
     } catch (error) {
+      toast.error((error as any)?.data?.message || "An error occurred");
       console.error("Error running lottery:", error);
-      alert("Failed to run lottery. Check console for details.");
     }
   };
 
@@ -88,10 +113,10 @@ const AdminDashboard = () => {
     try {
       const tx = await smartContract?.forceCompleteLottery(selectedLottery);
       await tx.wait();
-      alert("Lottery force completed successfully!");
+      toast.success("Lottery set to completed successfully!");
     } catch (error) {
+      toast.error((error as any)?.data?.message || "An error occurred");
       console.error("Error force completing lottery:", error);
-      alert("Failed to force complete lottery. Check console for details.");
     }
   };
 
@@ -99,10 +124,10 @@ const AdminDashboard = () => {
     try {
       const tx = await smartContract?.withdrawFunds();
       await tx.wait();
-      alert("Funds withdrawn successfully!");
+      toast.success("Funds withdrawn successfully!");
     } catch (error) {
+      toast.error((error as any)?.data?.message || "An error occurred");
       console.error("Error withdrawing funds:", error);
-      alert("Failed to withdraw funds. Check console for details.");
     }
   };
 
@@ -110,10 +135,10 @@ const AdminDashboard = () => {
     try {
       const tx = await smartContract?.setAdminWallet(newAdminWallet);
       await tx.wait();
-      alert("Admin wallet set successfully!");
+      toast.success("Admin wallet set successfully!");
     } catch (error) {
+      toast.error((error as any)?.data?.message || "An error occurred");
       console.error("Error setting admin wallet:", error);
-      alert("Failed to set admin wallet. Check console for details.");
     }
   };
 
@@ -121,29 +146,31 @@ const AdminDashboard = () => {
     return <div className="text-red-500">{contractError}</div>;
   }
 
-  if (!smartContract) {
-    return <div>Loading...</div>;
-  }
+  // if (!smartContract) {
+  //   return <div>Loading...</div>;
+  // }
 
   return (
     <div className="p-4">
+      <Toaster />
+      <Header />
       <h1 className="text-2xl font-bold mb-4">Admin Dashboard</h1>
       <p className="mb-4">Connected Address: {address}</p>
-      <p className="mb-4">Contract Balance: {contractBalance} ETH</p>
+      <p className="mb-4">Contract Balance: {contractBalance} BNB</p>
 
       <Card className="mb-4">
         <CardHeader>Start New Lottery</CardHeader>
         <CardContent>
           <Input
             type="text"
-            placeholder="Prize Pool (ETH)"
+            placeholder="Prize Pool (bnb)"
             value={prizePool}
             onChange={(e) => setPrizePool(e.target.value)}
             className="mb-2"
           />
           <Input
             type="text"
-            placeholder="Ticket Price (ETH)"
+            placeholder="Ticket Price (bnb)"
             value={ticketPrice}
             onChange={(e) => setTicketPrice(e.target.value)}
             className="mb-2"
@@ -180,7 +207,7 @@ const AdminDashboard = () => {
                 Run Lottery
               </Button>
               <Button onClick={handleForceCompleteLottery} className="flex-1">
-                Force Complete Lottery
+                Complete Lottery
               </Button>
             </div>
           )}
