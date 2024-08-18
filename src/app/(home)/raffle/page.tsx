@@ -3,20 +3,70 @@ import React, { useState, useEffect } from "react";
 import { Flame } from "lucide-react";
 import HowItWorks from "./_component/HowItWorks";
 import { Header } from "./_component/header";
+import { useContract } from "@/hooks/use-contract";
+
+type Raffle = {
+  amount: number;
+  ticketsSold: number;
+  totalTickets: number;
+  isSoldOut: boolean;
+  prizePool: number;
+};
 
 const RaffleGame = () => {
   const [mainRaffleAmount, setMainRaffleAmount] = useState(260);
   const [ticketsSold, setTicketsSold] = useState(2);
   const [totalTickets, setTotalTickets] = useState(100);
+  
+  const { smartContract, error, address } = useContract('LOTTERY');
 
-  const [trendingRaffles, setTrendingRaffles] = useState([
-    { amount: 78.09, ticketsSold: 3, totalTickets: 3, isSoldOut: true },
-    { amount: 455, ticketsSold: 0, totalTickets: 500 },
-    { amount: 715, ticketsSold: 0, totalTickets: 500 },
-    { amount: 13000, ticketsSold: 0, totalTickets: 5000 },
-    { amount: 0, ticketsSold: 0, totalTickets: 0 },
-    { amount: 0, ticketsSold: 0, totalTickets: 0 },
-  ]);
+  const initialLoadd = async () => {
+    try {
+      if (error) {
+        throw new Error(error);
+      }
+      if (!address) {
+        throw new Error(`Connect Wallet`);
+      }
+      if (!smartContract) {
+        throw new Error(`Contract not initialized`);
+      }
+      const tx = await smartContract?.getActiveLotteries();
+      let activeLotteries : any[] = [];
+
+      for (let i = 0; i < tx.length; i++) {
+        activeLotteries.push({
+          amount: parseInt(tx[i][2]._hex, 16),
+          ticketsSold: parseInt(tx[i][4]._hex, 16),
+          totalTickets: parseInt(tx[i][3]._hex, 16),
+          isSoldOut: tx[i][6] != 1 ? true : false,
+          prizePool: parseInt(tx[i][1]._hex, 16),
+        });
+      }
+      
+
+      setTrendingRaffles(activeLotteries);
+    
+    } catch (err: any) {
+      console.log(err)
+    }
+  }
+
+  useEffect(() => {
+    if (smartContract) {
+      console.log(smartContract)
+    }
+
+    // setLoading(true);
+		try {
+      initialLoadd();
+    } catch (err: any) {
+      console.log(err)
+      // toast.error(err.message);
+    }
+  }, [smartContract])
+
+  const [trendingRaffles, setTrendingRaffles] = useState<Raffle[]>([]);
 
   const buyMainRaffleTicket = () => {
     if (ticketsSold < totalTickets) {
@@ -87,13 +137,14 @@ const RaffleGame = () => {
               {trendingRaffles.map((raffle, index) => (
                 <div
                   key={index}
-                  className={`  rounded-lg p-8 ${raffle.amount === 0 ? "opacity-50" : ""} ${
-                    raffle.amount === 455 ? "border border-yellow-400" : "border border-yellow-400"
-                  }`}
+                  className={`rounded-lg p-8 ${raffle.amount === 0 ? "opacity-50" : ""} border border-yellow-400`}
                 >
                   <p className="text-lg font-bold mb-1">${raffle.amount.toLocaleString()}</p>
                   <p className="text-xs text-gray-400 mb-2">
                     Tickets: {raffle.ticketsSold} of {raffle.totalTickets}
+                  </p>
+                  <p className="text-xs text-gray-400 mb-2">
+                    Prize pool: {raffle.prizePool}
                   </p>
                   {raffle.amount > 0 && (
                     <button
