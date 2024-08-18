@@ -11,7 +11,7 @@ import { pgTable } from "./_table";
 
 
 export const COIN = pgEnum('COIN', ["HEAD", "TAIL"])
-export const GAME_TYPE = pgEnum('GAME_TYPE', ["COIN", "ROULETTE"])
+export const GAME_TYPE = pgEnum('GAME_TYPE', ["COIN", "ROULETTE", "LOTTERY"])
 
 
 export const transactionHistory = pgTable("transaction_history", {
