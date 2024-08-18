@@ -3,6 +3,29 @@ import React, { useState, useEffect } from "react";
 import { Flame } from "lucide-react";
 import HowItWorks from "./_component/HowItWorks";
 import { Header } from "./_component/header";
+import { Button } from "@/components/ui/button";
+
+
+
+const TicketProgressBar = ({ ticketsSold, totalTickets }) => {
+  const progress = (ticketsSold / totalTickets) * 100;
+
+  return (
+    <div className="bg-gray-800 rounded-lg p-4 mb-6">
+      <div className="flex justify-between mb-2">
+        <span className="text-md text-gray-400">Tickets sold: {ticketsSold}</span>
+        <span className="text-md text-gray-400">Total: {totalTickets}</span>
+      </div>
+      <div className="w-full bg-gray-700 rounded-full h-5">
+        <div
+          className="bg-yellow-400 h-5 rounded-full transition-all duration-500 ease-out"
+          style={{ width: `${progress}%` }}
+        ></div>
+      </div>
+      <p className="text-md text-gray-400 mt-2">{totalTickets - ticketsSold} tickets left</p>
+    </div>
+  );
+};
 
 const RaffleGame = () => {
   const [mainRaffleAmount, setMainRaffleAmount] = useState(260);
@@ -56,24 +79,17 @@ const RaffleGame = () => {
           <div className="md:w-1/3 bg-shade p-4 rounded-md">
             <h2 className="text-6xl sm:text-7xl font-bold mb-4 text-yellow-400">${mainRaffleAmount}</h2>
             <p className="mb-4 text-sm text-gray-400">Raffle is drawn once {totalTickets} tickets have been sold</p>
-            <div className="bg-gray-800 border border-yellow-400 rounded-lg p-8 mb-6 flex flex-col ">
-              <div className="flex items-center space-x-2">
-                <span className="bg-yellow-400 text-black rounded-full w-8 h-8 flex items-center justify-center font-bold">
-                  {ticketsSold}
-                </span>
-                <span className="text-yellow-400 font-bold">/</span>
-                <span className="text-yellow-400 font-bold">{totalTickets.toString().padStart(3, "0")}</span>
-              </div>
-              <p className="text-xs text-gray-400 mt-1">
-                {ticketsSold} tickets sold of {totalTickets}
-              </p>
-            </div>
-            <button
+
+            <TicketProgressBar ticketsSold={ticketsSold} totalTickets={totalTickets} />
+            <Button onClick={buyMainRaffleTicket} className="font-heading my-6 text-xl w-full">
+              Buy Ticket
+            </Button>
+            {/* <button
               onClick={buyMainRaffleTicket}
               className="bg-yellow-500 text-black font-bold py-2 px-4 rounded-md text-sm hover:bg-yellow-400 transition-colors mb-4"
             >
               Buy ticket now
-            </button>
+            </button> */}
             <p className="text-sm text-gray-400">Ticket prize: $1</p>
           </div>
 
