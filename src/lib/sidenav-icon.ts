@@ -8,7 +8,7 @@ export const sideNavIcons = [
     href: "/roulette"
   },
   {
-    icons: "/svg/side-icon-3.svg",
+    icons: "/svg/raffle.svg",
     href: "/raffle"
   },
   {
