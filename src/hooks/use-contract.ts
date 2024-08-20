@@ -2,7 +2,7 @@
 import * as contract from '@/../contract.json';
 import { totalBetAmount } from '@/lib/db/action';
 import { Contract, ethers } from 'ethers';
-import { Web3Provider } from 'ethers/providers';
+import { Web3Provider, JsonRpcProvider } from 'ethers/providers';
 import { useCallback, useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
 const { Game, deployedNetwork, networkName } = contract
@@ -11,25 +11,42 @@ export const useContract = (gameType: keyof typeof Game) => {
   const { address } = useAccount()
   const [contract] = useState(Game[gameType])
   const [error, setError] = useState<string>()
-  const [provider, setProvider] = useState<Web3Provider>()
+  const [provider, setProvider] = useState<ethers.providers.Web3Provider | ethers.providers.JsonRpcProvider>()
+  const [signer, setSigner] = useState<ethers.providers.JsonRpcSigner>()
   const [smartContract, setSmartContract] = useState<Contract>()
+  const provider_rpc_url = "https://bsc-testnet-rpc.publicnode.com"
+  // const provider_rpc_url = process.env.NEXT_PUBLIC_BSC_RPC_URL
+
 
   useEffect(() => {
     async function loadWeb3() {
-      const ethereum = (window as any).ethereum
-      var provider: Web3Provider | null = null
-      if (ethereum) {
-        await ethereum.enable();
-        provider = new ethers.providers.Web3Provider(ethereum)
 
-        setProvider(provider)
+      let _provider: ethers.providers.JsonRpcProvider | ethers.providers.Web3Provider;
+
+      const ethereum = (window as any).ethereum;
+
+      // if (ethereum != undefined) {
+      //   console.log("inside etherum");
+
+      //   await ethereum.enable();
+      //   _provider = new ethers.providers.Web3Provider(ethereum);
+      if (provider_rpc_url) {
+
+        _provider = new ethers.providers.JsonRpcProvider(provider_rpc_url, { chainId: 97, name: " Binance Smart Chain Testnet" });
+      } else {
+
+        _provider = new ethers.providers.JsonRpcProvider("https://bsc-testnet-rpc.publicnode.com", { chainId: 97, name: "bsctestnet" });
       }
-      if (provider) {
-        loadBlockchainData(provider);
+
+      setProvider(_provider);
+      setSigner(_provider.getSigner())
+
+      if (_provider) {
+        await loadBlockchainData(_provider);
       }
     }
     loadWeb3()
-  }, [])
+  }, [provider_rpc_url, gameType, address])
 
   // useEffect(() => {
   //   async function loadWeb3() {
@@ -53,6 +70,8 @@ export const useContract = (gameType: keyof typeof Game) => {
     const addressToCheck = targetAddress || address || Game[gameType].contractAddress; // Use user address if available, otherwise, use the contract address
 
     if (addressToCheck) {
+
+
       const _bal = await provider?.getBalance(addressToCheck) ?? '0';
       return ethers.utils.formatEther(_bal);
     }
@@ -61,17 +80,19 @@ export const useContract = (gameType: keyof typeof Game) => {
   }, [address, gameType, provider]);
 
 
-  const loadBlockchainData = useCallback(async (provider: Web3Provider) => {
+  const loadBlockchainData = useCallback(async (provider: JsonRpcProvider) => {
+
     if (!provider || !contract) return;
     const { abi, contractAddress } = contract
     const activeNetwork = await provider.getNetwork();
     if (activeNetwork.chainId !== deployedNetwork) {
       setError(`Please switch to ${networkName} in order to play`);
     }
-    console.log("lulu", contractAddress);
-    setSmartContract(new ethers.Contract(contractAddress, abi, provider.getSigner()));
+    // const signer = await provider.getSigner()
+    // console.log("lulu", signer);
+    setSmartContract(new ethers.Contract(contractAddress, abi, provider!));
 
-  }, [contract])
+  }, [contract, provider])
 
 
 
