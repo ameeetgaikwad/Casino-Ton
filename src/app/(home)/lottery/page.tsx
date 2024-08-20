@@ -542,8 +542,10 @@ const RaffleGame = () => {
   const [myLotteries, setMyLotteries] = useState<MyLotteriesProps[] | []>([]);
   const [trendingRaffles, setTrendingRaffles] = useState<Raffle[]>([]);
   const [selectedLotteryId, setSelectedLotteryId] = useState<number>();
-  const { smartContract, error, address, provider } = useContract("LOTTERY");
+  const [allLotteriesParent, setAllLotteriesParent] = useState<MyLotteriesProps[]>([]);
   const [megaRaffle, setMegaRaffle] = useState<Raffle>();
+
+  const { smartContract, error, address, provider } = useContract("LOTTERY");
   console.log("PROVIDER", provider);
 
   const changeMegaRaffle = (raffle: Raffle) => {
@@ -555,7 +557,8 @@ const RaffleGame = () => {
 
   const loadBlockchainData = useCallback(async () => {
     if (!provider) return;
-    setUSDTcontract(new ethers.Contract("0xD3b2530fDF4b887061cAeeea9F6f257d2cdA00ae", USDTabi, provider.getSigner()));
+
+    setUSDTcontract(new ethers.Contract("0xE34AcC6bDbCDfB73C5AB8f07311297cF0288232C", USDTabi, provider.getSigner()));
   }, []);
 
   useEffect(() => {
@@ -598,7 +601,6 @@ const RaffleGame = () => {
           bestLottery = thisLottery;
         }
       }
-      console.log("LALLA", bestLottery);
       setTrendingRaffles(activeLotteries);
       if (!selectedLotteryId) {
         setMegaRaffle(bestLottery);
@@ -611,16 +613,35 @@ const RaffleGame = () => {
       for (let i = 0; i < tx.length; i++) {
         myLotteriesData.push({
           lotteryId: parseInt(tx[i][0]._hex, 16),
-          ticketsPurchased: parseInt(tx[i][1]._hex, 16),
+          ticketsPurchased: parseInt(tx[i][4]._hex, 16),
           ticketPrice: parseInt(tx[i][2]._hex, 16),
-          status: tx[i][3],
-          remainingTickets: parseInt(tx[i][4]._hex, 16),
-          prizePool: parseInt(tx[i][5]._hex, 16),
-          winner: tx[i][6],
+          status: tx[i][6],
+          remainingTickets: parseInt(tx[i][3]._hex, 16) - parseInt(tx[i][4]._hex, 16),
+          prizePool: parseInt(tx[i][1]._hex, 16),
+          winner: tx[i][5],
         });
       }
 
       setMyLotteries(myLotteriesData);
+
+      tx = await smartContract?.getAllLotteries();
+      let completedLotteries: any[] = [];
+      console.log(tx.toString());
+      for (let i = 0; i < tx.length; i++) {
+        if (tx[i][6] === 1) {
+          completedLotteries.push({
+            lotteryId: parseInt(tx[i][0]._hex, 16),
+            ticketsPurchased: parseInt(tx[i][4]._hex, 16),
+            ticketPrice: parseInt(tx[i][2]._hex, 16),
+            status: tx[i][6],
+            remainingTickets: parseInt(tx[i][3]._hex, 16) - parseInt(tx[i][4]._hex, 16),
+            prizePool: parseInt(tx[i][1]._hex, 16),
+            winner: tx[i][5],
+          });
+        }
+      }
+      console.log(completedLotteries), "jhbjrbf";
+      setAllLotteriesParent(completedLotteries);
     } catch (err: any) {
       console.log(err);
     }
@@ -645,12 +666,23 @@ const RaffleGame = () => {
 
       console.log(USDTcontract);
 
-      const approval = await USDTcontract.approve(smartContract.address, totalCost);
+      const decimals = await USDTcontract.decimals();
+
+      const allowance = await USDTcontract.allowance(address, smartContract.address);
+      const balance = await USDTcontract.balanceOf(address);
+
+      console.log("Allowance:", ethers.utils.formatUnits(allowance, decimals));
+      console.log("Balance:", ethers.utils.formatUnits(balance, decimals));
+
+      const adjustedAmount = ethers.utils.parseUnits(totalCost.toString(), decimals);
+
+      const approval = await USDTcontract.approve(smartContract.address, adjustedAmount);
+      await approval.wait();
       console.log(approval);
-      // now finl transaction with value totalCost
-      const tx = await smartContract?.buyTickets(lotteryId, 1, {
-        value: totalCost,
-      });
+
+      console.log(totalCost);
+
+      const tx = await smartContract?.buyTickets(lotteryId, 1);
       console.log(tx);
       initialLoadd();
     } catch (err: any) {
@@ -757,7 +789,7 @@ const RaffleGame = () => {
           </div>
         </div>
 
-        <MyLotteries records={myLotteries} />
+        <MyLotteries records={myLotteries} allLotteries={allLotteriesParent} />
         <HowItWorks />
       </div>
     </div>

@@ -12,7 +12,7 @@ contract USDTMock is ERC20, ERC20Burnable, ERC20Pausable, Ownable {
     }
 
     function approve(address spender, uint256 amount) public override returns (bool) {
-        return super.approve(spender, amount);
+        return super.approve(spender, amount * 10 ** decimals());
     }
 
     function pause() public onlyOwner {
@@ -22,8 +22,9 @@ contract USDTMock is ERC20, ERC20Burnable, ERC20Pausable, Ownable {
     function unpause() public onlyOwner {
         _unpause();
     }
-    
+
     function _update(address from, address to, uint256 value) internal override(ERC20, ERC20Pausable) {
         super._update(from, to, value);
     }
+
 }

@@ -5,6 +5,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { cn, shortContractAddress } from "@/lib/utils";
 import { useCopyToClipboard } from "usehooks-ts";
 import { useAccount } from "wagmi";
+import { useEffect, useState } from "react";
+import { Switch } from "@/components/ui/switch";
 
 type MyLotteriesProps = {
   lotteryId: number;
@@ -16,20 +18,51 @@ type MyLotteriesProps = {
   winner: string;
 };
 
-export function MyLotteries({ records }: { records: MyLotteriesProps[] | [] }) {
+export function MyLotteries({
+  records,
+  allLotteries,
+}: {
+  records: MyLotteriesProps[] | [];
+  allLotteries: MyLotteriesProps[] | [];
+}) {
   const [_, copy] = useCopyToClipboard();
+  const [myLotteriesSelected, setMyLotteriesSelected] = useState(true);
+
+  const [currLotteries, setCurrLotteries] =
+    useState<MyLotteriesProps[]>(records);
+
+  useEffect(() => {
+    if (myLotteriesSelected) {
+      setCurrLotteries(records);
+    } else {
+      setCurrLotteries(allLotteries);
+    }
+  }, [myLotteriesSelected, records, allLotteries]);
 
   const { address } = useAccount();
 
   return (
     <Card className="bg-shade mt-8 text-center">
-      <CardHeader className="font-bold">My Lotteries</CardHeader>
+      <CardHeader className="font-bold text-2xl">
+        <div className="flex space-x-5 text-center">
+          <span>My Lotteries</span>
+          <div>
+            <Switch
+              checked={!myLotteriesSelected}
+              onCheckedChange={() =>
+                setMyLotteriesSelected(!myLotteriesSelected)
+              }
+            />
+          </div>
+          <span>All Lotteries</span>
+        </div>
+      </CardHeader>
       <CardContent>
-        <Table className="border-none text-left">
+        <Table className="border-none text-left text-base">
           <TableHeader>
             <TableRow>
               <TableHead>Lottery ID</TableHead>
-              <TableHead>MyTickets</TableHead>
+              <TableHead>Purchased</TableHead>
               <TableHead>Per Price</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Remaining</TableHead>
@@ -38,17 +71,17 @@ export function MyLotteries({ records }: { records: MyLotteriesProps[] | [] }) {
             </TableRow>
           </TableHeader>
           <TableBody className="font-bold">
-            {records.length === 0 ? (
+            {currLotteries.length === 0 ? (
               <TableRow>
                 <TableCell
                   colSpan={7}
                   //   className="h-24 text-center  text-xl font-heading text-pretty text-primary"
                 >
-                  No recoders found
+                  No records found
                 </TableCell>
               </TableRow>
             ) : (
-              records.map((record, key) => (
+              currLotteries.map((record, key) => (
                 <TableRow
                   key={key}
                   className={cn(
