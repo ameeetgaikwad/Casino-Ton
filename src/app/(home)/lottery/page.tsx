@@ -643,7 +643,7 @@ const RaffleGame = () => {
       let completedLotteries: any[] = [];
       console.log(tx.toString())
       for (let i = 0; i < tx.length; i++) {
-        if (tx[i][6] === 3) {
+        if (tx[i][6] === 1) {
           completedLotteries.push({
             lotteryId: parseInt(tx[i][0]._hex, 16),
             ticketsPurchased: parseInt(tx[i][4]._hex, 16),
@@ -682,18 +682,25 @@ const RaffleGame = () => {
 
       const decimals = await USDTcontract.decimals();
 
+    const allowance = await USDTcontract.allowance(address, smartContract.address);
+    const balance = await USDTcontract.balanceOf(address);
+
+    console.log("Allowance:", ethers.utils.formatUnits(allowance, decimals));
+    console.log("Balance:", ethers.utils.formatUnits(balance, decimals));
+
+    
       const adjustedAmount = ethers.utils.parseUnits(totalCost.toString(), decimals);
 
       const approval = await USDTcontract.approve(
         smartContract.address,
         adjustedAmount
       );
+      await approval.wait();
       console.log(approval);
 
-      const tx = await smartContract?.buyTickets(lotteryId, 1, 
-        {
-        value: totalCost,
-      }
+      console.log(totalCost);
+
+      const tx = await smartContract?.buyTickets(lotteryId, 1
     );
       console.log(tx);
       initialLoadd();
