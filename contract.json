@@ -3,189 +3,226 @@
 	"deployedNetwork": 97,
 	"Game": {
 		"COIN": {
-			"contractAddress": "0xcF9900b18cfddA9D0c7F414084480ca134C77Eb9",
+			"contractAddress": "0xFdD1ed98BD46da737d49F9353742f8BDDCf83867",
 			"abi": [
 				{
-					"type": "constructor",
-					"stateMutability": "nonpayable",
-					"payable": false,
 					"inputs": [
 						{
-							"type": "address",
+							"internalType": "address payable",
 							"name": "_houseWallet",
-							"internalType": "address payable"
+							"type": "address"
 						}
-					]
+					],
+					"stateMutability": "nonpayable",
+					"type": "constructor"
 				},
 				{
-					"type": "event",
-					"name": "DetailedGameResult",
+					"anonymous": false,
 					"inputs": [
 						{
-							"type": "address",
-							"name": "player",
+							"indexed": false,
 							"internalType": "address",
-							"indexed": false
+							"name": "player",
+							"type": "address"
 						},
 						{
-							"type": "uint256",
-							"name": "amountBet",
+							"indexed": false,
 							"internalType": "uint256",
-							"indexed": false
+							"name": "amountBet",
+							"type": "uint256"
 						},
 						{
-							"type": "uint8",
+							"indexed": false,
+							"internalType": "uint8",
 							"name": "guess",
-							"internalType": "uint8",
-							"indexed": false
+							"type": "uint8"
 						},
 						{
-							"type": "bool",
-							"name": "winner",
+							"indexed": false,
 							"internalType": "bool",
-							"indexed": false
+							"name": "winner",
+							"type": "bool"
 						},
 						{
-							"type": "uint256",
-							"name": "totalPayout",
+							"indexed": false,
 							"internalType": "uint256",
-							"indexed": false
-						},
-						{
-							"type": "int256",
-							"name": "totalProfit",
-							"internalType": "int256",
-							"indexed": false
-						}
-					],
-					"anonymous": false
-				},
-				{
-					"type": "event",
-					"name": "GameResult",
-					"inputs": [
-						{
-							"type": "uint8",
-							"name": "side",
-							"internalType": "uint8",
-							"indexed": false
-						}
-					],
-					"anonymous": false
-				},
-				{ "type": "fallback", "stateMutability": "payable", "payable": true },
-				{
-					"type": "function",
-					"stateMutability": "payable",
-					"payable": true,
-					"outputs": [{ "type": "bool", "name": "", "internalType": "bool" }],
-					"name": "flipit",
-					"inputs": [
-						{ "type": "uint8", "name": "guess", "internalType": "uint8" }
-					],
-					"constant": false
-				},
-				{
-					"type": "function",
-					"stateMutability": "view",
-					"payable": false,
-					"outputs": [
-						{ "type": "uint256", "name": "", "internalType": "uint256" }
-					],
-					"name": "getGameCount",
-					"inputs": [],
-					"constant": true
-				},
-				{
-					"type": "function",
-					"stateMutability": "view",
-					"payable": false,
-					"outputs": [
-						{ "type": "address", "name": "addr", "internalType": "address" },
-						{
-							"type": "uint256",
-							"name": "amountBet",
-							"internalType": "uint256"
-						},
-						{ "type": "uint8", "name": "guess", "internalType": "uint8" },
-						{ "type": "bool", "name": "winner", "internalType": "bool" },
-						{
-							"type": "uint256",
 							"name": "totalPayout",
-							"internalType": "uint256"
+							"type": "uint256"
 						},
 						{
-							"type": "int256",
+							"indexed": false,
+							"internalType": "int256",
 							"name": "totalProfit",
-							"internalType": "int256"
+							"type": "int256"
+						}
+					],
+					"name": "DetailedGameResult",
+					"type": "event"
+				},
+				{
+					"inputs": [
+						{
+							"internalType": "uint8",
+							"name": "guess",
+							"type": "uint8"
+						}
+					],
+					"name": "flipit",
+					"outputs": [
+						{
+							"internalType": "bool",
+							"name": "",
+							"type": "bool"
+						}
+					],
+					"stateMutability": "payable",
+					"type": "function"
+				},
+				{
+					"anonymous": false,
+					"inputs": [
+						{
+							"indexed": false,
+							"internalType": "uint8",
+							"name": "side",
+							"type": "uint8"
+						}
+					],
+					"name": "GameResult",
+					"type": "event"
+				},
+				{
+					"inputs": [
+						{
+							"internalType": "address payable",
+							"name": "newHouseWallet",
+							"type": "address"
+						}
+					],
+					"name": "setHouseWallet",
+					"outputs": [],
+					"stateMutability": "nonpayable",
+					"type": "function"
+				},
+				{
+					"inputs": [
+						{
+							"internalType": "address payable",
+							"name": "newOwner",
+							"type": "address"
+						}
+					],
+					"name": "transferOwnership",
+					"outputs": [],
+					"stateMutability": "nonpayable",
+					"type": "function"
+				},
+				{
+					"inputs": [
+						{
+							"internalType": "uint256",
+							"name": "amount",
+							"type": "uint256"
+						}
+					],
+					"name": "withdraw",
+					"outputs": [],
+					"stateMutability": "nonpayable",
+					"type": "function"
+				},
+				{
+					"inputs": [],
+					"name": "withdrawAll",
+					"outputs": [],
+					"stateMutability": "nonpayable",
+					"type": "function"
+				},
+				{
+					"stateMutability": "payable",
+					"type": "receive"
+				},
+				{
+					"inputs": [],
+					"name": "getGameCount",
+					"outputs": [
+						{
+							"internalType": "uint256",
+							"name": "",
+							"type": "uint256"
+						}
+					],
+					"stateMutability": "view",
+					"type": "function"
+				},
+				{
+					"inputs": [
+						{
+							"internalType": "uint256",
+							"name": "index",
+							"type": "uint256"
 						}
 					],
 					"name": "getGameEntry",
-					"inputs": [
-						{ "type": "uint256", "name": "index", "internalType": "uint256" }
-					],
-					"constant": true
-				},
-				{
-					"type": "function",
-					"stateMutability": "view",
-					"payable": false,
 					"outputs": [
-						{ "type": "string", "name": "", "internalType": "string" }
+						{
+							"internalType": "address",
+							"name": "addr",
+							"type": "address"
+						},
+						{
+							"internalType": "uint256",
+							"name": "amountBet",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint8",
+							"name": "guess",
+							"type": "uint8"
+						},
+						{
+							"internalType": "bool",
+							"name": "winner",
+							"type": "bool"
+						},
+						{
+							"internalType": "uint256",
+							"name": "totalPayout",
+							"type": "uint256"
+						},
+						{
+							"internalType": "int256",
+							"name": "totalProfit",
+							"type": "int256"
+						}
 					],
+					"stateMutability": "view",
+					"type": "function"
+				},
+				{
+					"inputs": [],
+					"name": "getOwnerWallet",
+					"outputs": [
+						{
+							"internalType": "address payable",
+							"name": "",
+							"type": "address"
+						}
+					],
+					"stateMutability": "view",
+					"type": "function"
+				},
+				{
+					"inputs": [],
 					"name": "name",
-					"inputs": [],
-					"constant": true
-				},
-				{
-					"type": "function",
-					"stateMutability": "nonpayable",
-					"payable": false,
-					"outputs": [],
-					"name": "setHouseWallet",
-					"inputs": [
+					"outputs": [
 						{
-							"type": "address",
-							"name": "newHouseWallet",
-							"internalType": "address payable"
+							"internalType": "string",
+							"name": "",
+							"type": "string"
 						}
 					],
-					"constant": false
-				},
-				{
-					"type": "function",
-					"stateMutability": "nonpayable",
-					"payable": false,
-					"outputs": [],
-					"name": "transferOwnership",
-					"inputs": [
-						{
-							"type": "address",
-							"name": "newOwner",
-							"internalType": "address payable"
-						}
-					],
-					"constant": false
-				},
-				{
-					"type": "function",
-					"stateMutability": "nonpayable",
-					"payable": false,
-					"outputs": [],
-					"name": "withdraw",
-					"inputs": [
-						{ "type": "uint256", "name": "amount", "internalType": "uint256" }
-					],
-					"constant": false
-				},
-				{
-					"type": "function",
-					"stateMutability": "nonpayable",
-					"payable": false,
-					"outputs": [],
-					"name": "withdrawAll",
-					"inputs": [],
-					"constant": false
+					"stateMutability": "view",
+					"type": "function"
 				}
 			]
 		},

@@ -11,21 +11,27 @@ export const useContract = (gameType: keyof typeof Game) => {
   const { address } = useAccount()
   const [contract] = useState(Game[gameType])
   const [error, setError] = useState<string>()
-  const [provider, setProvider] = useState<Web3Provider>()
+  const [provider, setProvider] = useState<ethers.providers.Web3Provider | ethers.providers.JsonRpcProvider>()
   const [smartContract, setSmartContract] = useState<Contract>()
 
   useEffect(() => {
     async function loadWeb3() {
       const ethereum = (window as any).ethereum
-      var provider: Web3Provider | null = null
+      let provider: ethers.providers.Web3Provider | ethers.providers.JsonRpcProvider | null = null
       if (ethereum) {
         await ethereum.enable();
         provider = new ethers.providers.Web3Provider(ethereum)
-
-        setProvider(provider)
+        console.log("PROVIDER", provider);
+      } else {
+        // Fallback provider (Infura/Alchemy)
+        provider = new ethers.providers.JsonRpcProvider(`${process.env.BSC_RPC_URL}`); // Use the appropriate URL for your network
+        console.log("PROVIDER", provider);
       }
+      console.log("PROVIDER", provider);
+
+      setProvider(provider)
       if (provider) {
-        loadBlockchainData(provider);
+        loadBlockchainData(provider as Web3Provider);
       }
     }
     loadWeb3()
@@ -53,6 +59,8 @@ export const useContract = (gameType: keyof typeof Game) => {
     const addressToCheck = targetAddress || address || Game[gameType].contractAddress; // Use user address if available, otherwise, use the contract address
 
     if (addressToCheck) {
+
+
       const _bal = await provider?.getBalance(addressToCheck) ?? '0';
       return ethers.utils.formatEther(_bal);
     }
