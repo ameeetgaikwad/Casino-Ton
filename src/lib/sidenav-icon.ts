@@ -1,17 +1,15 @@
 export const sideNavIcons = [
   {
+    icons: "/svg/raffle.svg",
+    href: "/lottery"
+  },
+  {
     icons: "/svg/side-icon-1.svg",
-    href: "/coin"
+    href: "/flip"
   },
   {
     icons: "/svg/side-icon-2.svg",
     href: "/roulette"
   },
-  {
-    icons: "/svg/raffle.svg",
-    href: "/raffle"
-  },
-  {
-    icons: "/svg/side-icon-4.svg"
-  },
+
 ]

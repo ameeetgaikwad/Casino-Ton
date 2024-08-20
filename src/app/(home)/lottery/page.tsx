@@ -206,7 +206,7 @@ const RaffleGame = () => {
                 ${megaRaffle.prizePool}
               </h2>
               <p className="mb-4 text-sm text-gray-400">
-                Raffle is drawn once all the {megaRaffle.totalTickets} tickets have been sold
+                Lottery is drawn once all the {megaRaffle.totalTickets} tickets have been sold
               </p>
 
               <TicketProgressBar
@@ -226,11 +226,11 @@ const RaffleGame = () => {
           {/* Trending Raffles Section - Right Side */}
           <div className="md:w-2/3 bg-shade p-4 rounded-md">
             <h3 className="text-3xl font-bold mb-2 flex items-center">
-              <Flame className="text-orange-500 mr-2 h-8 w-8" /> Trending Raffle
+              <Flame className="text-orange-500 mr-2 h-8 w-8" /> Trending Lottery
               draws
             </h3>
             <p className="mb-4 text-lg text-gray-400">
-              Raffle is drawn once target slots have been sold
+              Lottery is drawn once target slots have been sold
             </p>
             <div className="grid grid-cols-2 gap-4">
               {trendingRaffles.map((raffle, index) => (

@@ -7,7 +7,7 @@ import { useContract } from "@/hooks/use-contract";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Header } from "../(home)/raffle/_component/header";
+import { Header } from "../(home)/lottery/_component/header";
 import { Toaster, toast } from "sonner";
 import { useAccount } from "wagmi";
 import { useRouter } from "next/navigation";
@@ -25,7 +25,11 @@ interface Lottery {
 
 const AdminDashboard = () => {
   const { Game } = contract;
-  const { smartContract, error: contractError, getBalance } = useContract("LOTTERY");
+  const {
+    smartContract,
+    error: contractError,
+    getBalance,
+  } = useContract("LOTTERY");
   const { address } = useAccount();
   const router = useRouter();
   const [activeLotteries, setActiveLotteries] = useState<Lottery[]>([]);
@@ -193,8 +197,17 @@ const AdminDashboard = () => {
             {activeLotteries.map((lottery, index) => (
               <Button
                 key={index}
-                onClick={() => handleSelectLottery(lottery.id?.toString() ?? index.toString())}
-                variant={selectedLottery === (lottery.id?.toString() ?? index.toString()) ? "default" : "outline"}
+                onClick={() =>
+                  handleSelectLottery(
+                    lottery.id?.toString() ?? index.toString()
+                  )
+                }
+                variant={
+                  selectedLottery ===
+                  (lottery.id?.toString() ?? index.toString())
+                    ? "default"
+                    : "outline"
+                }
                 className="w-full text-white border-2 border-white"
               >
                 Lottery #{lottery.id?.toString() ?? index.toString()}

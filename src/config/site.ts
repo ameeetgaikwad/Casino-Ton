@@ -16,7 +16,7 @@ export const siteConfig: SiteConfig = {
 }; */
 
 export const siteConfig: SiteConfig = {
-  name: "GOLDRUSHLFG",
+  name: "GoldrushLFG",
   description: "GOLDRUSHLFG - Vitruveo Blockchain Gaming",
   url: "https://goldrush.xyz",  // Assuming the correct base URL for your site
   ogImage: "https://flipya.xyz/img/flipya.jpg",  // Use the direct image URL
