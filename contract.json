@@ -493,7 +493,7 @@
 			]
 		},
 		"LOTTERY": {
-			"contractAddress": "0xbdCD26e7F254281523450401CFDdc4771563C2e7",
+			"contractAddress": "0xa72b80680FdDAb41882C072823fe1cc51BEdDeb4",
 			"abi": [
 				{
 					"inputs": [
@@ -501,6 +501,11 @@
 							"internalType": "uint256",
 							"name": "subscriptionId",
 							"type": "uint256"
+						},
+						{
+							"internalType": "address",
+							"name": "_usdtToken",
+							"type": "address"
 						}
 					],
 					"stateMutability": "nonpayable",
@@ -803,6 +808,56 @@
 				{
 					"inputs": [],
 					"name": "getActiveLotteries",
+					"outputs": [
+						{
+							"components": [
+								{
+									"internalType": "uint256",
+									"name": "id",
+									"type": "uint256"
+								},
+								{
+									"internalType": "uint256",
+									"name": "prizePool",
+									"type": "uint256"
+								},
+								{
+									"internalType": "uint256",
+									"name": "ticketPrice",
+									"type": "uint256"
+								},
+								{
+									"internalType": "uint256",
+									"name": "totalTickets",
+									"type": "uint256"
+								},
+								{
+									"internalType": "uint256",
+									"name": "soldTickets",
+									"type": "uint256"
+								},
+								{
+									"internalType": "address",
+									"name": "winner",
+									"type": "address"
+								},
+								{
+									"internalType": "enum SubscriptionConsumer.LotteryStatus",
+									"name": "status",
+									"type": "uint8"
+								}
+							],
+							"internalType": "struct SubscriptionConsumer.Lottery[]",
+							"name": "",
+							"type": "tuple[]"
+						}
+					],
+					"stateMutability": "view",
+					"type": "function"
+				},
+				{
+					"inputs": [],
+					"name": "getAllLotteries",
 					"outputs": [
 						{
 							"components": [
@@ -1586,6 +1641,19 @@
 					"name": "transferOwnership",
 					"outputs": [],
 					"stateMutability": "nonpayable",
+					"type": "function"
+				},
+				{
+					"inputs": [],
+					"name": "usdtToken",
+					"outputs": [
+						{
+							"internalType": "contract IERC20",
+							"name": "",
+							"type": "address"
+						}
+					],
+					"stateMutability": "view",
 					"type": "function"
 				},
 				{

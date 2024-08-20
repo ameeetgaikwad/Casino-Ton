@@ -90,8 +90,8 @@ const AdminDashboard = () => {
   const handleStartLottery = async () => {
     try {
       const tx = await smartContract?.startLottery(
-        ethers.utils.parseEther(prizePool),
-        ethers.utils.parseEther(ticketPrice),
+        prizePool,
+        ticketPrice,
         totalTickets
       );
       await tx.wait();
