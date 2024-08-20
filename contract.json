@@ -530,7 +530,7 @@
 			]
 		},
 		"LOTTERY": {
-			"contractAddress": "0xa72b80680FdDAb41882C072823fe1cc51BEdDeb4",
+			"contractAddress": "0x5766743356bf0162b474aAD503D8C15829fadBcF",
 			"abi": [
 				{
 					"inputs": [
@@ -813,7 +813,7 @@
 					],
 					"name": "buyTickets",
 					"outputs": [],
-					"stateMutability": "payable",
+					"stateMutability": "nonpayable",
 					"type": "function"
 				},
 				{

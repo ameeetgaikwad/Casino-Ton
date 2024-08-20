@@ -25,6 +25,9 @@ export function MyLotteries({
   records: MyLotteriesProps[] | [];
   allLotteries: MyLotteriesProps[] | [];
 }) {
+
+    console.log("Records: ", records);
+    console.log("All Lotteries: ", allLotteries);
   const [_, copy] = useCopyToClipboard();
   const [myLotteriesSelected, setMyLotteriesSelected] = useState(true);
 

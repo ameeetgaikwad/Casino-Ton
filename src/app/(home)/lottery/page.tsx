@@ -14,489 +14,490 @@ import { ethers } from "ethers";
 import { useAccount } from "wagmi";
 import { fr } from "ethers/wordlists";
 import { toast, Toaster } from "sonner";
+import { set } from "mobx";
 
 const USDTabi = [
-  {
-    inputs: [],
-    stateMutability: "nonpayable",
-    type: "constructor",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "spender",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "allowance",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "needed",
-        type: "uint256",
-      },
-    ],
-    name: "ERC20InsufficientAllowance",
-    type: "error",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "sender",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "balance",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "needed",
-        type: "uint256",
-      },
-    ],
-    name: "ERC20InsufficientBalance",
-    type: "error",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "approver",
-        type: "address",
-      },
-    ],
-    name: "ERC20InvalidApprover",
-    type: "error",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "receiver",
-        type: "address",
-      },
-    ],
-    name: "ERC20InvalidReceiver",
-    type: "error",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "sender",
-        type: "address",
-      },
-    ],
-    name: "ERC20InvalidSender",
-    type: "error",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "spender",
-        type: "address",
-      },
-    ],
-    name: "ERC20InvalidSpender",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "EnforcedPause",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "ExpectedPause",
-    type: "error",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "owner",
-        type: "address",
-      },
-    ],
-    name: "OwnableInvalidOwner",
-    type: "error",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-    ],
-    name: "OwnableUnauthorizedAccount",
-    type: "error",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "owner",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "spender",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "value",
-        type: "uint256",
-      },
-    ],
-    name: "Approval",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "previousOwner",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "newOwner",
-        type: "address",
-      },
-    ],
-    name: "OwnershipTransferred",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-    ],
-    name: "Paused",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "from",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "to",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "value",
-        type: "uint256",
-      },
-    ],
-    name: "Transfer",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-    ],
-    name: "Unpaused",
-    type: "event",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "owner",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "spender",
-        type: "address",
-      },
-    ],
-    name: "allowance",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "spender",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "amount",
-        type: "uint256",
-      },
-    ],
-    name: "approve",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-    ],
-    name: "balanceOf",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "value",
-        type: "uint256",
-      },
-    ],
-    name: "burn",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "value",
-        type: "uint256",
-      },
-    ],
-    name: "burnFrom",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "decimals",
-    outputs: [
-      {
-        internalType: "uint8",
-        name: "",
-        type: "uint8",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "name",
-    outputs: [
-      {
-        internalType: "string",
-        name: "",
-        type: "string",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "owner",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "pause",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "paused",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "renounceOwnership",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "symbol",
-    outputs: [
-      {
-        internalType: "string",
-        name: "",
-        type: "string",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "totalSupply",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "to",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "value",
-        type: "uint256",
-      },
-    ],
-    name: "transfer",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "from",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "to",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "value",
-        type: "uint256",
-      },
-    ],
-    name: "transferFrom",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "newOwner",
-        type: "address",
-      },
-    ],
-    name: "transferOwnership",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "unpause",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
+	{
+		"inputs": [],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "spender",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "allowance",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "needed",
+				"type": "uint256"
+			}
+		],
+		"name": "ERC20InsufficientAllowance",
+		"type": "error"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "sender",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "balance",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "needed",
+				"type": "uint256"
+			}
+		],
+		"name": "ERC20InsufficientBalance",
+		"type": "error"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "approver",
+				"type": "address"
+			}
+		],
+		"name": "ERC20InvalidApprover",
+		"type": "error"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "receiver",
+				"type": "address"
+			}
+		],
+		"name": "ERC20InvalidReceiver",
+		"type": "error"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "sender",
+				"type": "address"
+			}
+		],
+		"name": "ERC20InvalidSender",
+		"type": "error"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "spender",
+				"type": "address"
+			}
+		],
+		"name": "ERC20InvalidSpender",
+		"type": "error"
+	},
+	{
+		"inputs": [],
+		"name": "EnforcedPause",
+		"type": "error"
+	},
+	{
+		"inputs": [],
+		"name": "ExpectedPause",
+		"type": "error"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			}
+		],
+		"name": "OwnableInvalidOwner",
+		"type": "error"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "account",
+				"type": "address"
+			}
+		],
+		"name": "OwnableUnauthorizedAccount",
+		"type": "error"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "spender",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "value",
+				"type": "uint256"
+			}
+		],
+		"name": "Approval",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "previousOwner",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "OwnershipTransferred",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "account",
+				"type": "address"
+			}
+		],
+		"name": "Paused",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "from",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "value",
+				"type": "uint256"
+			}
+		],
+		"name": "Transfer",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "account",
+				"type": "address"
+			}
+		],
+		"name": "Unpaused",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "spender",
+				"type": "address"
+			}
+		],
+		"name": "allowance",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "spender",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "approve",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "account",
+				"type": "address"
+			}
+		],
+		"name": "balanceOf",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "value",
+				"type": "uint256"
+			}
+		],
+		"name": "burn",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "account",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "value",
+				"type": "uint256"
+			}
+		],
+		"name": "burnFrom",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "decimals",
+		"outputs": [
+			{
+				"internalType": "uint8",
+				"name": "",
+				"type": "uint8"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "name",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "owner",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "pause",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "paused",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "renounceOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "symbol",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "totalSupply",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "value",
+				"type": "uint256"
+			}
+		],
+		"name": "transfer",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "from",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "value",
+				"type": "uint256"
+			}
+		],
+		"name": "transferFrom",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "transferOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "unpause",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	}
 ];
 
 type Raffle = {
@@ -524,7 +525,9 @@ const TicketProgressBar = ({ ticketsSold, totalTickets }) => {
   return (
     <div className="bg-gray-800 rounded-lg p-4 mb-6">
       <div className="flex justify-between mb-2">
-        <span className="text-md text-gray-400">Tickets sold: {ticketsSold}</span>
+        <span className="text-md text-gray-400">
+          Tickets sold: {ticketsSold}
+        </span>
         <span className="text-md text-gray-400">Total: {totalTickets}</span>
       </div>
       <div className="w-full bg-gray-700 rounded-full h-5">
@@ -533,7 +536,9 @@ const TicketProgressBar = ({ ticketsSold, totalTickets }) => {
           style={{ width: `${progress}%` }}
         ></div>
       </div>
-      <p className="text-md text-gray-400 mt-2">{totalTickets - ticketsSold} tickets left</p>
+      <p className="text-md text-gray-400 mt-2">
+        {totalTickets - ticketsSold} tickets left
+      </p>
     </div>
   );
 };
@@ -544,9 +549,9 @@ const RaffleGame = () => {
   const [selectedLotteryId, setSelectedLotteryId] = useState<number>();
   const [allLotteriesParent, setAllLotteriesParent] = useState<MyLotteriesProps[]>([]);
   const [megaRaffle, setMegaRaffle] = useState<Raffle>();
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const { smartContract, error, address, provider } = useContract("LOTTERY");
-  console.log("PROVIDER", provider);
+  const { smartContract, error, address } = useContract("LOTTERY");
 
   const changeMegaRaffle = (raffle: Raffle) => {
     setSelectedLotteryId(raffle.lotteryId);
@@ -556,9 +561,21 @@ const RaffleGame = () => {
   const [USDTcontract, setUSDTcontract] = useState<any>();
 
   const loadBlockchainData = useCallback(async () => {
+    const ethereum = (window as any).ethereum;
+    var provider: Web3Provider | null = null;
+    if (ethereum) {
+      await ethereum.enable();
+      provider = new ethers.providers.Web3Provider(ethereum);
+    }
     if (!provider) return;
 
-    setUSDTcontract(new ethers.Contract("0xE34AcC6bDbCDfB73C5AB8f07311297cF0288232C", USDTabi, provider.getSigner()));
+    setUSDTcontract(
+      new ethers.Contract(
+        "0x97577f913209F32547349dEF49d40E7E1d2c7F28",
+        USDTabi,
+        provider.getSigner()
+      )
+    );
   }, []);
 
   useEffect(() => {
@@ -570,9 +587,9 @@ const RaffleGame = () => {
       if (error) {
         throw new Error(error);
       }
-      // if (!address) {
-      //   throw new Error(`Connect Wallet`);
-      // }
+      if (!address) {
+        throw new Error(`Connect Wallet`);
+      }
       if (!smartContract) {
         throw new Error(`Contract not initialized`);
       }
@@ -596,14 +613,15 @@ const RaffleGame = () => {
 
         if (
           !bestLottery.prizePool ||
-          bestLottery.totalTickets - bestLottery.ticketsSold > thisLottery.totalTickets - thisLottery.ticketsSold
+          bestLottery.totalTickets - bestLottery.ticketsSold >
+            thisLottery.totalTickets - thisLottery.ticketsSold
         ) {
           bestLottery = thisLottery;
         }
       }
       setTrendingRaffles(activeLotteries);
+      setMegaRaffle(bestLottery);
       if (!selectedLotteryId) {
-        setMegaRaffle(bestLottery);
         setSelectedLotteryId(bestLottery.lotteryId);
       }
 
@@ -613,12 +631,12 @@ const RaffleGame = () => {
       for (let i = 0; i < tx.length; i++) {
         myLotteriesData.push({
           lotteryId: parseInt(tx[i][0]._hex, 16),
-          ticketsPurchased: parseInt(tx[i][4]._hex, 16),
+          ticketsPurchased: parseInt(tx[i][1]._hex, 16),
           ticketPrice: parseInt(tx[i][2]._hex, 16),
-          status: tx[i][6],
-          remainingTickets: parseInt(tx[i][3]._hex, 16) - parseInt(tx[i][4]._hex, 16),
-          prizePool: parseInt(tx[i][1]._hex, 16),
-          winner: tx[i][5],
+          status: tx[i][3],
+          remainingTickets: parseInt(tx[i][4]._hex, 16),
+          prizePool: parseInt(tx[i][5]._hex, 16),
+          winner: tx[i][6],
         });
       }
 
@@ -626,9 +644,9 @@ const RaffleGame = () => {
 
       tx = await smartContract?.getAllLotteries();
       let completedLotteries: any[] = [];
-      console.log(tx.toString());
+      console.log(tx.toString())
       for (let i = 0; i < tx.length; i++) {
-        if (tx[i][6] === 1) {
+        if (tx[i][6] === 2 || tx[i][6] === 3) {
           completedLotteries.push({
             lotteryId: parseInt(tx[i][0]._hex, 16),
             ticketsPurchased: parseInt(tx[i][4]._hex, 16),
@@ -649,17 +667,17 @@ const RaffleGame = () => {
 
   const onBuyTicket = async (lotteryId) => {
     try {
+      setLoading(true);
+      if (error) {
+        throw new Error(error);
+      }
       if (!address) {
-        toast.error(`Connect Wallet`);
-        return;
+        throw new Error(`Connect Wallet`);
       }
       if (!smartContract) {
         throw new Error(`Contract not initialized`);
       }
       console.log("HAHHAHAHAA");
-      if (error) {
-        throw new Error(error);
-      }
 
       var totalCost = megaRaffle!.amount * 1;
       console.log(totalCost);
@@ -668,24 +686,25 @@ const RaffleGame = () => {
 
       const decimals = await USDTcontract.decimals();
 
-      const allowance = await USDTcontract.allowance(address, smartContract.address);
-      const balance = await USDTcontract.balanceOf(address);
-
-      console.log("Allowance:", ethers.utils.formatUnits(allowance, decimals));
-      console.log("Balance:", ethers.utils.formatUnits(balance, decimals));
-
       const adjustedAmount = ethers.utils.parseUnits(totalCost.toString(), decimals);
 
-      const approval = await USDTcontract.approve(smartContract.address, adjustedAmount);
-      await approval.wait();
+      const approval = await USDTcontract.approve(
+        smartContract.address,
+        adjustedAmount
+      );
+      // await approval.wait();
       console.log(approval);
 
       console.log(totalCost);
 
       const tx = await smartContract?.buyTickets(lotteryId, 1);
       console.log(tx);
+      await tx.wait();
+      toast.success("Ticket purchased successfully");
       initialLoadd();
+      setLoading(false);
     } catch (err: any) {
+      setLoading(false);
       console.log(err);
     }
   };
@@ -701,7 +720,7 @@ const RaffleGame = () => {
     } catch (err: any) {
       console.log(err);
     }
-  }, [smartContract, provider]);
+  }, [smartContract]);
 
   const buyTrendingRaffleTicket = (index) => {
     setTrendingRaffles((prev) =>
@@ -716,27 +735,40 @@ const RaffleGame = () => {
 
   return (
     <div className=" justify-center align-middle items-center  text-white h-full p-4 sm:p-6 lg:p-8 relative">
-      <Toaster />
       <Header />
       {/* Decorative stars */}
       <div className="absolute top-4 left-4 text-yellow-400 text-2xl">✦</div>
-      <div className="absolute bottom-4 right-4 text-yellow-400 text-4xl">✦</div>
+      <div className="absolute bottom-4 right-4 text-yellow-400 text-4xl">
+        ✦
+      </div>
 
       <div className="flex flex-col">
         <div className="w-full h-full mt-10 items-center justify-center align-middle mx-auto flex flex-col md:flex-row md:items-start md:space-x-8">
           {megaRaffle ? (
-            <div className="md:w-1/3 bg-shad rounded-md p-6">
-              <h2 className="text-5xl sm:text-5xl font-bold mb-4 text-yellow-400">${megaRaffle.prizePool}</h2>
+            <div className="md:w-1/3 bg-shade p-4 rounded-md p-6">
+              <h2 className="text-5xl sm:text-5xl font-bold mb-4 text-yellow-400">
+                ${megaRaffle.prizePool}
+              </h2>
               <p className="mb-4 text-sm text-gray-400">
-                Lottery is drawn once all the {megaRaffle.totalTickets} tickets have been sold
+                Lottery is drawn once all the {megaRaffle.totalTickets} tickets
+                have been sold
               </p>
 
-              <TicketProgressBar ticketsSold={megaRaffle.ticketsSold} totalTickets={megaRaffle.totalTickets} />
-              <Button onClick={() => onBuyTicket(megaRaffle.lotteryId)} className="font-heading my-6 text-xl w-full">
-                Buy Ticket
+              <TicketProgressBar
+                ticketsSold={megaRaffle.ticketsSold}
+                totalTickets={megaRaffle.totalTickets}
+              />
+              <Button
+                onClick={() => onBuyTicket(megaRaffle.lotteryId)}
+                className="font-heading my-6 text-xl w-full"
+                disabled={loading}
+              >
+                {loading ? "Loading" : "Buy Ticket"}
               </Button>
 
-              <p className="text-sm text-gray-400">Ticket prize: {megaRaffle.amount}</p>
+              <p className="text-sm text-gray-400">
+                Ticket prize: {megaRaffle.amount}
+              </p>
             </div>
           ) : (
             <> </>
@@ -744,14 +776,19 @@ const RaffleGame = () => {
           {/* Trending Raffles Section - Right Side */}
           <div className="md:w-2/3 bg-shade p-5 rounded-md">
             <h3 className="text-3xl font-bold mb-2 flex items-center">
-              <Flame className="text-orange-500 mr-2 h-8 w-8" /> Trending Lottery Draws
+              <Flame className="text-orange-500 mr-2 h-8 w-8" /> Trending
+              Lottery Draws
             </h3>
-            <p className="mb-4 text-lg text-gray-400">Lottery is drawn once target slots have been sold</p>
+            <p className="mb-4 text-lg text-gray-400">
+              Lottery is drawn once target slots have been sold
+            </p>
             <div className="grid grid-cols-2 gap-4">
               {trendingRaffles.map((raffle, index) => (
                 <div
                   key={index}
-                  className={`rounded-lg p-8 ${raffle.amount === 0 ? "opacity-50" : ""} border border-yellow-400`}
+                  className={`rounded-lg p-8 ${
+                    raffle.amount === 0 ? "opacity-50" : ""
+                  } border border-yellow-400`}
                 >
                   <div className="flex justify-between">
                     <p className="text-lg font-bold mb-1">
@@ -792,6 +829,7 @@ const RaffleGame = () => {
         <MyLotteries records={myLotteries} allLotteries={allLotteriesParent} />
         <HowItWorks />
       </div>
+      <Toaster />
     </div>
   );
 };

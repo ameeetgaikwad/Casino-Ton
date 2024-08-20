@@ -25,18 +25,21 @@ export const useContract = (gameType: keyof typeof Game) => {
 
       const ethereum = (window as any).ethereum;
 
-      // if (ethereum != undefined) {
-      //   console.log("inside etherum");
+      if (ethereum != undefined) {
+        console.log("inside etherum");
 
-      //   await ethereum.enable();
-      //   _provider = new ethers.providers.Web3Provider(ethereum);
-      if (provider_rpc_url) {
-
-        _provider = new ethers.providers.JsonRpcProvider(provider_rpc_url, { chainId: 97, name: " Binance Smart Chain Testnet" });
-      } else {
-
-        _provider = new ethers.providers.JsonRpcProvider("https://bsc-testnet-rpc.publicnode.com", { chainId: 97, name: "bsctestnet" });
+        await ethereum.enable();
       }
+
+        _provider = new ethers.providers.Web3Provider(ethereum);
+    
+      // if (provider_rpc_url) {
+
+      //   _provider = new ethers.providers.JsonRpcProvider(provider_rpc_url, { chainId: 97, name: " Binance Smart Chain Testnet" });
+      // } else {
+
+      //   _provider = new ethers.providers.JsonRpcProvider("https://bsc-testnet-rpc.publicnode.com", { chainId: 97, name: "bsctestnet" });
+      // }
 
       setProvider(_provider);
       setSigner(_provider.getSigner())
@@ -88,9 +91,9 @@ export const useContract = (gameType: keyof typeof Game) => {
     if (activeNetwork.chainId !== deployedNetwork) {
       setError(`Please switch to ${networkName} in order to play`);
     }
-    // const signer = await provider.getSigner()
-    // console.log("lulu", signer);
-    setSmartContract(new ethers.Contract(contractAddress, abi, provider!));
+    const signer = await provider.getSigner()
+    console.log("lulu", signer);
+    setSmartContract(new ethers.Contract(contractAddress, abi, signer!));
 
   }, [contract, provider])
 

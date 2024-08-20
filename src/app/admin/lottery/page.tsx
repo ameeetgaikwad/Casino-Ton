@@ -65,10 +65,10 @@ const AdminDashboard = () => {
     const fetchActiveLotteries = async () => {
       if (smartContract) {
         try {
-          const lotteries = await smartContract?.getActiveLotteries();
+          const lotteries = await smartContract?.getAllLotteries();
           console.log("lottries", lotteries);
 
-          setActiveLotteries(lotteries);
+          setActiveLotteries(lotteries.filter((lottery) => lottery.status != 3));
         } catch (error) {
           console.error("Error fetching active lotteries:", error);
         }
@@ -102,8 +102,8 @@ const AdminDashboard = () => {
   const handleStartLottery = async () => {
     try {
       const tx = await smartContract?.startLottery(
-        ethers.utils.parseEther(prizePool),
-        ethers.utils.parseEther(ticketPrice),
+        prizePool,
+        ticketPrice,
         totalTickets
       );
       await tx.wait();
