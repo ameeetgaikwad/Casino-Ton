@@ -1,21 +1,10 @@
 "use client";
 import { CoinFace } from "@/components/coin-face";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { InferSelectModel, schema } from "@/lib/db";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { cn, shortContractAddress } from "@/lib/utils";
-import { toast } from "sonner";
-import { format } from "timeago.js";
 import { useCopyToClipboard } from "usehooks-ts";
 import { useAccount } from "wagmi";
-import { useState } from "react";
 
 type MyLotteriesProps = {
   lotteryId: number;
@@ -31,7 +20,6 @@ export function MyLotteries({ records }: { records: MyLotteriesProps[] | [] }) {
   const [_, copy] = useCopyToClipboard();
 
   const { address } = useAccount();
-  console.log(records);
 
   return (
     <Card className="bg-shade mt-8 text-center">
@@ -83,13 +71,7 @@ export function MyLotteries({ records }: { records: MyLotteriesProps[] | [] }) {
                       {record.ticketPrice}
                     </div>
                   </TableCell>
-                  <TableCell>
-                    {record.status == 1
-                      ? "Active"
-                      : record.status == 2
-                      ? "Closed"
-                      : " Completed"}
-                  </TableCell>
+                  <TableCell>{record.status == 1 ? "Active" : record.status == 2 ? "Closed" : " Completed"}</TableCell>
                   <TableCell>{record.remainingTickets}</TableCell>
                   <TableCell>
                     <div className="flex items-right justify-right gap-2">
@@ -100,9 +82,7 @@ export function MyLotteries({ records }: { records: MyLotteriesProps[] | [] }) {
 
                   <TableCell>
                     <div className="flex items-right justify-right gap-2">
-                      {record.status != 3
-                        ? "Yet to decide"
-                        : shortContractAddress(record.winner)}
+                      {record.status != 3 ? "Yet to decide" : shortContractAddress(record.winner)}
                     </div>
                   </TableCell>
                 </TableRow>

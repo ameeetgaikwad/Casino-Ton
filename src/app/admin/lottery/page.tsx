@@ -65,8 +65,8 @@ const AdminDashboard = () => {
     const fetchActiveLotteries = async () => {
       if (smartContract) {
         try {
-          const lotteries = await smartContract.getActiveLotteries();
-
+          const lotteries = await smartContract?.getActiveLotteries();
+          console.log("lottries", lotteries);
 
           setActiveLotteries(lotteries);
         } catch (error) {
@@ -92,7 +92,7 @@ const AdminDashboard = () => {
     };
     fetchActiveLotteries();
     fetchContractBalance();
-    fetchPastLotteries();
+    // fetchPastLotteries();
   }, [smartContract, getBalance]);
 
   const handleSelectLottery = (lotteryId) => {
@@ -206,7 +206,7 @@ const AdminDashboard = () => {
         <CardHeader>Manage Active Lotteries</CardHeader>
         <CardContent>
           <div className="w-full flex flex-wrap mb-4">
-            {activeLotteries.map((lottery, index) => (
+            {activeLotteries?.map((lottery, index) => (
               <Button
                 key={index}
                 onClick={() => handleSelectLottery(lottery.id?.toString() ?? index.toString())}
