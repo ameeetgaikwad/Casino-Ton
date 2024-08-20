@@ -712,7 +712,7 @@ const RaffleGame = () => {
       <div className="flex flex-col">
         <div className="w-full h-full mt-10 items-center justify-center align-middle mx-auto flex flex-col md:flex-row md:items-start md:space-x-8">
           {megaRaffle ? (
-            <div className="md:w-[500px] bg-shade p-4 rounded-md p-6 max-w-[500px]">
+            <div className="md:w-1/3 bg-shade p-4 rounded-md p-6">
               <h2 className="text-5xl sm:text-5xl font-bold mb-4 text-yellow-400">
                 ${megaRaffle.prizePool}
               </h2>
@@ -740,7 +740,7 @@ const RaffleGame = () => {
             <> </>
           )}
           {/* Trending Raffles Section - Right Side */}
-          <div className="md:w-7/10 bg-shade p-5 rounded-md">
+          <div className="md:w-2/3 bg-shade p-5 rounded-md">
             <h3 className="text-3xl font-bold mb-2 flex items-center">
               <Flame className="text-orange-500 mr-2 h-8 w-8" /> Trending
               Lottery Draws
