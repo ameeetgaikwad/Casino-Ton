@@ -7,8 +7,10 @@ import { useContract } from "@/hooks/use-contract";
 import { MyLotteries } from "@/components/my-lotteries";
 import { Button } from "@/components/ui/button";
 import { tickets } from "@/lib/db/schema/tickets";
+import { Switch } from "@/components/ui/switch"
 
 type Raffle = {
+  lotteryId: number;
   amount: number;
   ticketsSold: number;
   totalTickets: number;
@@ -51,21 +53,19 @@ const TicketProgressBar = ({ ticketsSold, totalTickets }) => {
 };
 
 const RaffleGame = () => {
-  const [mainRaffleAmount, setMainRaffleAmount] = useState(260);
-  const [ticketsSold, setTicketsSold] = useState(2);
-  const [totalTickets, setTotalTickets] = useState(100);
 
   const [myLotteries, setMyLotteries] = useState<MyLotteriesProps[] | []>([]);
+  const [trendingRaffles, setTrendingRaffles] = useState<Raffle[]>([]);
+  const [selectedLotteryId, setSelectedLotteryId] = useState<number>();
 
   const { smartContract, error, address } = useContract("LOTTERY");
 
-  const [megaRaffle, setMegaRaffle] = useState<Raffle>({
-    amount: 0,
-    ticketsSold: 0,
-    totalTickets: 100,
-    isSoldOut: false,
-    prizePool: 0,
-  });
+  const [megaRaffle, setMegaRaffle] = useState<Raffle>();
+
+  const changeMegaRaffle = (raffle: Raffle) => {
+    setSelectedLotteryId(raffle.lotteryId);
+    setMegaRaffle(raffle);
+  };
 
   const initialLoadd = async () => {
     try {
@@ -89,6 +89,7 @@ const RaffleGame = () => {
         
 
         const thisLottery = {
+          lotteryId: tx[i][0],
           amount: parseInt(tx[i][2]._hex, 16),
           ticketsSold: parseInt(tx[i][4]._hex, 16),
           totalTickets: parseInt(tx[i][3]._hex, 16),
@@ -105,6 +106,7 @@ const RaffleGame = () => {
       console.log("LALLA", bestLottery);
       setTrendingRaffles(activeLotteries);
       setMegaRaffle(bestLottery);
+      setSelectedLotteryId(bestLottery.lotteryId);
 
       tx = await smartContract?.getPlayerLotteries(address);
       let myLotteriesData: any[] = [];
@@ -152,23 +154,13 @@ const RaffleGame = () => {
       console.log(smartContract);
     }
 
-    // setLoading(true);
     try {
       initialLoadd();
     } catch (err: any) {
       console.log(err);
-      // toast.error(err.message);
+
     }
   }, [smartContract]);
-
-  const [trendingRaffles, setTrendingRaffles] = useState<Raffle[]>([]);
-
-  const buyMainRaffleTicket = () => {
-    if (ticketsSold < totalTickets) {
-      setTicketsSold((prev) => prev + 1);
-      // TODO: Implement API call to purchase ticket
-    }
-  };
 
   const buyTrendingRaffleTicket = (index) => {
     setTrendingRaffles((prev) =>
@@ -181,13 +173,6 @@ const RaffleGame = () => {
     // TODO: Implement API call to purchase ticket
   };
 
-  useEffect(() => {
-    if (ticketsSold === totalTickets) {
-      // TODO: Implement raffle drawing logic
-      console.log("Main raffle ready to be drawn!");
-    }
-  }, [ticketsSold, totalTickets]);
-
   return (
     <div className=" justify-center align-middle items-center  text-white h-full p-4 sm:p-6 lg:p-8 relative">
       <Header />
@@ -198,11 +183,11 @@ const RaffleGame = () => {
       </div>
 
       <div className="flex flex-col">
-        {/* Main Raffle Section - Left Side */}
-        <div className="w-full  h-full mt-10 items-center justify-center align-middle mx-auto flex flex-col md:flex-row md:items-start md:space-x-8">
+
+        <div className="w-full h-full mt-10 items-center justify-center align-middle mx-auto flex flex-col md:flex-row md:items-start md:space-x-8">
           {megaRaffle ? 
-            <div className="md:w-1/3 bg-shade p-4 rounded-md">
-              <h2 className="text-6xl sm:text-7xl font-bold mb-4 text-yellow-400">
+            <div className="md:w-[500px] bg-shade p-4 rounded-md p-6 max-w-[500px]">
+              <h2 className="text-5xl sm:text-5xl font-bold mb-4 text-yellow-400">
                 ${megaRaffle.prizePool}
               </h2>
               <p className="mb-4 text-sm text-gray-400">
@@ -214,7 +199,7 @@ const RaffleGame = () => {
                 totalTickets={megaRaffle.totalTickets}
               />
               <Button
-                onClick={buyMainRaffleTicket}
+                
                 className="font-heading my-6 text-xl w-full"
               >
                 Buy Ticket
@@ -224,10 +209,10 @@ const RaffleGame = () => {
             </div>
           : <> </> }
           {/* Trending Raffles Section - Right Side */}
-          <div className="md:w-2/3 bg-shade p-4 rounded-md">
+          <div className="md:w-7/10 bg-shade p-5 rounded-md">
             <h3 className="text-3xl font-bold mb-2 flex items-center">
               <Flame className="text-orange-500 mr-2 h-8 w-8" /> Trending Lottery
-              draws
+              Draws
             </h3>
             <p className="mb-4 text-lg text-gray-400">
               Lottery is drawn once target slots have been sold
@@ -240,16 +225,25 @@ const RaffleGame = () => {
                     raffle.amount === 0 ? "opacity-50" : ""
                   } border border-yellow-400`}
                 >
+                  <div className="flex justify-between">
                   <p className="text-lg font-bold mb-1">
                     ${raffle.amount.toLocaleString()}
+                    <br />
+                   
                   </p>
-                  <p className="text-xs text-gray-400 mb-2">
+                  <Switch
+                      checked={raffle.lotteryId === megaRaffle?.lotteryId}
+                      onCheckedChange={() => changeMegaRaffle(raffle)}
+                    />
+                  </div>
+                  <p className="text-xl font-bold text-gray-400 mb-2">
+                    <h4>Prize pool: ${raffle.prizePool}</h4>
+                  </p>
+                  <p className="text-s text-gray-400 mb-2">
                     Tickets: {raffle.ticketsSold} of {raffle.totalTickets}
                   </p>
-                  <p className="text-xs text-gray-400 mb-2">
-                    Prize pool: {raffle.prizePool}
-                  </p>
-                  {raffle.amount > 0 && (
+                  
+                  {/* {raffle && (
                     <button
                       onClick={() => buyTrendingRaffleTicket(index)}
                       className={`py-1 px-2 rounded text-xs font-bold ${
@@ -261,7 +255,7 @@ const RaffleGame = () => {
                     >
                       {raffle.isSoldOut ? "Sold Out" : "Buy Now"}
                     </button>
-                  )}
+                  )} */}
                 </div>
               ))}
             </div>
