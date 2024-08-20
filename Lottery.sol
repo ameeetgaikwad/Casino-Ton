@@ -84,8 +84,7 @@ contract SubscriptionConsumer is VRFConsumerBaseV2Plus, ReentrancyGuard {
     uint256[] public requestIds;
     uint256 public lastRequestId;
 
-    bytes32 public keyHash =
-        0x787d74caea10b2b357790d5b5247c2f63d1d91572a9846f780606e4d953677ae;
+    bytes32 public keyHash = 0x8596b430971ac45bdf6088665b9ad8e8630c9d5049ab54b14dff711bee7c0e26;
 
     uint32 public callbackGasLimit = 1000000;
 
@@ -94,7 +93,8 @@ contract SubscriptionConsumer is VRFConsumerBaseV2Plus, ReentrancyGuard {
     uint32 public numWords = 2;
 
     constructor(uint256 subscriptionId)
-        VRFConsumerBaseV2Plus(0x9DdfaCa8183c41ad55329BdeeD9F6A8d53168B1B)
+        VRFConsumerBaseV2Plus(0xDA3b641D438362C440Ac5458c57e00a712b66700)
+        
     {
         s_subscriptionId = subscriptionId;
     }
