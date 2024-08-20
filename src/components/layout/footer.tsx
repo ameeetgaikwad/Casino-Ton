@@ -15,7 +15,7 @@ const Footer: React.FC = () => {
   return (
     <footer style={footerStyle}>
       <p>
-        &copy; FlipYa Gaming - Next Games Launching March 2024 (Rock Paper Scissors, Dice & Roulette) - {' '}
+        &copy; Goldrush Gaming - Next Games Launching December 2024 (Rock Paper Scissors, Dice & Roulette) - {' '}
         <a href="https://explorer.vitruveo.xyz/address/0x1aE6bc5210361C2a33be8f80360042911DfAbf62" target="_blank" rel="noopener noreferrer">
          Contract Verified Vitruveo Blockchain
         </a>
