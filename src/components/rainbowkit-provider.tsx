@@ -1,17 +1,7 @@
 "use client";
 
-import {
-  RainbowKitProvider,
-  Theme,
-  connectorsForWallets,
-  darkTheme,
-  getDefaultWallets,
-} from "@rainbow-me/rainbowkit";
-import {
-  argentWallet,
-  ledgerWallet,
-  trustWallet,
-} from "@rainbow-me/rainbowkit/wallets";
+import { RainbowKitProvider, Theme, connectorsForWallets, darkTheme, getDefaultWallets } from "@rainbow-me/rainbowkit";
+import { argentWallet, ledgerWallet, trustWallet } from "@rainbow-me/rainbowkit/wallets";
 import merge from "lodash.merge";
 import * as React from "react";
 import { Chain, WagmiConfig, configureChains, createConfig } from "wagmi";
@@ -48,10 +38,7 @@ const bscTestnet: Chain = {
   testnet: true,
 };
 
-const { chains, publicClient, webSocketPublicClient } = configureChains(
-  [bscTestnet],
-  [publicProvider()]
-);
+const { chains, publicClient, webSocketPublicClient } = configureChains([bscTestnet], [publicProvider()]);
 
 const projectId = process.env.NEXT_PUBLIC_PROJECT_ID!;
 
@@ -84,8 +71,8 @@ const wagmiConfig = createConfig({
   webSocketPublicClient,
 });
 export function RainbowProvider({ children }: { children: React.ReactNode }) {
-  const [mounted, setMounted] = React.useState(false);
-  React.useEffect(() => setMounted(true), []);
+  // const [mounted, setMounted] = React.useState(false);
+  // React.useEffect(() => setMounted(true), []);
   const theme = React.useMemo(
     () =>
       merge(darkTheme(), {
@@ -102,7 +89,7 @@ export function RainbowProvider({ children }: { children: React.ReactNode }) {
   return (
     <WagmiConfig config={wagmiConfig}>
       <RainbowKitProvider chains={chains} appInfo={demoAppInfo} theme={theme}>
-        {mounted && children}
+        {children}
       </RainbowKitProvider>
     </WagmiConfig>
   );
