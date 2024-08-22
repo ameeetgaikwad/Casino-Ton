@@ -525,7 +525,9 @@ const TicketProgressBar = ({ ticketsSold, totalTickets }) => {
   return (
     <div className="bg-gray-800 rounded-lg p-4 mb-6">
       <div className="flex justify-between mb-2">
-        <span className="text-md text-gray-400">Tickets sold: {ticketsSold}</span>
+        <span className="text-md text-gray-400">
+          Tickets sold: {ticketsSold}
+        </span>
         <span className="text-md text-gray-400">Total: {totalTickets}</span>
       </div>
       <div className="w-full bg-gray-700 rounded-full h-5">
@@ -534,7 +536,9 @@ const TicketProgressBar = ({ ticketsSold, totalTickets }) => {
           style={{ width: `${progress}%` }}
         ></div>
       </div>
-      <p className="text-md text-gray-400 mt-2">{totalTickets - ticketsSold} tickets left</p>
+      <p className="text-md text-gray-400 mt-2">
+        {totalTickets - ticketsSold} tickets left
+      </p>
     </div>
   );
 };
@@ -543,12 +547,15 @@ const RaffleGame = () => {
   const [myLotteries, setMyLotteries] = useState<MyLotteriesProps[] | []>([]);
   const [trendingRaffles, setTrendingRaffles] = useState<Raffle[]>([]);
   const [selectedLotteryId, setSelectedLotteryId] = useState<number>();
-  const [allLotteriesParent, setAllLotteriesParent] = useState<MyLotteriesProps[]>([]);
+  const [allLotteriesParent, setAllLotteriesParent] = useState<
+    MyLotteriesProps[]
+  >([]);
   const [megaRaffle, setMegaRaffle] = useState<Raffle>();
   const [loading, setLoading] = useState<boolean>(false);
   const provider_rpc_url = "https://bsc-testnet-rpc.publicnode.com";
 
-  const { smartContract, error, address, initializeProvider } = useContract("LOTTERY");
+  const { smartContract, error, address, initializeProvider } =
+    useContract("LOTTERY");
 
   const changeMegaRaffle = (raffle: Raffle) => {
     setSelectedLotteryId(raffle.lotteryId);
@@ -568,7 +575,9 @@ const RaffleGame = () => {
     });
 
     if ((window as any).ethereum && address) {
-      const walletProvider = new ethers.providers.Web3Provider((window as any).ethereum);
+      const walletProvider = new ethers.providers.Web3Provider(
+        (window as any).ethereum
+      );
       _provider = walletProvider;
       _signer = walletProvider.getSigner();
     } else {
@@ -582,7 +591,13 @@ const RaffleGame = () => {
     // }
     // if (!provider) return;
 
-    setUSDTcontract(new ethers.Contract("0x97577f913209F32547349dEF49d40E7E1d2c7F28", USDTabi, _signer));
+    setUSDTcontract(
+      new ethers.Contract(
+        "0x97577f913209F32547349dEF49d40E7E1d2c7F28",
+        USDTabi,
+        _signer
+      )
+    );
   }, [address]);
 
   useEffect(() => {
@@ -623,7 +638,8 @@ const RaffleGame = () => {
 
         if (
           !bestLottery.prizePool ||
-          bestLottery.totalTickets - bestLottery.ticketsSold > thisLottery.totalTickets - thisLottery.ticketsSold
+          bestLottery.totalTickets - bestLottery.ticketsSold >
+            thisLottery.totalTickets - thisLottery.ticketsSold
         ) {
           bestLottery = thisLottery;
         }
@@ -661,7 +677,8 @@ const RaffleGame = () => {
             ticketsPurchased: parseInt(tx[i][4]._hex, 16),
             ticketPrice: parseInt(tx[i][2]._hex, 16),
             status: tx[i][6],
-            remainingTickets: parseInt(tx[i][3]._hex, 16) - parseInt(tx[i][4]._hex, 16),
+            remainingTickets:
+              parseInt(tx[i][3]._hex, 16) - parseInt(tx[i][4]._hex, 16),
             prizePool: parseInt(tx[i][1]._hex, 16),
             winner: tx[i][5],
           });
@@ -699,9 +716,15 @@ const RaffleGame = () => {
 
       const decimals = await USDTcontract.decimals();
 
-      const adjustedAmount = ethers.utils.parseUnits(totalCost.toString(), decimals);
+      const adjustedAmount = ethers.utils.parseUnits(
+        totalCost.toString(),
+        decimals
+      );
 
-      const approval = await USDTcontract.approve(smartContract.address, adjustedAmount);
+      const approval = await USDTcontract.approve(
+        smartContract.address,
+        adjustedAmount
+      );
       // await approval.wait();
       console.log(approval);
 
@@ -750,18 +773,31 @@ const RaffleGame = () => {
       <Header />
       {/* Decorative stars */}
       <div className="absolute top-4 left-4 text-yellow-400 text-2xl">✦</div>
-      <div className="absolute bottom-4 right-4 text-yellow-400 text-4xl">✦</div>
+      <div className="absolute bottom-4 right-4 text-yellow-400 text-4xl">
+        ✦
+      </div>
 
       <div className="flex flex-col">
         <div className="w-full h-full mt-10 items-center justify-center align-middle mx-auto flex flex-col md:flex-row md:items-start md:space-x-8">
           {megaRaffle ? (
             <div className="md:w-1/3 bg-shade p-4 rounded-md p-6">
-              <h2 className="text-5xl sm:text-5xl font-bold mb-4 text-yellow-400">${megaRaffle.prizePool}</h2>
+              <div className="w-full flex space-between justify-between">
+                <h2 className="text-5xl sm:text-5xl font-bold mb-4 text-yellow-400">
+                  ${megaRaffle.prizePool}
+                </h2>
+                <p className="text-lg font-bold text-gray-400 mt-2">
+                  Ticket prize: ${megaRaffle.amount}
+                </p>
+              </div>
               <p className="mb-4 text-sm text-gray-400">
-                Lottery is drawn once all the {megaRaffle.totalTickets} tickets have been sold
+                Lottery is drawn once all the {megaRaffle.totalTickets} tickets
+                have been sold
               </p>
 
-              <TicketProgressBar ticketsSold={megaRaffle.ticketsSold} totalTickets={megaRaffle.totalTickets} />
+              <TicketProgressBar
+                ticketsSold={megaRaffle.ticketsSold}
+                totalTickets={megaRaffle.totalTickets}
+              />
               <Button
                 onClick={() => onBuyTicket(megaRaffle.lotteryId)}
                 className="font-heading my-6 text-xl w-full"
@@ -769,8 +805,6 @@ const RaffleGame = () => {
               >
                 {loading ? "Loading" : "Buy Ticket"}
               </Button>
-
-              <p className="text-sm text-gray-400">Ticket prize: {megaRaffle.amount}</p>
             </div>
           ) : (
             <> </>
@@ -778,18 +812,23 @@ const RaffleGame = () => {
           {/* Trending Raffles Section - Right Side */}
           <div className="md:w-2/3 bg-shade p-5 rounded-md">
             <h3 className="text-3xl font-bold mb-2 flex items-center">
-              <Flame className="text-orange-500 mr-2 h-8 w-8" /> Trending Lottery Draws
+              <Flame className="text-orange-500 mr-2 h-8 w-8" /> Trending
+              Lottery Draws
             </h3>
-            <p className="mb-4 text-lg text-gray-400">Lottery is drawn once target slots have been sold</p>
+            <p className="mb-4 text-lg text-gray-400">
+              Lottery is drawn once target slots have been sold
+            </p>
             <div className="grid grid-cols-2 gap-4">
               {trendingRaffles.map((raffle, index) => (
                 <div
                   key={index}
-                  className={`rounded-lg p-8 ${raffle.amount === 0 ? "opacity-50" : ""} border border-yellow-400`}
+                  className={`rounded-lg p-8 ${
+                    raffle.amount === 0 ? "opacity-50" : ""
+                  } border border-yellow-400`}
                 >
                   <div className="flex justify-between">
-                    <p className="text-lg font-bold mb-1">
-                      ${raffle.amount.toLocaleString()}
+                    <p className="text-2xl font-bold mb-1">
+                      ${raffle.prizePool}
                       <br />
                     </p>
                     <Switch
@@ -797,8 +836,8 @@ const RaffleGame = () => {
                       onCheckedChange={() => changeMegaRaffle(raffle)}
                     />
                   </div>
-                  <p className="text-xl font-bold text-gray-400 mb-2">
-                    <h4>Prize pool: ${raffle.prizePool}</h4>
+                  <p className="text-lg font-bold text-gray-400 mb-2 mt-2">
+                    <h3>Ticket Price: ${raffle.amount.toLocaleString()}</h3>
                   </p>
                   <p className="text-s text-gray-400 mb-2">
                     Tickets: {raffle.ticketsSold} of {raffle.totalTickets}

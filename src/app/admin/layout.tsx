@@ -12,7 +12,7 @@ export default function RootLayout({
   const contracts = [
     { name: "Lottery", path: "/admin/lottery" },
     { name: "Roulette", path: "/admin/roulette" },
-    { name: "flip", path: "/admin/flip" },
+    { name: "Flip", path: "/admin/flip" },
     // Add more contracts here
   ];
 
