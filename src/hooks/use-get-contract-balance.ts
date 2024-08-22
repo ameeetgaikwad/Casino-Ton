@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useContract } from './use-contract';
 
-export const useGetContractBalance = (contractAddress: string) => {
-  const { getBalance } = useContract('ROULETTE')
+export const useGetContractBalance = (contractAddress: string, contract: "ROULETTE" | "COIN" | "LOTTERY" = "ROULETTE") => {
+  const { getBalance } = useContract(contract)
   const [contractBalance, setContractBalance] = useState<string>();
   useEffect(() => {
     const fetchContractBalance = async () => {

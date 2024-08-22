@@ -3,7 +3,7 @@
 	"deployedNetwork": 97,
 	"Game": {
 		"COIN": {
-			"contractAddress": "0xFdD1ed98BD46da737d49F9353742f8BDDCf83867",
+			"contractAddress": "0x2c76eF63F28030B736087bde9d5247fD9433E97d",
 			"abi": [
 				{
 					"inputs": [
@@ -68,13 +68,7 @@
 						}
 					],
 					"name": "flipit",
-					"outputs": [
-						{
-							"internalType": "bool",
-							"name": "",
-							"type": "bool"
-						}
-					],
+					"outputs": [],
 					"stateMutability": "payable",
 					"type": "function"
 				},
@@ -83,13 +77,68 @@
 					"inputs": [
 						{
 							"indexed": false,
+							"internalType": "uint256",
+							"name": "gameId",
+							"type": "uint256"
+						},
+						{
+							"indexed": false,
+							"internalType": "address",
+							"name": "player",
+							"type": "address"
+						},
+						{
+							"indexed": false,
 							"internalType": "uint8",
-							"name": "side",
+							"name": "guess",
+							"type": "uint8"
+						},
+						{
+							"indexed": false,
+							"internalType": "uint256",
+							"name": "amountBet",
+							"type": "uint256"
+						}
+					],
+					"name": "GameInitiated",
+					"type": "event"
+				},
+				{
+					"anonymous": false,
+					"inputs": [
+						{
+							"indexed": false,
+							"internalType": "uint256",
+							"name": "gameId",
+							"type": "uint256"
+						},
+						{
+							"indexed": false,
+							"internalType": "uint8",
+							"name": "result",
 							"type": "uint8"
 						}
 					],
 					"name": "GameResult",
 					"type": "event"
+				},
+				{
+					"inputs": [
+						{
+							"internalType": "uint256",
+							"name": "gameId",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint8",
+							"name": "result",
+							"type": "uint8"
+						}
+					],
+					"name": "resolveGame",
+					"outputs": [],
+					"stateMutability": "nonpayable",
+					"type": "function"
 				},
 				{
 					"inputs": [
@@ -213,12 +262,139 @@
 				},
 				{
 					"inputs": [],
+					"name": "houseWallet",
+					"outputs": [
+						{
+							"internalType": "address payable",
+							"name": "",
+							"type": "address"
+						}
+					],
+					"stateMutability": "view",
+					"type": "function"
+				},
+				{
+					"inputs": [
+						{
+							"internalType": "uint256",
+							"name": "",
+							"type": "uint256"
+						}
+					],
+					"name": "lastPlayedGames",
+					"outputs": [
+						{
+							"internalType": "address",
+							"name": "player",
+							"type": "address"
+						},
+						{
+							"internalType": "uint256",
+							"name": "amountBet",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint8",
+							"name": "guess",
+							"type": "uint8"
+						},
+						{
+							"internalType": "bool",
+							"name": "winner",
+							"type": "bool"
+						},
+						{
+							"internalType": "uint256",
+							"name": "totalPayout",
+							"type": "uint256"
+						},
+						{
+							"internalType": "int256",
+							"name": "totalProfit",
+							"type": "int256"
+						}
+					],
+					"stateMutability": "view",
+					"type": "function"
+				},
+				{
+					"inputs": [],
 					"name": "name",
 					"outputs": [
 						{
 							"internalType": "string",
 							"name": "",
 							"type": "string"
+						}
+					],
+					"stateMutability": "view",
+					"type": "function"
+				},
+				{
+					"inputs": [],
+					"name": "nextGameId",
+					"outputs": [
+						{
+							"internalType": "uint256",
+							"name": "",
+							"type": "uint256"
+						}
+					],
+					"stateMutability": "view",
+					"type": "function"
+				},
+				{
+					"inputs": [],
+					"name": "owner",
+					"outputs": [
+						{
+							"internalType": "address payable",
+							"name": "",
+							"type": "address"
+						}
+					],
+					"stateMutability": "view",
+					"type": "function"
+				},
+				{
+					"inputs": [
+						{
+							"internalType": "uint256",
+							"name": "",
+							"type": "uint256"
+						}
+					],
+					"name": "pendingGames",
+					"outputs": [
+						{
+							"internalType": "address",
+							"name": "player",
+							"type": "address"
+						},
+						{
+							"internalType": "uint256",
+							"name": "amountBet",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint8",
+							"name": "guess",
+							"type": "uint8"
+						},
+						{
+							"internalType": "bool",
+							"name": "winner",
+							"type": "bool"
+						},
+						{
+							"internalType": "uint256",
+							"name": "totalPayout",
+							"type": "uint256"
+						},
+						{
+							"internalType": "int256",
+							"name": "totalProfit",
+							"type": "int256"
 						}
 					],
 					"stateMutability": "view",
