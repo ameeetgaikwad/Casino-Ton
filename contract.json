@@ -3,13 +3,18 @@
 	"deployedNetwork": 97,
 	"Game": {
 		"COIN": {
-			"contractAddress": "0x2c76eF63F28030B736087bde9d5247fD9433E97d",
+			"contractAddress": "0x4060bBef73eeD0524D4128F5D258ADf60cc6575C",
 			"abi": [
 				{
 					"inputs": [
 						{
 							"internalType": "address payable",
 							"name": "_houseWallet",
+							"type": "address"
+						},
+						{
+							"internalType": "address payable",
+							"name": "_operator",
 							"type": "address"
 						}
 					],
@@ -123,6 +128,13 @@
 					"type": "event"
 				},
 				{
+					"inputs": [],
+					"name": "pauseContract",
+					"outputs": [],
+					"stateMutability": "nonpayable",
+					"type": "function"
+				},
+				{
 					"inputs": [
 						{
 							"internalType": "uint256",
@@ -157,11 +169,31 @@
 					"inputs": [
 						{
 							"internalType": "address payable",
+							"name": "newOperator",
+							"type": "address"
+						}
+					],
+					"name": "setOperatorWallet",
+					"outputs": [],
+					"stateMutability": "nonpayable",
+					"type": "function"
+				},
+				{
+					"inputs": [
+						{
+							"internalType": "address payable",
 							"name": "newOwner",
 							"type": "address"
 						}
 					],
 					"name": "transferOwnership",
+					"outputs": [],
+					"stateMutability": "nonpayable",
+					"type": "function"
+				},
+				{
+					"inputs": [],
+					"name": "unpauseContract",
 					"outputs": [],
 					"stateMutability": "nonpayable",
 					"type": "function"
@@ -242,6 +274,19 @@
 							"internalType": "int256",
 							"name": "totalProfit",
 							"type": "int256"
+						}
+					],
+					"stateMutability": "view",
+					"type": "function"
+				},
+				{
+					"inputs": [],
+					"name": "getOperatorWallet",
+					"outputs": [
+						{
+							"internalType": "address payable",
+							"name": "",
+							"type": "address"
 						}
 					],
 					"stateMutability": "view",
@@ -345,12 +390,38 @@
 				},
 				{
 					"inputs": [],
+					"name": "operator",
+					"outputs": [
+						{
+							"internalType": "address payable",
+							"name": "",
+							"type": "address"
+						}
+					],
+					"stateMutability": "view",
+					"type": "function"
+				},
+				{
+					"inputs": [],
 					"name": "owner",
 					"outputs": [
 						{
 							"internalType": "address payable",
 							"name": "",
 							"type": "address"
+						}
+					],
+					"stateMutability": "view",
+					"type": "function"
+				},
+				{
+					"inputs": [],
+					"name": "paused",
+					"outputs": [
+						{
+							"internalType": "bool",
+							"name": "",
+							"type": "bool"
 						}
 					],
 					"stateMutability": "view",

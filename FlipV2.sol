@@ -96,7 +96,7 @@ contract Flip {
 
         if (guess == result) {
             // Won!
-            totalPayout = (amountBet * 188) / 100;
+            totalPayout = (amountBet * 188) / 100;  
             payable(msg.sender).transfer(totalPayout);
             won = true;
             totalProfit = int(totalPayout) - int(amountBet);
