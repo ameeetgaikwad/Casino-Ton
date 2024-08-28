@@ -2,60 +2,79 @@ import * as contract from '@/../contract.json';
 import { totalBetAmount } from '@/lib/db/action';
 import { Contract, ethers } from 'ethers';
 import { JsonRpcProvider } from 'ethers/providers';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { bsc } from 'viem/chains';
 import { useAccount } from 'wagmi';
 
 const { Game, deployedNetwork, networkName } = contract;
 
 export const useContract = (gameType: keyof typeof Game) => {
   const { address, isConnected } = useAccount();
-  const [contractData] = useState(Game[gameType]);
+  // const [contractData] = useState(Game[gameType]);
   const [error, setError] = useState<string>();
   const [provider, setProvider] = useState<JsonRpcProvider>();
   const [signer, setSigner] = useState<ethers.providers.JsonRpcSigner | JsonRpcProvider>();
   const [smartContract, setSmartContract] = useState<Contract>();
-  const provider_rpc_url = "https://bsc-testnet-rpc.publicnode.com";
+  // const provider_rpc_url = "https://bsc-testnet-rpc.publicnode.com";
+  const contractData = useMemo(() => Game[gameType], [gameType]);
 
-  async function initializeProvider() {
+  const provider_rpc_url = process.env.NEXT_PUBLIC_BSC_RPC_URL;
+
+  const memoizedContract = useMemo(() => {
+    if (!provider || !signer || !contractData) return null;
+
+    const { abi, contractAddress } = contractData;
+    return new ethers.Contract(contractAddress, abi, signer);
+  }, [provider, contractData]);
+
+  const initializeProvider = useCallback(async () => {
     let _provider: JsonRpcProvider;
     let _signer: ethers.providers.JsonRpcSigner | JsonRpcProvider;
 
-    // Always create a JsonRpcProvider
     _provider = new ethers.providers.JsonRpcProvider(provider_rpc_url, {
-      chainId: 97,
-      name: "Binance Smart Chain Testnet"
+      chainId: 56,
+      name: "Binance Smart Chain"
     });
 
-    // Check if wallet is connected and set the signer accordingly
     if ((window as any).ethereum && isConnected) {
       const ethereum = (window as any).ethereum;
       await ethereum.enable();
       const walletProvider = new ethers.providers.Web3Provider(ethereum);
-      console.log("walletProvider", walletProvider);
-
       _provider = walletProvider;
       _signer = walletProvider.getSigner();
     } else {
-      _signer = _provider; // Use the JsonRpcProvider as the signer if wallet is not connected
+      _signer = _provider;
     }
 
     setProvider(_provider);
     setSigner(_signer);
+  }, [provider_rpc_url, isConnected]);
 
-    await loadBlockchainData(_provider, _signer);
-  }
+
+  const loadBlockchainData = useCallback(async (provider: JsonRpcProvider) => {
+    if (!provider || !contractData) return;
+
+    const activeNetwork = await provider.getNetwork();
+
+    if (activeNetwork.chainId !== deployedNetwork) {
+      setError(`Please switch to ${networkName} in order to play`);
+    }
+  }, [contractData]);
 
   useEffect(() => {
     const init = async () => {
-
+      console.log("initialised provider");
       await initializeProvider();
-    }
+      if (provider) {
+        await loadBlockchainData(provider);
+      }
+    };
 
-    init()
-  }, [provider_rpc_url, gameType, isConnected]);
+    init();
+  }, []);
 
   const getBalance = useCallback(async (targetAddress?: string) => {
-    const addressToCheck = targetAddress || address || Game[gameType].contractAddress;
+    const addressToCheck = targetAddress || address || contractData.contractAddress;
 
     if (addressToCheck && provider) {
       const _bal = await provider.getBalance(addressToCheck);
@@ -63,21 +82,21 @@ export const useContract = (gameType: keyof typeof Game) => {
     }
 
     return '0';
-  }, [address, gameType, provider]);
+  }, [address, provider, contractData]);
 
-  const loadBlockchainData = useCallback(async (provider: JsonRpcProvider, signer: ethers.providers.JsonRpcSigner | JsonRpcProvider) => {
-    console.log("inside load blockchain", provider, signer)
-    if (!provider || !contractData) return;
-    const { abi, contractAddress } = contractData;
-    const activeNetwork = await provider.getNetwork();
+  // const loadBlockchainData = useCallback(async (provider: JsonRpcProvider, signer: ethers.providers.JsonRpcSigner | JsonRpcProvider) => {
+  //   // console.log("inside load blockchain", provider, signer)
+  //   if (!provider || !contractData) return;
+  //   const { abi, contractAddress } = contractData;
+  //   const activeNetwork = await provider.getNetwork();
 
-    if (activeNetwork.chainId !== deployedNetwork) {
-      setError(`Please switch to ${networkName} in order to play`);
-    }
+  //   if (activeNetwork.chainId !== deployedNetwork) {
+  //     setError(`Please switch to ${networkName} in order to play`);
+  //   }
 
-    // Create contract instance with the correct signer
-    setSmartContract(new ethers.Contract(contractAddress, abi, signer));
-  }, [contractData]);
+  //   // Create contract instance with the correct signer
+  //   setSmartContract(new ethers.Contract(contractAddress, abi, signer));
+  // }, [contractData]);
 
   const connectWallet = useCallback(async () => {
     if ((window as any).ethereum) {
@@ -86,11 +105,6 @@ export const useContract = (gameType: keyof typeof Game) => {
         const walletProvider = new ethers.providers.Web3Provider((window as any).ethereum);
         const _signer = walletProvider.getSigner();
         setSigner(_signer);
-
-        // Update smart contract with signer for write operations
-        if (smartContract) {
-          setSmartContract(smartContract.connect(_signer));
-        }
       } catch (error) {
         console.error("Failed to connect wallet:", error);
         setError("Failed to connect wallet. Please try again.");
@@ -98,7 +112,7 @@ export const useContract = (gameType: keyof typeof Game) => {
     } else {
       setError("Ethereum wallet not detected. Please install MetaMask or another wallet.");
     }
-  }, [smartContract]);
+  }, []);
 
   return {
     contract: contractData,
@@ -106,7 +120,7 @@ export const useContract = (gameType: keyof typeof Game) => {
     getBalance,
     address,
     provider,
-    smartContract,
+    smartContract: memoizedContract,
     connectWallet,
     initializeProvider
   };

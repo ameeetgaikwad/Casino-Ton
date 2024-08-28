@@ -93,7 +93,7 @@ const AdminDashboard = () => {
     fetchActiveLotteries();
     fetchContractBalance();
     // fetchPastLotteries();
-  }, [smartContract, getBalance]);
+  }, [smartContract]);
 
   const handleSelectLottery = (lotteryId) => {
     setSelectedLottery(lotteryId);

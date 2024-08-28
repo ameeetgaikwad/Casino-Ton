@@ -2,18 +2,12 @@ import { getAllTransaction, getEthFiatRate } from "@/lib/db/action";
 import { BetForm } from "./_component/bet-form";
 import { Header } from "./_component/header";
 import { TransactionHistory } from "@/components/transaction-history";
-// import { listenForEvents } from "@/lib/coin-flip-oracle";
-// import { useEffect } from "react";
 
 export const revalidate = 0;
 
 export default async function Home() {
   const transactionHistory = await getAllTransaction("COIN");
   const ethRate = await getEthFiatRate();
-
-  //   useEffect(() => {
-  // listenForEvents();
-  //   }, []);
 
   return (
     <main className="-ml-48 md:flex flex-grow flex-col p-4 transition-all duration-150 ease-in md:ml-0">

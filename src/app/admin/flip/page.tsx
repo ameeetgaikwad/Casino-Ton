@@ -85,7 +85,7 @@ const FlipAdmin = () => {
     };
 
     fetchContractData();
-  }, [smartContract, getBalance]);
+  }, [smartContract]);
 
   const handleSetHouseWallet = async () => {
     try {

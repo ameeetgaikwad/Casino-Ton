@@ -8,6 +8,10 @@ contract Flip {
     string public name;
     bool public paused = false;
 
+    uint256 public platformFeePercentage = 1; // Default 1%
+    uint256 public winnerBetPercentage = 188; // Default 188%
+    uint256 public maxBetPercentage = 10; // Default 10% of contract balance
+
     struct Game {
         address player;
         uint256 amountBet;
@@ -19,7 +23,7 @@ contract Flip {
 
     Game[] public lastPlayedGames;
     mapping(uint256 => Game) public pendingGames;
-    uint256 public nextGameId = 1;
+    uint256 public nextGameId = 0;
 
     event GameInitiated(
         uint256 gameId,
@@ -36,6 +40,8 @@ contract Flip {
         uint256 totalPayout,
         int256 totalProfit
     );
+
+    event FeeUpdated(string feeType, uint256 newValue);
 
     constructor(address payable _houseWallet, address payable _operator) {
         owner = payable(msg.sender);
@@ -67,6 +73,32 @@ contract Flip {
         houseWallet = newHouseWallet;
     }
 
+    function setPlatformFeePercentage(
+        uint256 newPercentage
+    ) external onlyOwner {
+        require(newPercentage <= 100, "House edge must be 100% or less");
+        platformFeePercentage = newPercentage;
+        emit FeeUpdated("PlatformFee", newPercentage);
+    }
+
+    function setWinnerBetPercentage(uint256 newMultiplier) external onlyOwner {
+        require(
+            newMultiplier > 100,
+            "Win multiplier must be greater than 100%"
+        );
+        winnerBetPercentage = newMultiplier;
+        emit FeeUpdated("winnerBetPercentage", newMultiplier);
+    }
+
+    function setMaxBetPercentage(uint256 newPercentage) external onlyOwner {
+        require(
+            newPercentage <= 100,
+            "Max bet percentage must be 100% or less"
+        );
+        maxBetPercentage = newPercentage;
+        emit FeeUpdated("MaxBet", newPercentage);
+    }
+
     function flipit(uint8 guess) public payable onlyUnpaused {
         require(
             guess == 0 || guess == 1,
@@ -74,13 +106,13 @@ contract Flip {
         );
         require(msg.value > 0, "Bet must be greater than 0");
 
-        uint256 houseEdgeCut = msg.value / 100;
+        uint256 houseEdgeCut = (msg.value * platformFeePercentage) / 100;
         houseWallet.transfer(houseEdgeCut);
         uint256 actualBet = msg.value - houseEdgeCut;
 
         require(
-            actualBet <= (address(this).balance * 10) / 100,
-            "You cannot bet more than what is available in the jackpot"
+            actualBet <= (address(this).balance * maxBetPercentage) / 100,
+            "Bet exceeds maximum allowed"
         );
 
         uint256 gameId = nextGameId++;
@@ -89,10 +121,10 @@ contract Flip {
         emit GameInitiated(gameId, msg.sender, guess, msg.value);
     }
 
-    function resolveGame(uint256 gameId, uint8 result)
-        external
-        onlyOperatorOrOwner
-    {
+    function resolveGame(
+        uint256 gameId,
+        uint8 result
+    ) external onlyOperatorOrOwner {
         require(
             result == 0 || result == 1,
             "Result should be 0 (heads) or 1 (tails)"
@@ -110,7 +142,7 @@ contract Flip {
 
         if (won) {
             finalPayout = 2 * game.amountBet;
-            totalPayout = (game.amountBet * 188) / 100;
+            totalPayout = (game.amountBet * winnerBetPercentage) / 100;
             payable(game.player).transfer(totalPayout);
             payable(operator).transfer(finalPayout - totalPayout);
             totalProfit = int256(totalPayout) - int256(game.amountBet);
@@ -133,7 +165,6 @@ contract Flip {
             totalPayout,
             totalProfit
         );
-
     }
 
     // Get amount of games played so far
@@ -142,7 +173,9 @@ contract Flip {
     }
 
     // Get stats about a certain played game, e.g. address of player, amount bet, won or lost, total payout, and total profit
-    function getGameEntry(uint256 index)
+    function getGameEntry(
+        uint256 index
+    )
         public
         view
         returns (

@@ -22,9 +22,11 @@ interface BetSelectionProps {
 export const BetSelection = ({ form, fiatRate }: BetSelectionProps) => {
   const [loading, setLoading] = useState(false);
   const { AudioEl, audioRef } = useCoinFip();
-  const { smartContract, error, address, getBalance } = useContract("COIN");
+  const { smartContract, error, address } = useContract("COIN");
+  console.log("coin smart contract", smartContract);
+
   const { totalWager } = useGetTotalWager(address as string, "COIN");
-  const { isPending } = useCoinContractListener(address as string, smartContract);
+  const { isPending } = useCoinContractListener(address as string, smartContract!);
 
   const contractAddress = smartContract?.address;
 
@@ -43,16 +45,18 @@ export const BetSelection = ({ form, fiatRate }: BetSelectionProps) => {
         throw new Error(`Contract not initialized`);
       }
       const option = {
-        gasLimit: 500000,
-        gasPrice: ethers.utils.parseUnits("5", "gwei"),
+        // gasLimit: 500000,
+        // gasPrice: ethers.utils.parseUnits("5", "gwei"),
         value: ethers.utils.parseEther(value.wager.toString()),
       };
       const selection = value.coinSide === "head" ? 0 : 1;
+      console.log("calling flip transaction");
       const tx = await smartContract?.flipit(selection, option);
-      console.log(tx);
+      console.log("Coin flip transaction", tx);
       statusDialogRefFunc.toggleModal(true, "COIN");
       audioRef?.play();
     } catch (err: any) {
+      console.log("failed coin flip", err);
       toast.error(err.message);
     } finally {
       setLoading(false);
