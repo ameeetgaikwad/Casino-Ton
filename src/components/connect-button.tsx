@@ -10,9 +10,12 @@ import { Button } from "./ui/button";
 
 export const ConnectButton = () => {
   const pathname = usePathname();
-  const { address, contract } = useContract(pathname.includes("coin") ? "COIN" : "ROULETTE");
-  const { contractBalance } = useGetContractBalance(contract.contractAddress);
-  const { contractBalance: balance } = useGetContractBalance(address as string);
+  const { address, contract } = useContract(pathname.includes("flip") ? "COIN" : "ROULETTE");
+  // const { contractBalance: houseBalance } = useGetContractBalance(contract.contractAddress);
+  // const { contractBalance: walletBalance } = useGetContractBalance(account?.address || '');
+  const { contractBalance: houseBalance } = useGetContractBalance(contract.contractAddress, "COIN");
+  const { contractBalance: walletBalance } = useGetContractBalance(address as string, "COIN");
+  // console.log(houseBalance, walletBalance);
 
   return (
     <_ConnectButton.Custom>
@@ -52,12 +55,12 @@ export const ConnectButton = () => {
                   <div className="flex gap-3 justify-center items-center">
                     <h3 className="font-heading">HOUSE BALANCE</h3>
                     <Image src="/svg/head.svg" alt="head" width={30} height={30} />
-                    <span className="text-primary">{Math.floor(Number(contractBalance) * 100) / 100}</span>
+                    <span className="text-primary">{Math.floor((Number(houseBalance) * 100) / 100)}</span>
                   </div>
                   <div className="flex gap-3 justify-center items-center">
                     <h3 className="font-heading">WALLET</h3>
                     <Image src="/svg/head.svg" alt="head" width={30} height={30} />
-                    <span className="text-primary">{Math.floor(Number(balance) * 100) / 100}</span>
+                    <span className="text-primary">{Math.floor((Number(walletBalance) * 100) / 100)}</span>
                   </div>
                   <span className="text-xl">{account.displayName}</span>
                   <Button className="font-heading text-xl" onClick={openAccountModal}>

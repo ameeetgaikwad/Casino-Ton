@@ -4,6 +4,7 @@ import { RainbowKitProvider, Theme, connectorsForWallets, darkTheme, getDefaultW
 import { argentWallet, ledgerWallet, trustWallet } from "@rainbow-me/rainbowkit/wallets";
 import merge from "lodash.merge";
 import * as React from "react";
+import { bsc } from "viem/chains";
 import { Chain, WagmiConfig, configureChains, createConfig } from "wagmi";
 import { publicProvider } from "wagmi/providers/public";
 // @ts-ignore
@@ -23,22 +24,37 @@ import { publicProvider } from "wagmi/providers/public";
 // };
 
 // @ts-ignore
-const bscTestnet: Chain = {
-  name: "Binance Smart Chain Testnet",
+// const bscTestnet: Chain = {
+//   name: "Binance Smart Chain Testnet",
+//   nativeCurrency: {
+//     name: "BNB",
+//     decimals: 18,
+//     symbol: "BNB",
+//   },
+//   rpcUrls: {
+//     public: { http: ["https://bsc-testnet-rpc.publicnode.com"] },
+//     default: { http: ["https://api.zan.top/node/v1/bsc/testnet/public"] },
+//   },
+//   id: 97,
+//   testnet: true,
+// };
+
+const bscMainnet: Chain = {
+  name: "Binance Smart Chain",
   nativeCurrency: {
     name: "BNB",
     decimals: 18,
     symbol: "BNB",
   },
   rpcUrls: {
-    public: { http: ["https://bsc-testnet-rpc.publicnode.com"] },
-    default: { http: ["https://api.zan.top/node/v1/bsc/testnet/public"] },
+    public: { http: ["https://bnb.rpc.subquery.network/public"] },
+    default: { http: ["https://bnb.rpc.subquery.network/public"] },
   },
-  id: 97,
-  testnet: true,
+  id: 56,
+  testnet: false,
 };
 
-const { chains, publicClient, webSocketPublicClient } = configureChains([bscTestnet], [publicProvider()]);
+const { chains, publicClient, webSocketPublicClient } = configureChains([bscMainnet], [publicProvider()]);
 
 const projectId = process.env.NEXT_PUBLIC_PROJECT_ID!;
 

@@ -84,7 +84,8 @@ contract SubscriptionConsumer is VRFConsumerBaseV2Plus, ReentrancyGuard {
     uint256[] public requestIds;
     uint256 public lastRequestId;
 
-    bytes32 public keyHash = 0x8596b430971ac45bdf6088665b9ad8e8630c9d5049ab54b14dff711bee7c0e26;
+    bytes32 public keyHash =
+        0x8596b430971ac45bdf6088665b9ad8e8630c9d5049ab54b14dff711bee7c0e26;
 
     uint32 public callbackGasLimit = 1000000;
 
@@ -92,10 +93,9 @@ contract SubscriptionConsumer is VRFConsumerBaseV2Plus, ReentrancyGuard {
 
     uint32 public numWords = 2;
 
-    constructor(uint256 subscriptionId)
-        VRFConsumerBaseV2Plus(0xDA3b641D438362C440Ac5458c57e00a712b66700)
-        
-    {
+    constructor(
+        uint256 subscriptionId
+    ) VRFConsumerBaseV2Plus(0xDA3b641D438362C440Ac5458c57e00a712b66700) {
         s_subscriptionId = subscriptionId;
     }
 
@@ -129,11 +129,10 @@ contract SubscriptionConsumer is VRFConsumerBaseV2Plus, ReentrancyGuard {
         );
     }
 
-    function buyTickets(uint256 _lotteryId, uint256 _numberOfTickets)
-        external
-        payable
-        nonReentrant
-    {
+    function buyTickets(
+        uint256 _lotteryId,
+        uint256 _numberOfTickets
+    ) external payable nonReentrant {
         Lottery storage lottery = lotteries[_lotteryId];
         require(lottery.status == LotteryStatus.Open, "Lottery is not open");
         require(
@@ -200,10 +199,9 @@ contract SubscriptionConsumer is VRFConsumerBaseV2Plus, ReentrancyGuard {
         emit RequestFulfilled(_requestId, _randomWords);
     }
 
-    function requestRandomWords(uint256 lotteryId)
-        external
-        returns (uint256 requestId)
-    {
+    function requestRandomWords(
+        uint256 lotteryId
+    ) external returns (uint256 requestId) {
         requestId = s_vrfCoordinator.requestRandomWords(
             VRFV2PlusClient.RandomWordsRequest({
                 keyHash: keyHash,
@@ -228,9 +226,10 @@ contract SubscriptionConsumer is VRFConsumerBaseV2Plus, ReentrancyGuard {
         return requestId;
     }
 
-    function completeLottery(uint256 _lotteryId, uint256 _randomNumber)
-        private
-    {
+    function completeLottery(
+        uint256 _lotteryId,
+        uint256 _randomNumber
+    ) private {
         Lottery storage lottery = lotteries[_lotteryId];
         require(lottery.status == LotteryStatus.Closed, "Lottery not closed");
 
@@ -250,19 +249,15 @@ contract SubscriptionConsumer is VRFConsumerBaseV2Plus, ReentrancyGuard {
         emit LotteryCompleted(_lotteryId, winner, winnerPrize);
     }
 
-    function getLotteryInfo(uint256 _lotteryId)
-        external
-        view
-        returns (Lottery memory)
-    {
+    function getLotteryInfo(
+        uint256 _lotteryId
+    ) external view returns (Lottery memory) {
         return lotteries[_lotteryId];
     }
 
-    function getPlayerTickets(address _player)
-        external
-        view
-        returns (Ticket[] memory)
-    {
+    function getPlayerTickets(
+        address _player
+    ) external view returns (Ticket[] memory) {
         return playerTickets[_player];
     }
 
@@ -294,11 +289,9 @@ contract SubscriptionConsumer is VRFConsumerBaseV2Plus, ReentrancyGuard {
         return activeLotteries;
     }
 
-    function getPlayerLotteries(address _player)
-        external
-        view
-        returns (LotteryDetails[] memory)
-    {
+    function getPlayerLotteries(
+        address _player
+    ) external view returns (LotteryDetails[] memory) {
         uint256[] memory playerLotteryIds = new uint256[](lotteries.length);
         uint256 count = 0;
 
@@ -330,39 +323,32 @@ contract SubscriptionConsumer is VRFConsumerBaseV2Plus, ReentrancyGuard {
         return playerLotteryDetails;
     }
 
-    function getTotalTicketsSold(uint256 _lotteryId)
-        external
-        view
-        returns (uint256)
-    {
+    function getTotalTicketsSold(
+        uint256 _lotteryId
+    ) external view returns (uint256) {
         require(_lotteryId < lotteries.length, "Invalid lottery ID");
         return lotteries[_lotteryId].soldTickets;
     }
 
-    function getRemainingTickets(uint256 _lotteryId)
-        external
-        view
-        returns (uint256)
-    {
+    function getRemainingTickets(
+        uint256 _lotteryId
+    ) external view returns (uint256) {
         require(_lotteryId < lotteries.length, "Invalid lottery ID");
         Lottery storage lottery = lotteries[_lotteryId];
         return lottery.totalTickets - lottery.soldTickets;
     }
 
-    function getLotteryStatus(uint256 _lotteryId)
-        external
-        view
-        returns (LotteryStatus)
-    {
+    function getLotteryStatus(
+        uint256 _lotteryId
+    ) external view returns (LotteryStatus) {
         require(_lotteryId < lotteries.length, "Invalid lottery ID");
         return lotteries[_lotteryId].status;
     }
 
-    function getPlayerTicketsForLottery(address _player, uint256 _lotteryId)
-        external
-        view
-        returns (uint256[] memory)
-    {
+    function getPlayerTicketsForLottery(
+        address _player,
+        uint256 _lotteryId
+    ) external view returns (uint256[] memory) {
         require(_lotteryId < lotteries.length, "Invalid lottery ID");
         uint256[] memory playerTicketNumbers = new uint256[](
             lotteries[_lotteryId].soldTickets
@@ -384,19 +370,16 @@ contract SubscriptionConsumer is VRFConsumerBaseV2Plus, ReentrancyGuard {
         return playerTicketNumbers;
     }
 
-    function getTotalPlayerTickets(address _player)
-        external
-        view
-        returns (uint256)
-    {
+    function getTotalPlayerTickets(
+        address _player
+    ) external view returns (uint256) {
         return playerTickets[_player].length;
     }
 
-    function getPlayerRecentTickets(address _player, uint256 _count)
-        external
-        view
-        returns (Ticket[] memory)
-    {
+    function getPlayerRecentTickets(
+        address _player,
+        uint256 _count
+    ) external view returns (Ticket[] memory) {
         Ticket[] memory allTickets = playerTickets[_player];
         uint256 totalTickets = allTickets.length;
         uint256 returnCount = _count < totalTickets ? _count : totalTickets;
@@ -409,11 +392,10 @@ contract SubscriptionConsumer is VRFConsumerBaseV2Plus, ReentrancyGuard {
         return recentTickets;
     }
 
-    function getLotteryDetailsForPlayer(uint256 _lotteryId, address _player)
-        external
-        view
-        returns (LotteryDetails memory)
-    {
+    function getLotteryDetailsForPlayer(
+        uint256 _lotteryId,
+        address _player
+    ) external view returns (LotteryDetails memory) {
         require(_lotteryId < lotteries.length, "Invalid lottery ID");
 
         Lottery memory lottery = lotteries[_lotteryId];

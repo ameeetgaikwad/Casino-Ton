@@ -18,10 +18,10 @@ export const useGetContractBalance = (contractAddress: string, contract: "ROULET
     fetchContractBalance();
 
     // Periodically fetch and update the contract balance (every 3 seconds in this example)
-    const intervalId = setInterval(fetchContractBalance, 3000);
+    // const intervalId = setInterval(fetchContractBalance, 3000);
 
     // Cleanup the interval on component unmount
-    return () => clearInterval(intervalId);
+    // return () => clearInterval(intervalId);
   }, [getBalance, contractAddress]);
 
   return {

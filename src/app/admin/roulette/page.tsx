@@ -89,7 +89,7 @@ const RouletteAdmin = () => {
     };
 
     fetchContractData();
-  }, [smartContract, getBalance]);
+  }, [smartContract]);
 
   const handleSetHouseWallet = async () => {
     try {

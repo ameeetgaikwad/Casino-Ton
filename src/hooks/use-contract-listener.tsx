@@ -1,13 +1,24 @@
 import { statusDialogRefFunc } from "@/components/status-dialog";
 import { saveTransactionData } from "@/lib/db/action";
 import BigNumber from "bignumber.js";
-import { Contract } from "ethers";
+import { Contract, ethers } from "ethers";
 import { useEffect } from "react";
 import { useTransition } from "./use-transition";
-import { GameInitiatedCB } from "@/lib/coin-flip-oracle";
+import { GameInitiatedCB, useSetupEventListener } from "@/lib/coin-flip-oracle";
+import { useContract } from "./use-contract";
+import { Game } from "@/../contract.json";
 
-export const useCoinContractListener = (address: string, contract: Contract | undefined) => {
+const provider_rpc_url = process.env.NEXT_PUBLIC_BSC_RPC_URL;
+const provider = new ethers.providers.JsonRpcProvider(provider_rpc_url);
+const wallet = new ethers.Wallet(process.env.NEXT_PUBLIC_PRIVATE_KEY!, provider);
+
+const contractABI = Game.COIN.abi;
+const contractAddress = Game.COIN.contractAddress;
+const contract: Contract = new ethers.Contract(contractAddress, contractABI, wallet);
+
+export const useCoinContractListener = (address: string, contracts: Contract | undefined) => {
   const [isPending, startTransaction] = useTransition();
+
   useEffect(() => {
     if (!contract) return;
     const cb = (
@@ -19,38 +30,50 @@ export const useCoinContractListener = (address: string, contract: Contract | un
       _totalProfit: BigNumber,
       event: any
     ) => {
-      const totalPayout = Number(BigNumber(_totalPayout).toString()) / 1e18;
-      const totalBetAmounts = Number(BigNumber(_totalBetAmounts).toString()) / 1e18;
-      const totalProfit = Number(BigNumber(_totalProfit).toString()) / 1e18;
-      console.log(isWin);
-      isWin
-        ? statusDialogRefFunc.updateStatus("win", totalPayout)
-        : statusDialogRefFunc.updateStatus("lose", totalBetAmounts);
-      if (playerAddress === address) {
-        startTransaction(async () => {
-          await saveTransactionData(
-            {
-              isWin,
-              player: address,
-              transaction: event.transactionHash,
-              wager: totalBetAmounts,
-              outcome: guess == 0 ? "HEAD" : "TAIL",
-              gameType: "COIN",
-              payout: totalPayout,
-              profit: totalProfit,
-            },
-            "/coin"
-          );
-        });
+      try {
+        const totalPayout = Number(BigNumber(_totalPayout).toString()) / 1e18;
+        const totalBetAmounts = Number(BigNumber(_totalBetAmounts).toString()) / 1e18;
+        const totalProfit = Number(BigNumber(_totalProfit).toString()) / 1e18;
+        console.log(isWin);
+        isWin
+          ? statusDialogRefFunc.updateStatus("win", totalPayout)
+          : statusDialogRefFunc.updateStatus("lose", totalBetAmounts);
+        if (playerAddress === address) {
+          startTransaction(async () => {
+            try {
+              await saveTransactionData(
+                {
+                  isWin,
+                  player: address,
+                  transaction: event.transactionHash,
+                  wager: totalBetAmounts,
+                  outcome: guess == 0 ? "HEAD" : "TAIL",
+                  gameType: "COIN",
+                  payout: totalPayout,
+                  profit: totalProfit,
+                },
+                "/coin"
+              );
+            } catch (error) {
+              console.error("Error saving transaction data:", error);
+            }
+          });
+        }
+      } catch (error) {
+        console.error("Error in DetailedGameResult callback:", error);
       }
     };
 
-    contract.addListener("DetailedGameResult", cb);
-    contract.addListener("GameInitiated", GameInitiatedCB);
-    return () => {
-      contract.removeListener("DetailedGameResult", cb);
-      contract.removeListener("GameInitiated", GameInitiatedCB);
-    };
+    try {
+      // contract.on("GameInitiated", GameInitiatedCB);
+      useSetupEventListener();
+      contract.addListener("DetailedGameResult", cb);
+      return () => {
+        contract.removeListener("DetailedGameResult", cb);
+      };
+    } catch (error) {
+      console.error("Error setting up contract listeners:", error);
+    }
   }, [contract, address]);
 
   return {
