@@ -10,7 +10,7 @@ export default async function Home() {
   const ethRate = await getEthFiatRate();
 
   return (
-    <main className="-ml-48 md:flex flex-grow flex-col p-4 transition-all duration-150 ease-in md:ml-0">
+    <main className="md:flex flex-grow flex-col p-4 transition-all duration-150 ease-in md:ml-0">
       <Header
         lastTenOutcome={transactionHistory.map((o) => ({
           outcome: o.outcome,
@@ -20,7 +20,9 @@ export default async function Home() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 h-full ">
         <BetForm fiatRate={Number(ethRate["USD"] ?? 200)} />
       </div>
-      {transactionHistory.length > 0 && <TransactionHistory records={transactionHistory} />}
+      {transactionHistory.length > 0 && (
+        <TransactionHistory records={transactionHistory} />
+      )}
     </main>
   );
 }
