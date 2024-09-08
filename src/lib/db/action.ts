@@ -2,7 +2,7 @@
 
 import { InferInsertModel, and, db, desc, eq, schema, sum } from "@/lib/db";
 import { revalidatePath } from "next/cache";
-type GameType = typeof schema.GAME_TYPE.enumValues[number]
+export type GameType = typeof schema.GAME_TYPE.enumValues[number]
 
 
 export const saveTransactionData = async (values: InferInsertModel<typeof schema.transactionHistory>, path: string = '/coin') => {

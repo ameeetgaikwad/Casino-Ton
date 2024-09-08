@@ -10,19 +10,38 @@ import { Button } from "./ui/button";
 
 export const ConnectButton = () => {
   const pathname = usePathname();
-  const { address, contract } = useContract(pathname.includes("flip") ? "COIN" : "ROULETTE");
+  const { address, contract } = useContract(
+    pathname.includes("flip") ? "COIN" : "ROULETTE"
+  );
   // const { contractBalance: houseBalance } = useGetContractBalance(contract.contractAddress);
   // const { contractBalance: walletBalance } = useGetContractBalance(account?.address || '');
-  const { contractBalance: houseBalance } = useGetContractBalance(contract.contractAddress, "COIN");
-  const { contractBalance: walletBalance } = useGetContractBalance(address as string, "COIN");
+  const { contractBalance: houseBalance } = useGetContractBalance(
+    contract.contractAddress,
+    "COIN"
+  );
+  const { contractBalance: walletBalance } = useGetContractBalance(
+    address as string,
+    "COIN"
+  );
   // console.log(houseBalance, walletBalance);
 
   return (
     <_ConnectButton.Custom>
-      {({ account, chain, openAccountModal, openChainModal, openConnectModal, authenticationStatus, mounted }) => {
+      {({
+        account,
+        chain,
+        openAccountModal,
+        openChainModal,
+        openConnectModal,
+        authenticationStatus,
+        mounted,
+      }) => {
         const ready = mounted && authenticationStatus !== "loading";
         const connected =
-          ready && account && chain && (!authenticationStatus || authenticationStatus === "authenticated");
+          ready &&
+          account &&
+          chain &&
+          (!authenticationStatus || authenticationStatus === "authenticated");
 
         return (
           <div
@@ -38,34 +57,64 @@ export const ConnectButton = () => {
             {(() => {
               if (!connected) {
                 return (
-                  <Button onClick={openConnectModal} className="font-heading text-xl" type="button">
+                  <Button
+                    onClick={openConnectModal}
+                    className="font-heading text-xl"
+                    type="button"
+                  >
                     CONNECT WALLET
                   </Button>
                 );
               }
               if (chain.unsupported) {
                 return (
-                  <Button className="font-heading text-xl" variant="destructive" onClick={openChainModal} type="button">
+                  <Button
+                    className="font-heading text-xl"
+                    variant="destructive"
+                    onClick={openChainModal}
+                    type="button"
+                  >
                     Wrong network
                   </Button>
                 );
               }
               return (
-                <div className="flex justify-center items-center gap-4">
-                  <div className="flex gap-3 justify-center items-center">
-                    <h3 className="font-heading">HOUSE BALANCE</h3>
-                    <Image src="/svg/head.svg" alt="head" width={30} height={30} />
-                    <span className="text-primary">{Math.floor((Number(houseBalance) * 100) / 100)}</span>
+                <div className="flex md:flex-row flex-col justify-center items-center gap-4">
+                  <div className="flex">
+                    <div className="flex gap-3 justify-center items-center">
+                      <h3 className="font-heading">HOUSE BALANCE</h3>
+                      <Image
+                        src="/svg/head.svg"
+                        alt="head"
+                        width={30}
+                        height={30}
+                      />
+                      <span className="text-primary">
+                        {Math.floor((Number(houseBalance) * 100) / 100)}
+                      </span>
+                    </div>
+                    <div className="flex gap-3 justify-center items-center">
+                      <h3 className="font-heading">WALLET</h3>
+                      <Image
+                        src="/svg/head.svg"
+                        alt="head"
+                        width={30}
+                        height={30}
+                      />
+                      <span className="text-primary">
+                        {Math.floor((Number(walletBalance) * 100) / 100)}
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex gap-3 justify-center items-center">
-                    <h3 className="font-heading">WALLET</h3>
-                    <Image src="/svg/head.svg" alt="head" width={30} height={30} />
-                    <span className="text-primary">{Math.floor((Number(walletBalance) * 100) / 100)}</span>
+                  <div className="flex">
+                    <span className="text-xl">{account.displayName}</span>
+                    <Button
+                      className="font-heading text-xl"
+                      onClick={openAccountModal}
+                    >
+                      DISCONNECT
+                    </Button>
                   </div>
-                  <span className="text-xl">{account.displayName}</span>
-                  <Button className="font-heading text-xl" onClick={openAccountModal}>
-                    DISCONNECT
-                  </Button>
                 </div>
               );
             })()}

@@ -10,20 +10,40 @@ export const Sidenav = () => {
   const pathname = usePathname();
   return (
     <Fragment>
-      <aside className=" hidden md:flex h-fit  rounded-2xl flex-col space-y-4 p-4 transform bg-shade transition-transform duration-150 ease-in md:translate-x-0 md:shadow-md">
+      <aside className=" flex h-fit  rounded-2xl flex-col space-y-4 p-4 transform bg-shade transition-transform duration-150 ease-in md:translate-x-0 md:shadow-md">
         <div className=" w-32 h-32 flex justify-center items-center">
-          <Image src="/svg/logo2.svg" width={75} height={75} className="w-full h-full" alt="logo" />
+          <Image
+            src="/svg/logo2.svg"
+            width={75}
+            height={75}
+            className="w-full h-full"
+            alt="logo"
+          />
         </div>
         {sideNavIcons.map((item, idx) => (
-          <Box selected={pathname} href={item.href} icons={item.icons} key={idx} />
+          <Box
+            selected={pathname}
+            href={item.href}
+            icons={item.icons}
+            key={idx}
+          />
         ))}
       </aside>
     </Fragment>
   );
 };
 
-function Box({ href, icons, selected }: { href: string | undefined; icons: string; selected: string | null }) {
-  const Comp = (props: any) => (!href ? <div {...props} /> : <Link href={href} {...props} />);
+function Box({
+  href,
+  icons,
+  selected,
+}: {
+  href: string | undefined;
+  icons: string;
+  selected: string | null;
+}) {
+  const Comp = (props: any) =>
+    !href ? <div {...props} /> : <Link href={href} {...props} />;
 
   return (
     <Comp className="w-32 h-32 rounded-2xl overflow-hidden cursor-pointer">
@@ -31,7 +51,10 @@ function Box({ href, icons, selected }: { href: string | undefined; icons: strin
         src={icons}
         width={75}
         height={75}
-        className={cn(href?.includes(selected ?? "") ? "bg-primary" : "bg-background", "w-full h-full  p-4")}
+        className={cn(
+          href?.includes(selected ?? "") ? "bg-primary" : "bg-background",
+          "w-full h-full  p-4"
+        )}
         alt="logo"
       />
     </Comp>
