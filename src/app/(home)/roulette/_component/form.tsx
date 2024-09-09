@@ -46,7 +46,7 @@ export const Form = observer(() => {
 
   const { isPending } = useRouletteContractListener(
     address as string,
-    smartContract
+    smartContract || undefined
   );
   const play = useCallback(async () => {
     setLoading(true);
