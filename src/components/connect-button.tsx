@@ -7,11 +7,6 @@ import { usePathname } from "next/navigation";
 import { Button } from "./ui/button";
 
 // ... (previous imports)
-window.open = (function (open) {
-  return function (url, _, features) {
-    return open.call(window, url, "_blank", features);
-  };
-})(window.open);
 
 export const ConnectButton = () => {
   const pathname = usePathname();
