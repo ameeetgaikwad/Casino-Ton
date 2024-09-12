@@ -87,7 +87,7 @@ export default (props: Props) => {
         </main>
         <Button
           variant="ghost"
-          className=" flex md:hidden fixed right-0 z-10 p-4 hover:bg-trasparent"
+          className=" flex md:hidden fixed right-0  z-10 py-8 hover:bg-trasparent"
           onClick={() => setIsOpen(!isOpen)}
         >
           {<Menu size={32} />}
