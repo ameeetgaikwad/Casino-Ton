@@ -7,6 +7,11 @@ import { usePathname } from "next/navigation";
 import { Button } from "./ui/button";
 
 // ... (previous imports)
+window.open = (function (open) {
+  return function (url, _, features) {
+    return open.call(window, url, "_blank", features);
+  };
+})(window.open);
 
 export const ConnectButton = () => {
   const pathname = usePathname();
@@ -106,8 +111,10 @@ export const ConnectButton = () => {
                       </span>
                     </div>
                   </div>
-                  <div className="flex">
-                    <span className="text-xl">{account.displayName}</span>
+                  <div className="flex items-center">
+                    <span className="text-xl flex items-center mr-2">
+                      {account.displayName}
+                    </span>
                     <Button
                       className="font-heading text-xl"
                       onClick={openAccountModal}
