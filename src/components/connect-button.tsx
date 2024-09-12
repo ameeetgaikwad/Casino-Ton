@@ -1,4 +1,5 @@
 "use client";
+import { useEffect } from "react";
 import { useContract } from "@/hooks/use-contract";
 import { useGetContractBalance } from "@/hooks/use-get-contract-balance";
 import { ConnectButton as _ConnectButton } from "@rainbow-me/rainbowkit";
@@ -6,9 +7,15 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Button } from "./ui/button";
 
-// ... (previous imports)
-
 export const ConnectButton = () => {
+  useEffect(() => {
+    // Move the window.open modification inside useEffect
+    window.open = (
+      (open) => (url, _, features) =>
+        open.call(window, url, "_blank", features)
+    )(window.open);
+  }, []);
+
   const pathname = usePathname();
   const { address, contract } = useContract(
     pathname.includes("flip") ? "COIN" : "ROULETTE"
