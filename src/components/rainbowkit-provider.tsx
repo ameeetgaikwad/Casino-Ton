@@ -1,12 +1,25 @@
 "use client";
 
-import { RainbowKitProvider, Theme, connectorsForWallets, darkTheme, getDefaultWallets } from "@rainbow-me/rainbowkit";
-import { argentWallet, ledgerWallet, trustWallet } from "@rainbow-me/rainbowkit/wallets";
+import "@rainbow-me/rainbowkit/styles.css";
+
+import {
+  getDefaultConfig,
+  RainbowKitProvider,
+  connectorsForWallets,
+} from "@rainbow-me/rainbowkit";
+import { WagmiProvider } from "wagmi";
+import { bsc } from "wagmi/chains";
+import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
+
+import {
+  argentWallet,
+  ledgerWallet,
+  metaMaskWallet,
+  trustWallet,
+} from "@rainbow-me/rainbowkit/wallets";
 import merge from "lodash.merge";
 import * as React from "react";
-import { bsc } from "viem/chains";
-import { Chain, WagmiConfig, configureChains, createConfig } from "wagmi";
-import { publicProvider } from "wagmi/providers/public";
+
 // @ts-ignore
 // const vitruveo: Chain = {
 //   name: "vitruveo",
@@ -54,59 +67,63 @@ const bscMainnet: Chain = {
   testnet: false,
 };
 
-const { chains, publicClient, webSocketPublicClient } = configureChains([bscMainnet], [publicProvider()]);
-
 const projectId = process.env.NEXT_PUBLIC_PROJECT_ID!;
 
-const { wallets } = getDefaultWallets({
-  appName: "RainbowKit demo",
-  projectId,
-  chains,
-});
+// const { wallets } = getDefaultWallets({
+//   appName: "RainbowKit demo",
+//   projectId,
+//   chains,
+// });
 
-const demoAppInfo = {
-  appName: "Rainbowkit Demo",
-};
-
-const connectors = connectorsForWallets([
-  ...wallets,
+const connectors = connectorsForWallets(
+  [
+    {
+      groupName: "Recommended",
+      wallets: [metaMaskWallet, argentWallet, ledgerWallet, trustWallet],
+    },
+  ],
   {
-    groupName: "Other",
-    wallets: [
-      argentWallet({ projectId, chains }),
-      trustWallet({ projectId, chains }),
-      ledgerWallet({ projectId, chains }),
-    ],
-  },
-]);
+    appName: "RainbowKit demo",
+    projectId: "YOUR_PROJECT_ID",
+  }
+);
 
-const wagmiConfig = createConfig({
-  autoConnect: true,
-  connectors,
-  publicClient,
-  webSocketPublicClient,
+const config = getDefaultConfig({
+  appName: "RainbowKit demo",
+  projectId: projectId,
+  chains: [bsc],
+  ssr: true, // If your dApp uses server side rendering (SSR)
 });
+
+// const wagmiConfig = createConfig({
+//   autoConnect: true,
+//   connectors,
+//   publicClient,
+//   webSocketPublicClient,
+// });
+const queryClient = new QueryClient();
+
 export function RainbowProvider({ children }: { children: React.ReactNode }) {
   // const [mounted, setMounted] = React.useState(false);
   // React.useEffect(() => setMounted(true), []);
-  const theme = React.useMemo(
-    () =>
-      merge(darkTheme(), {
-        colors: {
-          accentColor: "hsl(var(--shade))",
-        },
-        fonts: {
-          body: "var(--font-sans)",
-        },
-      } as Theme),
-    []
-  );
+  // const theme = React.useMemo(
+  //   () =>
+  //     merge(darkTheme(), {
+  //       colors: {
+  //         accentColor: "hsl(var(--shade))",
+  //       },
+  //       fonts: {
+  //         body: "var(--font-sans)",
+  //       },
+  //     } as Theme),
+  //   []
+  // );
 
   return (
-    <WagmiConfig config={wagmiConfig}>
-      <RainbowKitProvider chains={chains} appInfo={demoAppInfo} theme={theme}>
-        {children}
-      </RainbowKitProvider>
-    </WagmiConfig>
+    <WagmiProvider config={config}>
+      <QueryClientProvider client={queryClient}>
+        <RainbowKitProvider>{children}</RainbowKitProvider>
+      </QueryClientProvider>
+    </WagmiProvider>
   );
 }
