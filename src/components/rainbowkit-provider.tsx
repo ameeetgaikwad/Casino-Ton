@@ -13,9 +13,12 @@ import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 
 import {
   argentWallet,
+  coinbaseWallet,
+  injectedWallet,
   ledgerWallet,
   metaMaskWallet,
   trustWallet,
+  walletConnectWallet,
 } from "@rainbow-me/rainbowkit/wallets";
 import merge from "lodash.merge";
 import * as React from "react";
@@ -92,6 +95,12 @@ const config = getDefaultConfig({
   appName: "RainbowKit demo",
   projectId: projectId,
   chains: [bsc],
+  wallets: [
+    {
+      groupName: "Recommended",
+      wallets: [coinbaseWallet, walletConnectWallet, injectedWallet],
+    },
+  ],
   ssr: true, // If your dApp uses server side rendering (SSR)
 });
 
