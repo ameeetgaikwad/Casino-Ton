@@ -75,18 +75,18 @@ const projectId = process.env.NEXT_PUBLIC_PROJECT_ID!;
 //   chains,
 // });
 
-const connectors = connectorsForWallets(
-  [
-    {
-      groupName: "Recommended",
-      wallets: [metaMaskWallet, argentWallet, ledgerWallet, trustWallet],
-    },
-  ],
-  {
-    appName: "RainbowKit demo",
-    projectId: "YOUR_PROJECT_ID",
-  }
-);
+// const connectors = connectorsForWallets(
+//   [
+//     {
+//       groupName: "Recommended",
+//       wallets: [metaMaskWallet, argentWallet, ledgerWallet, trustWallet],
+//     },
+//   ],
+//   {
+//     appName: "RainbowKit demo",
+//     projectId: "YOUR_PROJECT_ID",
+//   }
+// );
 
 const config = getDefaultConfig({
   appName: "RainbowKit demo",
