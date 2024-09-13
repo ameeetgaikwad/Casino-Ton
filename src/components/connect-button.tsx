@@ -69,7 +69,7 @@ export const ConnectButton = () => {
                     className="font-heading text-xl"
                     type="button"
                   >
-                    CONNECT WALLET
+                    CONNECT WALLET-TEST
                   </Button>
                 );
               }
