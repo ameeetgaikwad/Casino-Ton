@@ -1,3 +1,4 @@
+"use client";
 import { RainbowProvider } from "@/components/rainbowkit-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 import { siteMetadata } from "@/config/site";
@@ -6,6 +7,9 @@ import "@rainbow-me/rainbowkit/styles.css";
 import type { Metadata } from "next";
 import LocalFont from "next/font/local";
 import "./globals.css";
+
+import { TonConnectUIProvider } from "@tonconnect/ui-react";
+
 import { Toaster } from "@/components/ui/sonner";
 //import { Provider } from '@/contexts/provider';
 //import { ReduxContext } from '@/contexts/ReduxContext';
@@ -31,7 +35,7 @@ const fontHeading = LocalFont({
   preload: true,
 });
 
-export const metadata: Metadata = siteMetadata;
+// export const metadata: Metadata = siteMetadata;
 
 export default function RootLayout({
   children,
@@ -50,7 +54,13 @@ export default function RootLayout({
         suppressContentEditableWarning
       >
         <ThemeProvider>
-          <RainbowProvider>{children}</RainbowProvider>
+          <RainbowProvider>
+            <TonConnectUIProvider
+              manifestUrl={process.env.NEXT_PUBLIC_MANIFEST_URL}
+            >
+              {children}
+            </TonConnectUIProvider>
+          </RainbowProvider>
           <Toaster richColors theme="dark" />
         </ThemeProvider>
       </body>

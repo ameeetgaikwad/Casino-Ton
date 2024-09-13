@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useParams, usePathname } from "next/navigation";
 import { GameType, getAllTransaction } from "@/lib/db/action";
+import { TonConnectButton } from "@tonconnect/ui-react";
 interface Props {
   children: React.ReactNode;
 }
@@ -80,7 +81,7 @@ export default (props: Props) => {
             </div>
           </DialogContent>
         </Dialog>
-
+        <TonConnectButton />
         <main className="w-full">
           {props.children}
           <Footer />
