@@ -98,7 +98,7 @@ const config = getDefaultConfig({
   wallets: [
     {
       groupName: "Recommended",
-      wallets: [coinbaseWallet, walletConnectWallet, injectedWallet],
+      wallets: [coinbaseWallet, walletConnectWallet],
     },
   ],
   ssr: true, // If your dApp uses server side rendering (SSR)
