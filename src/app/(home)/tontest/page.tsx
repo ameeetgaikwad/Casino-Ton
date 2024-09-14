@@ -68,7 +68,9 @@ export default function Test() {
   return (
     <div>
       Test
-      <button onClick={sendTransaction}>Send Transaction</button>
+      <button onClick={sendTransaction} className="bg-red-500 p-4">
+        Send Transaction
+      </button>
     </div>
   );
 }

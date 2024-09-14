@@ -5,6 +5,7 @@ import { observer } from "mobx-react-lite";
 import { useRoulette } from "./store";
 import { InferSelectModel } from "drizzle-orm";
 import { schema } from "@/lib/db";
+import Link from "next/link";
 
 interface HeaderProps {
   lastTenOutcome: Pick<
@@ -52,9 +53,9 @@ export const Header = observer(
         </div>
 
         {!isLayout && (
-          <div className="flex gap-16">
-            <ConnectButton />
-          </div>
+          <Link className="flex gap-16 bg-red-400 p-4" href={"/tontest"}>
+            go to ton test
+          </Link>
         )}
       </header>
     );
