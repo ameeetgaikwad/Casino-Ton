@@ -1,6 +1,6 @@
 import { CoinFace } from "@/components/coin-face";
 import { ConnectButton } from "@/components/connect-button";
-import { InferSelectModel, schema } from "@/lib/db";
+import { InferSelectModel, schema } from "@/db";
 
 // interface HeaderProps {
 //   lastTenOutcome: Array<Pick<InferSelectModel<typeof schema.transactionHistory>, "outcome">>;

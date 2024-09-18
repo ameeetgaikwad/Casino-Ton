@@ -1,4 +1,4 @@
-import { getAllTransaction, getEthFiatRate } from "@/lib/db/action";
+import { getAllTransaction, getEthFiatRate } from "@/db/action";
 import { BetForm } from "./_component/bet-form";
 import { Header } from "./_component/header";
 import { TransactionHistory } from "@/components/transaction-history";

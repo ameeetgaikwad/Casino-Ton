@@ -16,7 +16,7 @@ import MainLayout from "@/components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useParams, usePathname } from "next/navigation";
-import { GameType, getAllTransaction } from "@/lib/db/action";
+import { GameType, getAllTransaction } from "@/db/action";
 import { TonConnectButton } from "@tonconnect/ui-react";
 interface Props {
   children: React.ReactNode;

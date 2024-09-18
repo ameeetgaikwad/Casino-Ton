@@ -1,6 +1,6 @@
 'use server';
 
-import { InferInsertModel, and, db, desc, eq, schema, sum } from "@/lib/db";
+import { InferInsertModel, and, db, desc, eq, schema, sum } from "@/db";
 import { revalidatePath } from "next/cache";
 export type GameType = typeof schema.GAME_TYPE.enumValues[number]
 

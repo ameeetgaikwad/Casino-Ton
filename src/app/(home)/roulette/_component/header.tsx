@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { observer } from "mobx-react-lite";
 import { useRoulette } from "./store";
 import { InferSelectModel } from "drizzle-orm";
-import { schema } from "@/lib/db";
+import { schema } from "@/db";
 import Link from "next/link";
 
 interface HeaderProps {

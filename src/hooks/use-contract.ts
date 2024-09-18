@@ -1,5 +1,5 @@
 import * as contract from '@/../contract.json';
-import { totalBetAmount } from '@/lib/db/action';
+import { totalBetAmount } from '@/db/action';
 import { Contract, ethers } from 'ethers';
 import { JsonRpcProvider } from 'ethers/providers';
 import { useCallback, useEffect, useMemo, useState } from 'react';

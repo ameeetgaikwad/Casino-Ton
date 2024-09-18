@@ -1,8 +1,15 @@
 "use client";
 import { CoinFace } from "@/components/coin-face";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { InferSelectModel, schema } from "@/lib/db";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { InferSelectModel, schema } from "@/db";
 import { cn, shortContractAddress } from "@/lib/utils";
 import { toast } from "sonner";
 import { format } from "timeago.js";
@@ -33,13 +40,21 @@ export function TransactionHistory({ records }: TransactionHistoryProps) {
           <TableBody className="font-bold">
             {records.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={8} className="h-24 text-center  text-xl font-heading text-pretty text-primary">
+                <TableCell
+                  colSpan={8}
+                  className="h-24 text-center  text-xl font-heading text-pretty text-primary"
+                >
                   No recoders found
                 </TableCell>
               </TableRow>
             ) : (
               records.map((record, key) => (
-                <TableRow key={key} className={cn(record.isWin ? "text-green-500" : "text-destructive")}>
+                <TableRow
+                  key={key}
+                  className={cn(
+                    record.isWin ? "text-green-500" : "text-destructive"
+                  )}
+                >
                   <TableCell>{shortContractAddress(record.player)}</TableCell>
                   <TableCell
                     className="flex gap-2"
@@ -48,9 +63,13 @@ export function TransactionHistory({ records }: TransactionHistoryProps) {
                       toast.info("Copied successfully.", { duration: 1500 });
                     }}
                   >
-                    {shortContractAddress(record.transaction)} <span className="icon-[ion--copy] cursor-pointer" />
+                    {shortContractAddress(record.transaction)}{" "}
+                    <span className="icon-[ion--copy] cursor-pointer" />
                   </TableCell>
-                  <TableCell>{record.createdAt && format(record.createdAt?.toLocaleString())}</TableCell>
+                  <TableCell>
+                    {record.createdAt &&
+                      format(record.createdAt?.toLocaleString())}
+                  </TableCell>
                   <TableCell>{record.outcome}</TableCell>
                   <TableCell>
                     <div className="flex items-right justify-right gap-2">

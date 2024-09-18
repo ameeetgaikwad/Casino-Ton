@@ -1,5 +1,5 @@
 import { TransactionHistory } from "@/components/transaction-history";
-import { getAllTransaction } from "@/lib/db/action";
+import { getAllTransaction } from "@/db/action";
 import { Header } from "./_component/header";
 import { Roulette } from "./_component/roulette";
 import { RouletteProvider } from "./_component/store";

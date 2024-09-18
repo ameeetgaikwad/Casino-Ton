@@ -1,5 +1,5 @@
 import { statusDialogRefFunc } from "@/components/status-dialog";
-import { saveTransactionData } from "@/lib/db/action";
+import { saveTransactionData } from "@/db/action";
 import BigNumber from "bignumber.js";
 import { Contract, ethers } from "ethers";
 import { useEffect } from "react";
@@ -10,13 +10,23 @@ import { Game } from "@/../contract.json";
 
 const provider_rpc_url = process.env.NEXT_PUBLIC_BSC_RPC_URL;
 const provider = new ethers.providers.JsonRpcProvider(provider_rpc_url);
-const wallet = new ethers.Wallet(process.env.NEXT_PUBLIC_PRIVATE_KEY!, provider);
+const wallet = new ethers.Wallet(
+  process.env.NEXT_PUBLIC_PRIVATE_KEY!,
+  provider
+);
 
 const contractABI = Game.COIN.abi;
 const contractAddress = Game.COIN.contractAddress;
-const contract: Contract = new ethers.Contract(contractAddress, contractABI, wallet);
+const contract: Contract = new ethers.Contract(
+  contractAddress,
+  contractABI,
+  wallet
+);
 
-export const useCoinContractListener = (address: string, contracts: Contract | undefined) => {
+export const useCoinContractListener = (
+  address: string,
+  contracts: Contract | undefined
+) => {
   const [isPending, startTransaction] = useTransition();
 
   useEffect(() => {
@@ -32,7 +42,8 @@ export const useCoinContractListener = (address: string, contracts: Contract | u
     ) => {
       try {
         const totalPayout = Number(BigNumber(_totalPayout).toString()) / 1e18;
-        const totalBetAmounts = Number(BigNumber(_totalBetAmounts).toString()) / 1e18;
+        const totalBetAmounts =
+          Number(BigNumber(_totalBetAmounts).toString()) / 1e18;
         const totalProfit = Number(BigNumber(_totalProfit).toString()) / 1e18;
         console.log(isWin);
         isWin
@@ -81,7 +92,10 @@ export const useCoinContractListener = (address: string, contracts: Contract | u
   };
 };
 
-export const useRouletteContractListener = (address: string, contract: Contract | undefined) => {
+export const useRouletteContractListener = (
+  address: string,
+  contract: Contract | undefined
+) => {
   const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
@@ -100,14 +114,19 @@ export const useRouletteContractListener = (address: string, contract: Contract 
       console.log("Triggered cb contract roulette");
       console.log("totalprofit", _totalProfit);
       const totalPayout = Number(BigNumber(_totalPayout).toString()) / 1e18;
-      const totalBetAmounts = Number(BigNumber(_totalBetAmounts).toString()) / 1e18;
+      const totalBetAmounts =
+        Number(BigNumber(_totalBetAmounts).toString()) / 1e18;
       const totalProfit = Number(BigNumber(_totalProfit).toString()) / 1e18;
 
       console.log(isWin);
 
       isWin
         ? statusDialogRefFunc.updateStatus("win", totalPayout, guess.toString())
-        : statusDialogRefFunc.updateStatus("lose", totalBetAmounts, guess.toString());
+        : statusDialogRefFunc.updateStatus(
+            "lose",
+            totalBetAmounts,
+            guess.toString()
+          );
       if (playerAddress === address) {
         startTransition(async () => {
           await saveTransactionData(
@@ -127,7 +146,13 @@ export const useRouletteContractListener = (address: string, contract: Contract 
       }
     };
     // uint8 side, GuessType guessType, bool won, uint payout
-    const helper = (side: number, guessType: number, won: boolean, payout: BigNumber, event: any) => {
+    const helper = (
+      side: number,
+      guessType: number,
+      won: boolean,
+      payout: BigNumber,
+      event: any
+    ) => {
       console.log("Triggered cb contract roulette helper");
       console.log(side);
       console.log(guessType);

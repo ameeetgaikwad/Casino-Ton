@@ -3,8 +3,9 @@ import postgres from "postgres";
 import * as transactionHistory from "./schema/transaction-history";
 import * as lotteries from "./schema/lotteries";
 import * as tickets from "./schema/tickets";
+import * as flip from "./schema/flip";
 
-export const schema = { ...transactionHistory, lotteries, tickets };
+export const schema = { ...transactionHistory, lotteries, tickets, flip };
 
 export { pgTable as tableCreator } from "./schema/_table";
 

@@ -1,6 +1,6 @@
 import { CoinFace } from "@/components/coin-face";
 import { ConnectButton } from "@/components/connect-button";
-import { InferSelectModel, schema } from "@/lib/db";
+import { InferSelectModel, schema } from "@/db";
 import Link from "next/link";
 
 interface HeaderProps {
