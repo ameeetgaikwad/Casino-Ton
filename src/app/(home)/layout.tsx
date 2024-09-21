@@ -16,8 +16,8 @@ import MainLayout from "@/components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useParams, usePathname } from "next/navigation";
-import { GameType, getAllTransaction } from "@/db/action";
-import { TonConnectButton } from "@tonconnect/ui-react";
+// import { GameType, getAllTransaction } from "@/db/action";
+
 interface Props {
   children: React.ReactNode;
 }
@@ -25,15 +25,16 @@ interface Props {
 export default (props: Props) => {
   const pathName = usePathname().slice(1);
   const [history, setHistory] = useState<any>([]);
-  const transactionHistory = async () => {
-    const history = await getAllTransaction(pathName.toUpperCase() as GameType);
 
-    setHistory(history);
-  };
+  // const transactionHistory = async () => {
+  //   const history = await getAllTransaction(pathName.toUpperCase() as GameType);
 
-  useEffect(() => {
-    transactionHistory();
-  }, []);
+  //   setHistory(history);
+  // };
+
+  // useEffect(() => {
+  //   transactionHistory();
+  // }, []);
 
   const renderHeader = () => {
     switch (pathName) {
@@ -81,7 +82,8 @@ export default (props: Props) => {
             </div>
           </DialogContent>
         </Dialog>
-        <TonConnectButton />
+
+        {/* <TonConnectButton /> */}
         <main className="w-full">
           {props.children}
           <Footer />

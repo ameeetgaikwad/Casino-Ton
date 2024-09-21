@@ -1,36 +1,43 @@
 import { eq, sql } from 'drizzle-orm';
-import { db } from '@/db/index';
 import { flip, users } from '@/drizzle/schema';
 import type { Flip } from '@/drizzle/schema';
 import { gameConfig } from '@/config/flip';
+import { db } from '@/drizzle/db';
+import { globalConfig } from '@/config/global';
 
-export async function flipCoin(guess: number, playerAddress: string, amountBet: number): Promise<{ gameId: string }> {
+export async function flipCoin(guess: number, playerAddress: string, amountBet: number): Promise<{ gameId: string } | null> {
+    console.log('flipCoin', guess, playerAddress, amountBet)
     const userBalance = await db.select({ balance: users.balance }).from(users).where(eq(users.address, playerAddress));
-    const houseBalance = await db.select({ balance: users.balance }).from(users).where(eq(users.address, gameConfig.houseAddress));
+
+    const houseBalance = await db.select({ balance: users.balance }).from(users).where(eq(users.address, globalConfig.houseAddress));
 
     if (userBalance[0].balance < amountBet) {
-        throw new Error("Insufficient balance");
+        console.log('Insufficient balance')
+        return null;
     }
 
     if (guess !== 0 && guess !== 1) {
-        throw new Error("Guess should be 0 (heads) or 1 (tails)");
+        console.log('Guess should be 0 (heads) or 1 (tails)')
+        return null;
     }
 
     if (amountBet <= 0) {
-        throw new Error("Amount bet must be greater than 0");
+        console.log('Amount bet must be greater than 0')
+        return null;
     }
 
     // const houseEdgeCut = (amountBet * gameConfig.platformFeePercentage) / 100;
     // const actualBet = amountBet - houseEdgeCut;
 
     if (amountBet > (houseBalance[0].balance * gameConfig.maxBetPercentage / 100)) {
-        throw new Error("Bet exceeds maximum allowed");
+        console.log('Bet exceeds maximum allowed')
+        return null;
     }
 
     await db.transaction(async (tx) => {
         await tx.update(users).set({ balance: sql`${users.balance}-${amountBet}` }).where(eq(users.address, playerAddress));
 
-        await tx.update(users).set({ balance: sql`${users.balance}+${amountBet}` }).where(eq(users.address, gameConfig.houseAddress));
+        await tx.update(users).set({ balance: sql`${users.balance}+${amountBet}` }).where(eq(users.address, globalConfig.houseAddress));
     });
 
     const gameId = await db.insert(flip).values({ player: playerAddress, amountBet: amountBet, guess: guess, status: 'PENDING' }).returning({ id: flip.id });
@@ -38,19 +45,18 @@ export async function flipCoin(guess: number, playerAddress: string, amountBet: 
     return { gameId: gameId[0].id };
 }
 
-export async function resolveGame(gameId: string, result: number): Promise<Flip> {
+export async function resolveGame(gameId: string): Promise<Flip | null> {
     const game = await db.select().from(flip).where(eq(flip.id, gameId)).limit(1);
     const won: boolean = Math.random() < 0.46
 
     if (!game[0]) {
-        throw new Error("Game does not exist");
+        console.log('Game does not exist')
+        return null;
     }
 
     if (game[0].status !== 'PENDING') {
-        throw new Error("Game has already been resolved");
-    }
-    if (result !== 0 && result !== 1) {
-        throw new Error("Result should be 0 (heads) or 1 (tails)");
+        console.log('Game has already been resolved')
+        return null;
     }
 
     let totalPayout = 0;
@@ -82,6 +88,19 @@ export async function resolveGame(gameId: string, result: number): Promise<Flip>
     return updatedGame[0];
 }
 
+export async function getGameCount(): Promise<number> {
+    const result = await db.select({ count: sql`count(${flip.id})` }).from(flip);
+    return Number(result[0].count) || 0;
+}
+
+export async function getGameEntries(limit: number): Promise<Flip[]> {
+    return db.select().from(flip).orderBy(sql`${flip.createdAt} DESC`).limit(limit);
+}
+
+export async function getHouseBalance(): Promise<number> {
+    const result = await db.select({ balance: users.balance }).from(users).where(eq(users.address, globalConfig.houseAddress));
+    return Number(result[0].balance) || 0;
+}
 // export async function getGameCount(): Promise<number> {
 //     const result = await db.select({ count: flip.id }).from(flip);
 //     return Number(result[0].count) || 0;

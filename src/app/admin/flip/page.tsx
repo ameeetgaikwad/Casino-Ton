@@ -8,9 +8,20 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Toaster, toast } from "sonner";
 import { useAccount } from "wagmi";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Header } from "../header";
 import { useRouter } from "next/navigation";
+import {
+  requestHouseBalance,
+  requestResolveGame,
+} from "@/services/helpers/flipHelper";
 
 type GameEntry = {
   address: string;
@@ -22,7 +33,11 @@ type GameEntry = {
 };
 
 const FlipAdmin = () => {
-  const { smartContract, error: contractError, getBalance } = useContract("COIN");
+  const {
+    smartContract,
+    error: contractError,
+    getBalance,
+  } = useContract("COIN");
   const { address } = useAccount();
   const [contractBalance, setContractBalance] = useState("0");
   const [newHouseWallet, setNewHouseWallet] = useState("");
@@ -30,143 +45,163 @@ const FlipAdmin = () => {
   const [newOwner, setNewOwner] = useState("");
   const [gameCount, setGameCount] = useState(0);
   const [lastGames, setLastGames] = useState<GameEntry[]>([]);
+  const [houseBalance, setHouseBalance] = useState(0);
+  const [gameId, setGameId] = useState("");
   const router = useRouter();
 
-  const checkOwner = async () => {
-    if (smartContract && address) {
-      console.log("insid here");
+  // const checkOwner = async () => {
+  //   if (smartContract && address) {
+  //     console.log("insid here");
 
-      try {
-        const owner = await smartContract.getOwnerWallet();
-        console.log("FLIP OWNER", owner);
+  //     try {
+  //       const owner = await smartContract.getOwnerWallet();
+  //       console.log("FLIP OWNER", owner);
 
-        if (owner.toLowerCase() !== address.toLowerCase()) {
-            router.push("/");
-        }
-      } catch (error) {
-        console.error("Error checking owner:", error);
-      }
-    }
-  };
+  //       if (owner.toLowerCase() !== address.toLowerCase()) {
+  //         router.push("/");
+  //       }
+  //     } catch (error) {
+  //       console.error("Error checking owner:", error);
+  //     }
+  //   }
+  // };
 
   //TODO: UNcomment this
-    // useEffect(() => {
-    //   checkOwner();
-    // }, [address, smartContract]);
+  // useEffect(() => {
+  //   checkOwner();
+  // }, [address, smartContract]);
   //TODO: UNcomment this
 
-  useEffect(() => {
-    const fetchContractData = async () => {
-      if (smartContract) {
-        try {
-          const balance = await getBalance(smartContract.address);
-          setContractBalance(balance);
+  // useEffect(() => {
+  //   const fetchContractData = async () => {
+  //     if (smartContract) {
+  //       try {
+  //         const balance = await getBalance(smartContract.address);
+  //         setContractBalance(balance);
 
-          const count = await smartContract.getGameCount();
-          setGameCount(count.toNumber());
+  //         const count = await smartContract.getGameCount();
+  //         setGameCount(count.toNumber());
 
-          const games: GameEntry[] = [];
-          for (let i = Math.max(0, count - 5); i < count; i++) {
-            let game = await smartContract.getGameEntry(i);
-            games.push({
-              address: game.addr,
-              amountBet: ethers.utils.formatEther(game.amountBet),
-              guess: game.guess,
-              winner: game.winner,
-              totalPayout: ethers.utils.formatEther(game.totalPayout),
-              totalProfit: ethers.utils.formatEther(game.totalProfit),
-            });
-          }
-          setLastGames(games);
-        } catch (error) {
-          console.error("Error fetching contract data:", error);
-        }
-      }
-    };
+  //         const games: GameEntry[] = [];
+  //         for (let i = Math.max(0, count - 5); i < count; i++) {
+  //           let game = await smartContract.getGameEntry(i);
+  //           games.push({
+  //             address: game.addr,
+  //             amountBet: ethers.utils.formatEther(game.amountBet),
+  //             guess: game.guess,
+  //             winner: game.winner,
+  //             totalPayout: ethers.utils.formatEther(game.totalPayout),
+  //             totalProfit: ethers.utils.formatEther(game.totalProfit),
+  //           });
+  //         }
+  //         setLastGames(games);
+  //       } catch (error) {
+  //         console.error("Error fetching contract data:", error);
+  //       }
+  //     }
+  //   };
 
-    fetchContractData();
-  }, [smartContract]);
+  //   fetchContractData();
+  // }, [smartContract]);
 
-  const handleSetHouseWallet = async () => {
-    try {
-      const tx = await smartContract?.setHouseWallet(newHouseWallet);
-      await tx.wait();
-      toast.success("House wallet updated successfully!");
-      setNewHouseWallet("");
-    } catch (error) {
-      toast.error((error as any)?.data?.message || "An error occurred");
-      console.error("Error setting house wallet:", error);
-    }
-  };
+  // const handleSetHouseWallet = async () => {
+  //   try {
+  //     const tx = await smartContract?.setHouseWallet(newHouseWallet);
+  //     await tx.wait();
+  //     toast.success("House wallet updated successfully!");
+  //     setNewHouseWallet("");
+  //   } catch (error) {
+  //     toast.error((error as any)?.data?.message || "An error occurred");
+  //     console.error("Error setting house wallet:", error);
+  //   }
+  // };
 
-  const handleWithdraw = async () => {
-    try {
-      const amount = ethers.utils.parseEther(withdrawAmount);
-      const tx = await smartContract?.withdraw(amount);
-      await tx.wait();
-      toast.success(`${withdrawAmount} ETH withdrawn successfully!`);
-      setWithdrawAmount("");
-      const newBalance = await getBalance(smartContract?.address);
-      setContractBalance(newBalance);
-    } catch (error) {
-      toast.error((error as any)?.data?.message || "An error occurred");
-      console.error("Error withdrawing funds:", error);
-    }
-  };
+  // const handleWithdraw = async () => {
+  //   try {
+  //     const amount = ethers.utils.parseEther(withdrawAmount);
+  //     const tx = await smartContract?.withdraw(amount);
+  //     await tx.wait();
+  //     toast.success(`${withdrawAmount} ETH withdrawn successfully!`);
+  //     setWithdrawAmount("");
+  //     const newBalance = await getBalance(smartContract?.address);
+  //     setContractBalance(newBalance);
+  //   } catch (error) {
+  //     toast.error((error as any)?.data?.message || "An error occurred");
+  //     console.error("Error withdrawing funds:", error);
+  //   }
+  // };
 
-  const handleWithdrawAll = async () => {
-    try {
-      const tx = await smartContract?.withdrawAll();
-      await tx.wait();
-      toast.success("All funds withdrawn successfully!");
-      const newBalance = await getBalance(smartContract?.address);
-      setContractBalance(newBalance);
-    } catch (error) {
-      toast.error((error as any)?.data?.message || "An error occurred");
-      console.error("Error withdrawing all funds:", error);
-    }
-  };
+  // const handleWithdrawAll = async () => {
+  //   try {
+  //     const tx = await smartContract?.withdrawAll();
+  //     await tx.wait();
+  //     toast.success("All funds withdrawn successfully!");
+  //     const newBalance = await getBalance(smartContract?.address);
+  //     setContractBalance(newBalance);
+  //   } catch (error) {
+  //     toast.error((error as any)?.data?.message || "An error occurred");
+  //     console.error("Error withdrawing all funds:", error);
+  //   }
+  // };
 
-  const handleTransferOwnership = async () => {
-    try {
-      const tx = await smartContract?.transferOwnership(newOwner);
-      await tx.wait();
-      toast.success("Ownership transferred successfully!");
-      setNewOwner("");
-    } catch (error) {
-      toast.error((error as any)?.data?.message || "An error occurred");
-      console.error("Error transferring ownership:", error);
-    }
-  };
+  // const handleTransferOwnership = async () => {
+  //   try {
+  //     const tx = await smartContract?.transferOwnership(newOwner);
+  //     await tx.wait();
+  //     toast.success("Ownership transferred successfully!");
+  //     setNewOwner("");
+  //   } catch (error) {
+  //     toast.error((error as any)?.data?.message || "An error occurred");
+  //     console.error("Error transferring ownership:", error);
+  //   }
+  // };
 
   if (contractError) {
     return <div className="text-red-500">{contractError}</div>;
   }
 
+  useEffect(() => {
+    const fetchHouseBalance = async () => {
+      const balance = await requestHouseBalance();
+      setHouseBalance(balance);
+    };
+
+    fetchHouseBalance();
+  }, []);
+
+  const handleResolveGame = async () => {
+    try {
+      const response = await requestResolveGame(gameId);
+      console.log(response, "response");
+    } catch (error) {
+      console.error("Error resolving game:", error);
+    }
+  };
+
   return (
-    <div className="h-fit p-8 bg-gray-600">
+    <div className="p-8 h-full bg-gray-600">
       <Toaster />
       <Header />
       <h1 className="text-2xl font-bold mb-4">Flip Contract Admin</h1>
       <p className="mb-4">Connected Address: {address}</p>
-      <p className="mb-4">Contract Balance: {contractBalance} ETH</p>
+      <p className="mb-4">Contract Balance: {houseBalance} USDC</p>
 
       <Card className="mb-4">
-        <CardHeader>Set House Wallet</CardHeader>
+        <CardHeader>Resolve Game</CardHeader>
         <CardContent>
           <div className="flex gap-2">
             <Input
               type="text"
-              placeholder="New House Wallet Address"
-              value={newHouseWallet}
-              onChange={(e) => setNewHouseWallet(e.target.value)}
+              placeholder="Game ID"
+              value={gameId}
+              onChange={(e) => setGameId(e.target.value)}
             />
-            <Button onClick={handleSetHouseWallet}>Set House Wallet</Button>
+            <Button onClick={handleResolveGame}>Resolve Game</Button>
           </div>
         </CardContent>
       </Card>
 
-      <Card className="mb-4">
+      {/* <Card className="mb-4">
         <CardHeader>Withdraw Funds</CardHeader>
         <CardContent>
           <div className="flex gap-2 mb-4">
@@ -176,9 +211,9 @@ const FlipAdmin = () => {
               value={withdrawAmount}
               onChange={(e) => setWithdrawAmount(e.target.value)}
             />
-            <Button onClick={handleWithdraw}>Withdraw</Button>
+            <Button>Withdraw</Button>
           </div>
-          <Button onClick={handleWithdrawAll}>Withdraw All</Button>
+          <Button>Withdraw All</Button>
         </CardContent>
       </Card>
 
@@ -192,10 +227,10 @@ const FlipAdmin = () => {
               value={newOwner}
               onChange={(e) => setNewOwner(e.target.value)}
             />
-            <Button onClick={handleTransferOwnership}>Transfer Ownership</Button>
+            <Button>Transfer Ownership</Button>
           </div>
         </CardContent>
-      </Card>
+      </Card> */}
 
       <Card className="mb-4">
         <CardHeader>Last 5 Games</CardHeader>

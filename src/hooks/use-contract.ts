@@ -1,5 +1,5 @@
 import * as contract from '@/../contract.json';
-import { totalBetAmount } from '@/db/action';
+// import { totalBetAmount } from '@/db/action';
 import { Contract, ethers } from 'ethers';
 import { JsonRpcProvider } from 'ethers/providers';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -130,8 +130,8 @@ export const useGetTotalWager = (address: string, gameType: keyof typeof Game) =
   const [totalWager, setTotalWager] = useState<string>();
 
   useEffect(() => {
-    totalBetAmount(address as string, gameType)
-      .then(wager => setTotalWager(wager[0]?.value ?? '0'));
+    // totalBetAmount(address as string, gameType)
+    //   .then(wager => setTotalWager(wager[0]?.value ?? '0'));
   }, [address, gameType]);
 
   return { totalWager };

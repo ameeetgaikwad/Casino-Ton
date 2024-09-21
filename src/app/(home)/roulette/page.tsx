@@ -1,27 +1,27 @@
 import { TransactionHistory } from "@/components/transaction-history";
-import { getAllTransaction } from "@/db/action";
+// import { getAllTransaction } from "@/db/action";
 import { Header } from "./_component/header";
 import { Roulette } from "./_component/roulette";
 import { RouletteProvider } from "./_component/store";
 import { ConnectButton } from "@/components/connect-button";
-
+import { TonConnectButton } from "@tonconnect/ui-react";
 export const revalidate = 0;
 
 export default async function Home() {
-  const transactionHistory = await getAllTransaction("ROULETTE");
+  // const transactionHistory = await getAllTransaction("ROULETTE");
 
   return (
     <main className=" md:flex flex-grow flex-col p-4 transition-all duration-150 ease-in md:ml-0">
       <RouletteProvider>
         <div className="hidden md:block">
-          <Header
+          {/* <Header
             lastTenOutcome={transactionHistory.map((o) => ({
               outcome: o.outcome,
             }))}
-          />
+          /> */}
         </div>
         <div className="flex gap-16 md:hidden">
-          <ConnectButton />
+          <TonConnectButton />
         </div>
 
         <h1 className="text-6xl font-heading text-primary mt-4 mb-4">
@@ -29,7 +29,7 @@ export default async function Home() {
         </h1>
         <Roulette />
       </RouletteProvider>
-      <TransactionHistory records={transactionHistory} />
+      {/* <TransactionHistory records={transactionHistory} /> */}
     </main>
   );
 }

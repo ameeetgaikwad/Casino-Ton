@@ -1,17 +1,80 @@
 // app/api/flip/route.ts
-import { NextRequest, NextResponse } from 'next/server';
-import { flipCoin, resolveGame } from '@/services/flipService';
+import { type NextRequest, NextResponse } from 'next/server';
+import { flipCoin, getGameCount, getGameEntries, getHouseBalance, resolveGame } from '@/services/flipService';
+import { protect, protectAdmin } from '@/middlewares/authMiddlewares';
 
 export async function POST(request: NextRequest) {
-    const { guess, playerAddress, amountBet } = await request.json();
-    const result = await flipCoin(guess, playerAddress, amountBet);
+    const { guess, amountBet } = await request.json();
+    console.log("POST request received", guess, amountBet);
+    const token = request.headers.get('Authorization')?.replace("Bearer ", "");
+
+    if (!token) {
+        return NextResponse.json({ error: 'No token provided' }, { status: 401 })
+    }
+    const user = await protect(token)
+
+    if (!user) {
+        return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
+    }
+    const result = await flipCoin(guess, user.address, amountBet);
+    if (!result) {
+        return NextResponse.json({ error: 'Failed to flip coin' }, { status: 500 })
+    }
     return NextResponse.json(result);
 }
 
 export async function PUT(request: NextRequest) {
-    const { gameId, result } = await request.json();
-    const resolvedGame = await resolveGame(gameId, result);
+    const { gameId } = await request.json();
+    console.log("PUT request received", gameId);
+    const token = request.headers.get('Authorization')?.replace("Bearer ", "");
+
+    if (!token) {
+        return NextResponse.json({ error: 'No token provided' }, { status: 401 })
+    }
+    const user = await protectAdmin(token)
+
+    if (!user) {
+        return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
+    }
+    const resolvedGame = await resolveGame(gameId);
+    if (!resolvedGame) {
+        return NextResponse.json({ error: 'Failed to resolve game' }, { status: 500 })
+    }
     return NextResponse.json(resolvedGame);
+}
+
+export async function GET(request: NextRequest) {
+    const { searchParams } = new URL(request.url);
+    const action = searchParams.get('action');
+    const token = request.headers.get('Authorization')?.replace("Bearer ", "");
+
+    if (!token) {
+        return NextResponse.json({ error: 'No token provided' }, { status: 401 });
+    }
+
+    const user = await protectAdmin(token);
+
+    if (!user) {
+        return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
+    }
+
+    if (action === 'count') {
+        const count = await getGameCount();
+        return NextResponse.json({ count });
+    }
+
+    if (action === 'entries') {
+        const limit = Number.parseInt(searchParams.get('limit') || '5');
+        const entries = await getGameEntries(limit);
+        return NextResponse.json(entries);
+    }
+
+    if (action === 'balance') {
+        const balance = await getHouseBalance();
+        return NextResponse.json({ balance });
+    }
+
+    return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
 }
 
 // export async function GET(request: NextRequest) {

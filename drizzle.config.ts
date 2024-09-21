@@ -18,7 +18,7 @@ export default defineConfig({
   dialect: "postgresql",
   // driver: "pg",
   dbCredentials: {
-    url: process.env.DATABASE_URL as string
+    url: 'postgresql://postgres.rbmvtiukwjpclklufbsb:ol4G557ubb2GqIJ6@aws-0-us-east-1.pooler.supabase.com:6543/postgres'
   },
   verbose: true,
   strict: true,

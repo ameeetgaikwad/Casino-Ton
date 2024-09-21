@@ -1,6 +1,6 @@
 {
-  "id": "18251976-25e7-4db1-937b-0c16d0b193be",
-  "prevId": "11a84c36-f198-490c-8e44-e2ab096ff37b",
+  "id": "5f6a8920-569d-47f0-a54d-ff6f7eff4ed7",
+  "prevId": "18251976-25e7-4db1-937b-0c16d0b193be",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -31,13 +31,13 @@
           "name": "value",
           "type": "bigint",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "tx_hash": {
           "name": "tx_hash",
           "type": "varchar(255)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "t_id": {
           "name": "t_id",

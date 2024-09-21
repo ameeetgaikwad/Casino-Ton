@@ -9,6 +9,7 @@ import LocalFont from "next/font/local";
 import "./globals.css";
 
 import { TonConnectUIProvider } from "@tonconnect/ui-react";
+import { AuthWrapper } from "@/components/AuthWrapper";
 
 import { Toaster } from "@/components/ui/sonner";
 //import { Provider } from '@/contexts/provider';
@@ -58,7 +59,7 @@ export default function RootLayout({
             <TonConnectUIProvider
               manifestUrl={process.env.NEXT_PUBLIC_MANIFEST_URL}
             >
-              {children}
+              <AuthWrapper>{children}</AuthWrapper>
             </TonConnectUIProvider>
           </RainbowProvider>
           <Toaster richColors theme="dark" />

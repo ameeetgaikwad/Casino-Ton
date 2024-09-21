@@ -36,7 +36,11 @@ export const BetForm = ({ fiatRate }: BetFormProps) => {
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <CoinSelection onSelection={(value) => field.onChange(value)} selected={field.value} {...field} />
+                <CoinSelection
+                  onSelection={(value) => field.onChange(value)}
+                  selected={field.value}
+                  {...field}
+                />
               </FormControl>
             </FormItem>
           )}

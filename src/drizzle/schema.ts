@@ -1,4 +1,5 @@
 import {
+    bigint,
     boolean,
     decimal,
     doublePrecision,
@@ -56,7 +57,7 @@ export const transactionHistory = pgTable("transaction_history", {
 export const users = pgTable('users', {
     id: uuid("id").notNull().primaryKey().defaultRandom(),
     address: varchar('address', { length: 255 }).notNull().unique(),
-    balance: integer('balance').notNull().default(0),
+    balance: bigint('balance', { mode: 'number' }).notNull().default(0),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
@@ -66,11 +67,11 @@ export const FLIP_STATUS = pgEnum('FLIP_STATUS', ["PENDING", "WON", "LOST", "CAN
 export const flip = pgTable('flip', {
     id: uuid("id").notNull().primaryKey().defaultRandom(),
     player: varchar('player', { length: 255 }).notNull().references(() => users.address),
-    amountBet: integer('amount_bet').notNull(),
+    amountBet: bigint('amount_bet', { mode: 'number' }).notNull(),
     guess: integer('guess').notNull(),
     winner: boolean('winner'),
-    totalPayout: integer('total_payout'),
-    totalProfit: integer('total_profit'),
+    totalPayout: bigint('total_payout', { mode: 'number' }),
+    totalProfit: bigint('total_profit', { mode: 'number' }),
     status: FLIP_STATUS("status").notNull().default('PENDING'),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
@@ -81,8 +82,8 @@ export const LOTTERY_STATUS = pgEnum('LOTTERY_STATUS', ["NOT_STARTED", "OPEN", "
 
 export const lottery = pgTable('lottery', {
     id: serial('id').primaryKey(),
-    prizePool: integer('prize_pool').notNull(),
-    ticketPrice: integer('ticket_price').notNull(),
+    prizePool: bigint('prize_pool', { mode: 'number' }).notNull(),
+    ticketPrice: bigint('ticket_price', { mode: 'number' }).notNull(),
     totalTickets: integer('total_tickets').notNull(),
     soldTickets: integer('sold_tickets').notNull().default(0),
     winner: varchar('winner', { length: 255 }).references(() => users.address),
@@ -96,7 +97,7 @@ export const tickets = pgTable('tickets', {
     lotteryId: integer('lottery_id').notNull().references(() => lottery.id),
     playerAddress: varchar('player_address', { length: 255 }).notNull().references(() => users.address),
     ticketNumber: integer('ticket_number').notNull(),
-    amount: integer('amount').notNull(),
+    amount: bigint('amount', { mode: 'number' }).notNull(),
     createdAt: timestamp('created_at').notNull().defaultNow(),
 });
 
@@ -104,10 +105,10 @@ export const TRANSACTION_STATUS = pgEnum('TRANSACTION_STATUS', ["PENDING", "CONF
 
 export const deposits = pgTable('deposits', {
     id: uuid("id").notNull().primaryKey().defaultRandom(),
-    from: varchar('address', { length: 255 }).references(() => users.address),
-    to: varchar('address', { length: 255 }).references(() => users.address),
-    value: integer('value').notNull(),
-    txHash: varchar('tx_hash', { length: 255 }).notNull().unique(),
+    from: varchar('from', { length: 255 }).references(() => users.address),
+    to: varchar('to', { length: 255 }).references(() => users.address),
+    value: bigint('value', { mode: 'number' }),
+    txHash: varchar('tx_hash', { length: 255 }).unique(),
     tId: uuid('t_id').notNull().unique(),
     status: TRANSACTION_STATUS("status").default('PENDING'),
     createdAt: timestamp('created_at').defaultNow().notNull(),
@@ -117,7 +118,7 @@ export const withdrawals = pgTable('withdrawals', {
     id: uuid("id").notNull().primaryKey().defaultRandom(),
     from: varchar('address', { length: 255 }).references(() => users.address),
     to: varchar('address', { length: 255 }).references(() => users.address),
-    value: integer('value').notNull(),
+    value: bigint('value', { mode: 'number' }).notNull(),
     txHash: varchar('tx_hash', { length: 255 }).notNull().unique(),
     tId: uuid('t_id').notNull().unique(),
     status: TRANSACTION_STATUS("status").default('PENDING'),
@@ -127,12 +128,12 @@ export const withdrawals = pgTable('withdrawals', {
 export const roulette = pgTable('roulette', {
     id: uuid('id').defaultRandom().primaryKey(),
     player: varchar('player', { length: 256 }).notNull(),
-    amountBet: integer('amount_bet').notNull(),
+    amountBet: bigint('amount_bet', { mode: 'number' }).notNull(),
     guess: integer('guess').notNull(),
     winner: boolean('winner').notNull(),
     ethInJackpot: integer('eth_in_jackpot').notNull(),
     guessType: integer('guess_type').notNull(),
-    payout: integer('payout').notNull(),
+    payout: bigint('payout', { mode: 'number' }).notNull(),
     createdAt: timestamp('created_at').defaultNow().notNull()
 });
 

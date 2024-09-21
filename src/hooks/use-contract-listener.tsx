@@ -1,5 +1,5 @@
 import { statusDialogRefFunc } from "@/components/status-dialog";
-import { saveTransactionData } from "@/db/action";
+// import { saveTransactionData } from "@/db/action";
 import BigNumber from "bignumber.js";
 import { Contract, ethers } from "ethers";
 import { useEffect } from "react";
@@ -52,19 +52,20 @@ export const useCoinContractListener = (
         if (playerAddress === address) {
           startTransaction(async () => {
             try {
-              await saveTransactionData(
-                {
-                  isWin,
-                  player: address,
-                  transaction: event.transactionHash,
-                  wager: totalBetAmounts,
-                  outcome: guess == 0 ? "HEAD" : "TAIL",
-                  gameType: "COIN",
-                  payout: totalPayout,
-                  profit: totalProfit,
-                },
-                "/coin"
-              );
+              // await saveTransactionData(
+              //   {
+              //     isWin,
+              //     player: address,
+              //     transaction: event.transactionHash,
+              //     wager: totalBetAmounts,
+              //     outcome: guess == 0 ? "HEAD" : "TAIL",
+              //     gameType: "COIN",
+              //     payout: totalPayout,
+              //     profit: totalProfit,
+              //   },
+              //   "/coin"
+              // );
+              console.log("temp");
             } catch (error) {
               console.error("Error saving transaction data:", error);
             }
@@ -129,19 +130,19 @@ export const useRouletteContractListener = (
           );
       if (playerAddress === address) {
         startTransition(async () => {
-          await saveTransactionData(
-            {
-              isWin,
-              player: address,
-              transaction: event.transactionHash,
-              wager: totalBetAmounts,
-              outcome: guess.toString(),
-              gameType: "ROULETTE",
-              payout: totalPayout,
-              profit: isWin ? totalProfit * -1 : totalProfit,
-            },
-            "/roulette"
-          );
+          // await saveTransactionData(
+          //   {
+          //     isWin,
+          //     player: address,
+          //     transaction: event.transactionHash,
+          //     wager: totalBetAmounts,
+          //     outcome: guess.toString(),
+          //     gameType: "ROULETTE",
+          //     payout: totalPayout,
+          //     profit: isWin ? totalProfit * -1 : totalProfit,
+          //   },
+          //   "/roulette"
+          // );
         });
       }
     };

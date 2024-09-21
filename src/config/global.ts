@@ -1,3 +1,3 @@
 export const globalConfig = {
-    houseAddress: '0x0000000000000000000000000000000000000000'
+    houseAddress: '0QAtwf9w_FmP-wPgiwmaJYRjq3KBgeLkMYj012h0xJMQOTlv'
 };

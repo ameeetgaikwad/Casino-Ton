@@ -1,8 +1,8 @@
 import { v4 as uuidv4 } from 'uuid';
 import { eq, sql } from 'drizzle-orm';
-import { db } from '@/db/index';
 import { lottery, Ticket, tickets, users } from '@/drizzle/schema';
 import { lotteryConfig } from '@/config/lottery';
+import { db } from '@/drizzle/db';
 
 export async function startLottery(prizePool: number, ticketPrice: number, totalTickets: number) {
     const newLottery = await db.insert(lottery).values({

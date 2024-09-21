@@ -1,6 +1,6 @@
 import { eq, sql } from 'drizzle-orm';
-import { db } from '@/db/index';
 import { roulette, users, Game } from '@/drizzle/schema';
+import { db } from '@/drizzle/db';
 
 enum GuessType {
     Number = 0,
