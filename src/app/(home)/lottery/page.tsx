@@ -6,7 +6,7 @@ import { Header } from "./_component/header";
 import { useContract } from "@/hooks/use-contract";
 import { MyLotteries } from "@/components/my-lotteries";
 import { Button } from "@/components/ui/button";
-import { tickets } from "@/db/schema/tickets";
+// import { tickets } from "@/db/schema/tickets";
 import { Switch } from "@/components/ui/switch";
 import { JsonRpcProvider, Web3Provider } from "ethers/providers";
 import { useCallback } from "react";
@@ -15,490 +15,6 @@ import { useAccount } from "wagmi";
 import { fr } from "ethers/wordlists";
 import { toast, Toaster } from "sonner";
 import { set } from "mobx";
-
-const USDTabi = [
-  {
-    inputs: [],
-    stateMutability: "nonpayable",
-    type: "constructor",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "spender",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "allowance",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "needed",
-        type: "uint256",
-      },
-    ],
-    name: "ERC20InsufficientAllowance",
-    type: "error",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "sender",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "balance",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "needed",
-        type: "uint256",
-      },
-    ],
-    name: "ERC20InsufficientBalance",
-    type: "error",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "approver",
-        type: "address",
-      },
-    ],
-    name: "ERC20InvalidApprover",
-    type: "error",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "receiver",
-        type: "address",
-      },
-    ],
-    name: "ERC20InvalidReceiver",
-    type: "error",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "sender",
-        type: "address",
-      },
-    ],
-    name: "ERC20InvalidSender",
-    type: "error",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "spender",
-        type: "address",
-      },
-    ],
-    name: "ERC20InvalidSpender",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "EnforcedPause",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "ExpectedPause",
-    type: "error",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "owner",
-        type: "address",
-      },
-    ],
-    name: "OwnableInvalidOwner",
-    type: "error",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-    ],
-    name: "OwnableUnauthorizedAccount",
-    type: "error",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "owner",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "spender",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "value",
-        type: "uint256",
-      },
-    ],
-    name: "Approval",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "previousOwner",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "newOwner",
-        type: "address",
-      },
-    ],
-    name: "OwnershipTransferred",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-    ],
-    name: "Paused",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "from",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "to",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "value",
-        type: "uint256",
-      },
-    ],
-    name: "Transfer",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-    ],
-    name: "Unpaused",
-    type: "event",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "owner",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "spender",
-        type: "address",
-      },
-    ],
-    name: "allowance",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "spender",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "amount",
-        type: "uint256",
-      },
-    ],
-    name: "approve",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-    ],
-    name: "balanceOf",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "value",
-        type: "uint256",
-      },
-    ],
-    name: "burn",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "value",
-        type: "uint256",
-      },
-    ],
-    name: "burnFrom",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "decimals",
-    outputs: [
-      {
-        internalType: "uint8",
-        name: "",
-        type: "uint8",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "name",
-    outputs: [
-      {
-        internalType: "string",
-        name: "",
-        type: "string",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "owner",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "pause",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "paused",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "renounceOwnership",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "symbol",
-    outputs: [
-      {
-        internalType: "string",
-        name: "",
-        type: "string",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "totalSupply",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "to",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "value",
-        type: "uint256",
-      },
-    ],
-    name: "transfer",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "from",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "to",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "value",
-        type: "uint256",
-      },
-    ],
-    name: "transferFrom",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "newOwner",
-        type: "address",
-      },
-    ],
-    name: "transferOwnership",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "unpause",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-];
 
 type Raffle = {
   lotteryId: number;
@@ -564,41 +80,41 @@ const RaffleGame = () => {
 
   const [USDTcontract, setUSDTcontract] = useState<any>();
 
-  const loadUsdtContractData = useCallback(async () => {
-    let _provider: JsonRpcProvider;
-    let _signer: ethers.providers.JsonRpcSigner | JsonRpcProvider;
+  // const loadUsdtContractData = useCallback(async () => {
+  //   let _provider: JsonRpcProvider;
+  //   let _signer: ethers.providers.JsonRpcSigner | JsonRpcProvider;
 
-    // Always create a JsonRpcProvider
-    _provider = new ethers.providers.JsonRpcProvider(provider_rpc_url, {
-      chainId: 97,
-      name: "Binance Smart Chain Testnet",
-    });
+  //   // Always create a JsonRpcProvider
+  //   _provider = new ethers.providers.JsonRpcProvider(provider_rpc_url, {
+  //     chainId: 97,
+  //     name: "Binance Smart Chain Testnet",
+  //   });
 
-    if ((window as any).ethereum && address) {
-      const walletProvider = new ethers.providers.Web3Provider(
-        (window as any).ethereum
-      );
-      _provider = walletProvider;
-      _signer = walletProvider.getSigner();
-    } else {
-      _signer = _provider; // Use the JsonRpcProvider as the signer if wallet is not connected
-    }
-    // const ethereum = (window as any).ethereum;
-    // var provider: Web3Provider | null = null;
-    // if (ethereum) {
-    //   await ethereum.enable();
-    //   provider = new ethers.providers.Web3Provider(ethereum);
-    // }
-    // if (!provider) return;
+  //   if ((window as any).ethereum && address) {
+  //     const walletProvider = new ethers.providers.Web3Provider(
+  //       (window as any).ethereum
+  //     );
+  //     _provider = walletProvider;
+  //     _signer = walletProvider.getSigner();
+  //   } else {
+  //     _signer = _provider; // Use the JsonRpcProvider as the signer if wallet is not connected
+  //   }
+  //   // const ethereum = (window as any).ethereum;
+  //   // var provider: Web3Provider | null = null;
+  //   // if (ethereum) {
+  //   //   await ethereum.enable();
+  //   //   provider = new ethers.providers.Web3Provider(ethereum);
+  //   // }
+  //   // if (!provider) return;
 
-    setUSDTcontract(
-      new ethers.Contract(
-        "0x97577f913209F32547349dEF49d40E7E1d2c7F28",
-        USDTabi,
-        _signer
-      )
-    );
-  }, [address]);
+  //   setUSDTcontract(
+  //     new ethers.Contract(
+  //       "0x97577f913209F32547349dEF49d40E7E1d2c7F28",
+  //       USDTabi,
+  //       _signer
+  //     )
+  //   );
+  // }, [address]);
 
   useEffect(() => {
     console.log(USDTcontract);
@@ -691,82 +207,82 @@ const RaffleGame = () => {
     }
   };
 
-  const onBuyTicket = async (lotteryId) => {
-    if (!address) {
-      toast.error("Connect wallet");
-      return;
-    }
-    try {
-      setLoading(true);
-      if (error) {
-        throw new Error(error);
-      }
-      if (!address) {
-        throw new Error(`Connect Wallet`);
-      }
-      if (!smartContract) {
-        throw new Error(`Contract not initialized`);
-      }
-      console.log("HAHHAHAHAA");
+  // const onBuyTicket = async (lotteryId) => {
+  //   if (!address) {
+  //     toast.error("Connect wallet");
+  //     return;
+  //   }
+  //   try {
+  //     setLoading(true);
+  //     if (error) {
+  //       throw new Error(error);
+  //     }
+  //     if (!address) {
+  //       throw new Error(`Connect Wallet`);
+  //     }
+  //     if (!smartContract) {
+  //       throw new Error(`Contract not initialized`);
+  //     }
+  //     console.log("HAHHAHAHAA");
 
-      var totalCost = megaRaffle!.amount * 1;
-      console.log(totalCost);
+  //     var totalCost = megaRaffle!.amount * 1;
+  //     console.log(totalCost);
 
-      console.log(USDTcontract);
+  //     console.log(USDTcontract);
 
-      const decimals = await USDTcontract.decimals();
+  //     const decimals = await USDTcontract.decimals();
 
-      const adjustedAmount = ethers.utils.parseUnits(
-        totalCost.toString(),
-        decimals
-      );
+  //     const adjustedAmount = ethers.utils.parseUnits(
+  //       totalCost.toString(),
+  //       decimals
+  //     );
 
-      const approval = await USDTcontract.approve(
-        smartContract.address,
-        adjustedAmount
-      );
-      // await approval.wait();
-      console.log(approval);
+  //     const approval = await USDTcontract.approve(
+  //       smartContract.address,
+  //       adjustedAmount
+  //     );
+  //     // await approval.wait();
+  //     console.log(approval);
 
-      console.log(totalCost);
+  //     console.log(totalCost);
 
-      const tx = await smartContract?.buyTickets(lotteryId, 1);
-      console.log(tx);
-      await tx.wait();
-      toast.success("Ticket purchased successfully");
-      initialLoadd();
-      setLoading(false);
-    } catch (err: any) {
-      setLoading(false);
-      toast.error((err as any)?.data?.message);
-      console.log(err);
-    }
-  };
+  //     const tx = await smartContract?.buyTickets(lotteryId, 1);
+  //     console.log(tx);
+  //     await tx.wait();
+  //     toast.success("Ticket purchased successfully");
+  //     initialLoadd();
+  //     setLoading(false);
+  //   } catch (err: any) {
+  //     setLoading(false);
+  //     toast.error((err as any)?.data?.message);
+  //     console.log(err);
+  //   }
+  // };
 
-  useEffect(() => {
-    if (!smartContract) {
-      initializeProvider();
-      console.log(smartContract);
-    }
+  // useEffect(() => {
+  //   if (!smartContract) {
+  //     initializeProvider();
+  //     console.log(smartContract);
+  //   }
 
-    try {
-      loadUsdtContractData();
-      initialLoadd();
-    } catch (err: any) {
-      console.log(err);
-    }
-  }, [smartContract, address]);
+  //   try {
+  //     loadUsdtContractData();
+  //     initialLoadd();
+  //   } catch (err: any) {
+  //     console.log(err);
+  //   }
+  // }, [smartContract, address]);
 
-  const buyTrendingRaffleTicket = (index) => {
-    setTrendingRaffles((prev) =>
-      prev.map((raffle, i) =>
-        i === index && raffle.ticketsSold < raffle.totalTickets
-          ? { ...raffle, ticketsSold: raffle.ticketsSold + 1 }
-          : raffle
-      )
-    );
-    // TODO: Implement API call to purchase ticket
-  };
+  // const buyTrendingRaffleTicket = (index) => {
+  //   setTrendingRaffles((prev) =>
+  //     prev.map((raffle, i) =>
+  //       i === index && raffle.ticketsSold < raffle.totalTickets
+  //         ? { ...raffle, ticketsSold: raffle.ticketsSold + 1 }
+  //         : raffle
+  //     )
+  //   );
+  //   // TODO: Implement API call to purchase ticket
+  // };
 
   return (
     <div className=" justify-center align-middle items-center  text-white h-full p-4 sm:p-6 lg:p-8 relative">
@@ -799,7 +315,7 @@ const RaffleGame = () => {
                 totalTickets={megaRaffle.totalTickets}
               />
               <Button
-                onClick={() => onBuyTicket(megaRaffle.lotteryId)}
+                // onClick={() => onBuyTicket(megaRaffle.lotteryId)}
                 className="font-heading my-6 text-xl w-full"
                 disabled={loading}
               >
@@ -862,7 +378,7 @@ const RaffleGame = () => {
           </div>
         </div>
 
-        <MyLotteries records={myLotteries} allLotteries={allLotteriesParent} />
+        <MyLotteries />
         <HowItWorks />
       </div>
       <Toaster />

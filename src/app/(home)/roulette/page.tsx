@@ -1,3 +1,4 @@
+"use client";
 import { TransactionHistory } from "@/components/transaction-history";
 // import { getAllTransaction } from "@/db/action";
 import { Header } from "./_component/header";

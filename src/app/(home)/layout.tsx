@@ -23,7 +23,7 @@ interface Props {
 }
 
 export default (props: Props) => {
-  const pathName = usePathname().slice(1);
+  const pathName = usePathname()?.slice(1) ?? "";
   const [history, setHistory] = useState<any>([]);
 
   // const transactionHistory = async () => {
@@ -41,18 +41,18 @@ export default (props: Props) => {
       case "flip":
         return (
           <FlipHeader
-            lastTenOutcome={history.map((o) => ({
-              outcome: o.outcome,
-            }))}
+            // lastTenOutcome={history.map((o) => ({
+            //   outcome: o.outcome,
+            // }))}
             isLayout={true}
           />
         );
       case "roulette":
         return (
           <RouletteHeader
-            lastTenOutcome={history.map((o) => ({
-              outcome: o.outcome,
-            }))}
+            // lastTenOutcome={history.map((o) => ({
+            //   outcome: o.outcome,
+            // }))}
             isLayout={true}
           />
         );

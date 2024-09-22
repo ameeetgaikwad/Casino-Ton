@@ -9,14 +9,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { InferSelectModel, schema } from "@/db";
+import { TransactionHistoryI } from "@/drizzle/schema";
 import { cn, shortContractAddress } from "@/lib/utils";
 import { toast } from "sonner";
 import { format } from "timeago.js";
 import { useCopyToClipboard } from "usehooks-ts";
 
 interface TransactionHistoryProps {
-  records: InferSelectModel<typeof schema.transactionHistory>[];
+  records: TransactionHistoryI[];
 }
 
 export function TransactionHistory({ records }: TransactionHistoryProps) {

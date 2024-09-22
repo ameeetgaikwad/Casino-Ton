@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from 'uuid';
 import { eq, sql } from 'drizzle-orm';
 import { lottery, Ticket, tickets, users } from '@/drizzle/schema';
 import { lotteryConfig } from '@/config/lottery';
@@ -127,6 +126,10 @@ export async function getPlayerTickets(playerAddress: string) {
 
 export async function getActiveLotteries() {
     return await db.select().from(lottery).where(eq(lottery.status, 'OPEN'));
+}
+
+export async function getAllLotteries() {
+    return await db.select().from(lottery);
 }
 
 export async function getPlayerLotteries(playerAddress: string) {

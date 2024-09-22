@@ -18,7 +18,7 @@ export const ConnectButton = () => {
 
   const pathname = usePathname();
   const { address, contract } = useContract(
-    pathname.includes("flip") ? "COIN" : "ROULETTE"
+    pathname?.includes("flip") ? "COIN" : "ROULETTE"
   );
   // const { contractBalance: houseBalance } = useGetContractBalance(contract.contractAddress);
   // const { contractBalance: walletBalance } = useGetContractBalance(account?.address || '');

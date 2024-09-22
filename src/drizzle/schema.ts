@@ -41,6 +41,10 @@ export const COIN = pgEnum('COIN', ["HEAD", "TAIL"])
 export const GAME_TYPE = pgEnum('GAME_TYPE', ["COIN", "ROULETTE", "LOTTERY"])
 
 
+
+
+
+
 export const transactionHistory = pgTable("transaction_history", {
     id: uuid("id").notNull().primaryKey().defaultRandom(),
     player: text("player").notNull(),
@@ -151,3 +155,7 @@ export type Lottery = typeof lottery.$inferSelect;
 export type NewLottery = typeof lottery.$inferInsert;
 export type Ticket = typeof tickets.$inferSelect;
 export type NewTicket = typeof tickets.$inferInsert;
+
+export type GameType = (typeof GAME_TYPE.enumValues)[number];
+export type TransactionHistoryI = typeof transactionHistory.$inferSelect;
+export type NewTransactionHistoryI = typeof transactionHistory.$inferInsert;

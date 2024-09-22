@@ -8,11 +8,30 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Toaster, toast } from "sonner";
-import { useAccount } from "wagmi";
+import { useTonAddress } from "@tonconnect/ui-react";
 import { useRouter } from "next/navigation";
 import { Header } from "../header";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { requestHouseBalance } from "@/services/helpers/flipHelper";
+import {
+  requestForceCompleteLottery,
+  requestRunLottery,
+  requestStartLottery,
+} from "@/services/helpers/lotteryHelper";
 
 interface Lottery {
   id: number;
@@ -26,34 +45,48 @@ interface Lottery {
 }
 
 const AdminDashboard = () => {
-  const { smartContract, error: contractError, getBalance } = useContract("LOTTERY");
-  const { address } = useAccount();
+  const {
+    smartContract,
+    error: contractError,
+    getBalance,
+  } = useContract("LOTTERY");
+  const address = useTonAddress();
   const router = useRouter();
   const [activeLotteries, setActiveLotteries] = useState<Lottery[]>([]);
   const [selectedLottery, setSelectedLottery] = useState("");
-  const [prizePool, setPrizePool] = useState("");
-  const [ticketPrice, setTicketPrice] = useState("");
-  const [totalTickets, setTotalTickets] = useState("");
+  const [prizePool, setPrizePool] = useState(0);
+  const [ticketPrice, setTicketPrice] = useState(0);
+  const [totalTickets, setTotalTickets] = useState(0);
   const [newAdminWallet, setNewAdminWallet] = useState("");
-  const [contractBalance, setContractBalance] = useState("0");
+  const [houseBalance, setHouseBalance] = useState(0);
   const [pastLotteries, setPastLotteries] = useState<Lottery[]>([]);
+  const [runLotteryId, setRunLotteryId] = useState(0);
+  const [forceCompleteLotteryId, setForceCompleteLotteryId] = useState(0);
+  useEffect(() => {
+    const fetchHouseBalance = async () => {
+      const balance = await requestHouseBalance();
+      setHouseBalance(balance);
+    };
 
-  const checkOwner = async () => {
-    if (smartContract && address) {
-      console.log("insid here");
+    fetchHouseBalance();
+  }, []);
 
-      try {
-        const owner = await smartContract.adminWallet();
-        console.log("OWNER", owner);
+  // const checkOwner = async () => {
+  //   if (smartContract && address) {
+  //     console.log("insid here");
 
-        if (owner.toLowerCase() !== address.toLowerCase()) {
-          router.push("/");
-        }
-      } catch (error) {
-        console.error("Error checking owner:", error);
-      }
-    }
-  };
+  //     try {
+  //       const owner = await smartContract.adminWallet();
+  //       console.log("OWNER", owner);
+
+  //       if (owner.toLowerCase() !== address.toLowerCase()) {
+  //         router.push("/");
+  //       }
+  //     } catch (error) {
+  //       console.error("Error checking owner:", error);
+  //     }
+  //   }
+  // };
 
   // //TODO: UNcomment this
   // useEffect(() => {
@@ -61,52 +94,55 @@ const AdminDashboard = () => {
   // }, [address, smartContract]);
   //TODO: UNcomment this
 
-  useEffect(() => {
-    const fetchActiveLotteries = async () => {
-      if (smartContract) {
-        try {
-          const lotteries = await smartContract?.getAllLotteries();
-          console.log("lottries", lotteries);
+  // useEffect(() => {
+  //   const fetchActiveLotteries = async () => {
+  //     if (smartContract) {
+  //       try {
+  //         const lotteries = await smartContract?.getAllLotteries();
+  //         console.log("lottries", lotteries);
 
-          setActiveLotteries(lotteries.filter((lottery) => lottery.status != 3));
-        } catch (error) {
-          console.error("Error fetching active lotteries:", error);
-        }
-      }
-    };
+  //         setActiveLotteries(
+  //           lotteries.filter((lottery) => lottery.status != 3)
+  //         );
+  //       } catch (error) {
+  //         console.error("Error fetching active lotteries:", error);
+  //       }
+  //     }
+  //   };
 
-    const fetchContractBalance = async () => {
-      const balance = await getBalance(smartContract?.address);
-      setContractBalance(balance);
-    };
-    const fetchPastLotteries = async () => {
-      if (smartContract) {
-        try {
-          const lotteries = await smartContract.getAllLotteries();
-          const completedLotteries = lotteries.filter((lottery) => lottery.status === 3); // Assuming 3 is the "Completed" status
-          setPastLotteries(completedLotteries);
-        } catch (error) {
-          console.error("Error fetching past lotteries:", error);
-        }
-      }
-    };
-    fetchActiveLotteries();
-    fetchContractBalance();
-    // fetchPastLotteries();
-  }, [smartContract]);
+  //   const fetchContractBalance = async () => {
+  //     const balance = await getBalance(smartContract?.address);
+  //     setContractBalance(balance);
+  //   };
+  //   // const fetchPastLotteries = async () => {
+  //   //   if (smartContract) {
+  //   //     try {
+  //   //       const lotteries = await smartContract.getAllLotteries();
+  //   //       const completedLotteries = lotteries.filter(
+  //   //         (lottery) => lottery.status === 3
+  //   //       ); // Assuming 3 is the "Completed" status
+  //   //       setPastLotteries(completedLotteries);
+  //   //     } catch (error) {
+  //   //       console.error("Error fetching past lotteries:", error);
+  //   //     }
+  //   //   }
+  //   // };
+  //   fetchActiveLotteries();
+  //   fetchContractBalance();
+  //   // fetchPastLotteries();
+  // }, [smartContract]);
 
-  const handleSelectLottery = (lotteryId) => {
-    setSelectedLottery(lotteryId);
-  };
+  // const handleSelectLottery = (lotteryId) => {
+  //   setSelectedLottery(lotteryId);
+  // };
 
   const handleStartLottery = async () => {
     try {
-      const tx = await smartContract?.startLottery(
+      const res = await requestStartLottery(
         prizePool,
         ticketPrice,
         totalTickets
       );
-      await tx.wait();
       toast.success("Lottery started successfully!");
     } catch (error) {
       toast.error((error as any)?.data?.message || "An error occurred");
@@ -116,8 +152,7 @@ const AdminDashboard = () => {
 
   const handleRunLottery = async () => {
     try {
-      const tx = await smartContract?.runLottery(selectedLottery);
-      await tx.wait();
+      const res = await requestRunLottery(runLotteryId);
       toast.success("Lottery run successfully!");
     } catch (error) {
       toast.error((error as any)?.data?.message || "An error occurred");
@@ -127,8 +162,7 @@ const AdminDashboard = () => {
 
   const handleForceCompleteLottery = async () => {
     try {
-      const tx = await smartContract?.forceCompleteLottery(selectedLottery);
-      await tx.wait();
+      const res = await requestForceCompleteLottery(forceCompleteLotteryId);
       toast.success("Lottery set to completed successfully!");
     } catch (error) {
       toast.error((error as any)?.data?.message || "An error occurred");
@@ -136,27 +170,27 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleWithdrawFunds = async () => {
-    try {
-      const tx = await smartContract?.withdrawFunds();
-      await tx.wait();
-      toast.success("Funds withdrawn successfully!");
-    } catch (error) {
-      toast.error((error as any)?.data?.message || "An error occurred");
-      console.error("Error withdrawing funds:", error);
-    }
-  };
+  // const handleWithdrawFunds = async () => {
+  //   try {
+  //     const tx = await smartContract?.withdrawFunds();
+  //     await tx.wait();
+  //     toast.success("Funds withdrawn successfully!");
+  //   } catch (error) {
+  //     toast.error((error as any)?.data?.message || "An error occurred");
+  //     console.error("Error withdrawing funds:", error);
+  //   }
+  // };
 
-  const handleSetAdminWallet = async () => {
-    try {
-      const tx = await smartContract?.setAdminWallet(newAdminWallet);
-      await tx.wait();
-      toast.success("Admin wallet set successfully!");
-    } catch (error) {
-      toast.error((error as any)?.data?.message || "An error occurred");
-      console.error("Error setting admin wallet:", error);
-    }
-  };
+  // const handleSetAdminWallet = async () => {
+  //   try {
+  //     const tx = await smartContract?.setAdminWallet(newAdminWallet);
+  //     await tx.wait();
+  //     toast.success("Admin wallet set successfully!");
+  //   } catch (error) {
+  //     toast.error((error as any)?.data?.message || "An error occurred");
+  //     console.error("Error setting admin wallet:", error);
+  //   }
+  // };
 
   if (contractError) {
     return <div className="text-red-500">{contractError}</div>;
@@ -171,8 +205,8 @@ const AdminDashboard = () => {
       <Toaster />
       <Header />
       <h1 className="text-2xl font-bold mb-4">Admin Dashboard</h1>
-      <p className="mb-4">Connected Address: {address}</p>
-      <p className="mb-4">Contract Balance: {contractBalance} BNB</p>
+      {/* <p className="mb-4">Connected Address: {address}</p> */}
+      <p className="mb-4">Contract Balance: {houseBalance} USDC</p>
 
       <Card className="mb-4">
         <CardHeader>Start New Lottery</CardHeader>
@@ -181,21 +215,21 @@ const AdminDashboard = () => {
             type="text"
             placeholder="Prize Pool (bnb)"
             value={prizePool}
-            onChange={(e) => setPrizePool(e.target.value)}
+            onChange={(e) => setPrizePool(Number(e.target.value))}
             className="mb-2"
           />
           <Input
             type="text"
             placeholder="Ticket Price (bnb)"
             value={ticketPrice}
-            onChange={(e) => setTicketPrice(e.target.value)}
+            onChange={(e) => setTicketPrice(Number(e.target.value))}
             className="mb-2"
           />
           <Input
             type="number"
             placeholder="Total Tickets"
             value={totalTickets}
-            onChange={(e) => setTotalTickets(e.target.value)}
+            onChange={(e) => setTotalTickets(Number(e.target.value))}
             className="mb-2"
           />
           <Button onClick={handleStartLottery}>Start Lottery</Button>
@@ -203,45 +237,49 @@ const AdminDashboard = () => {
       </Card>
 
       <Card className="mb-4">
-        <CardHeader>Manage Active Lotteries</CardHeader>
+        <CardHeader>Run Lottery</CardHeader>
         <CardContent>
           <div className="w-full flex flex-wrap mb-4">
-            {activeLotteries?.map((lottery, index) => (
-              <Button
-                key={index}
-                onClick={() => handleSelectLottery(lottery.id?.toString() ?? index.toString())}
-                variant={selectedLottery === (lottery.id?.toString() ?? index.toString()) ? "default" : "outline"}
-                className="w-fit m-4 font-  h-fit flex flex-wrap text-white border-2 border-white"
-              >
-                <div className="flex flex-col">
-                  <span>Lottery #{lottery.id?.toString() ?? index.toString()}</span>
-                  <span>PrizePool {lottery.prizePool?.toString() ?? index.toString()}</span>
-                  <span>Sold {`${lottery.soldTickets?.toString()} / ${lottery.totalTickets?.toString()}`}</span>
-                </div>
-              </Button>
-            ))}
+            <Input
+              type="number"
+              placeholder="Lottery ID"
+              value={runLotteryId}
+              onChange={(e) => setRunLotteryId(Number(e.target.value))}
+              className="mb-2"
+            />
+            <Button onClick={handleRunLottery}>Run Lottery</Button>
           </div>
-          {selectedLottery && (
-            <div className="flex flex-col sm:flex-row gap-2">
-              <Button onClick={handleRunLottery} className="flex-1">
-                Run Lottery
-              </Button>
-              <Button onClick={handleForceCompleteLottery} className="flex-1">
-                Complete Lottery
-              </Button>
-            </div>
-          )}
         </CardContent>
       </Card>
 
       <Card className="mb-4">
+        <CardHeader>Force Complete Lottery</CardHeader>
+        <CardContent>
+          <div className="w-full flex flex-wrap mb-4">
+            <Input
+              type="number"
+              placeholder="Lottery ID"
+              value={forceCompleteLotteryId}
+              onChange={(e) =>
+                setForceCompleteLotteryId(Number(e.target.value))
+              }
+              className="mb-2"
+            />
+            <Button onClick={handleForceCompleteLottery}>
+              Force Complete Lottery
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* <Card className="mb-4">
         <CardHeader>Withdraw Funds</CardHeader>
         <CardContent>
           <Button onClick={handleWithdrawFunds}>Withdraw Funds</Button>
         </CardContent>
-      </Card>
+      </Card> */}
 
-      <Card className="mb-4">
+      {/* <Card className="mb-4">
         <CardHeader>Set Admin Wallet</CardHeader>
         <CardContent>
           <Input
@@ -253,7 +291,7 @@ const AdminDashboard = () => {
           />
           <Button onClick={handleSetAdminWallet}>Set Admin Wallet</Button>
         </CardContent>
-      </Card>
+      </Card> */}
       <div className="space-y-6">
         <Card>
           <CardHeader>Past Lotteries</CardHeader>
@@ -273,8 +311,12 @@ const AdminDashboard = () => {
                 {pastLotteries.map((lottery) => (
                   <TableRow key={lottery.id.toString()}>
                     <TableCell>{lottery.id.toString()}</TableCell>
-                    <TableCell>{ethers.utils.formatEther(lottery.prizePool)} BNB</TableCell>
-                    <TableCell>{ethers.utils.formatEther(lottery.ticketPrice)} BNB</TableCell>
+                    <TableCell>
+                      {ethers.utils.formatEther(lottery.prizePool)} BNB
+                    </TableCell>
+                    <TableCell>
+                      {ethers.utils.formatEther(lottery.ticketPrice)} BNB
+                    </TableCell>
                     <TableCell>{lottery.totalTickets.toString()}</TableCell>
                     <TableCell>{lottery.soldTickets.toString()}</TableCell>
                     <TableCell>{lottery.winner}</TableCell>

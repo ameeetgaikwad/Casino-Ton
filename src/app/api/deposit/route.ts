@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { deposits, users } from "@/drizzle/schema"
-
-import { eq } from 'drizzle-orm'
-import { createAndSendToken, protect } from "@/middlewares/authMiddlewares";
+import { deposits } from "@/drizzle/schema"
+import { protect } from "@/middlewares/authMiddlewares";
 import { db } from "@/drizzle/db";
 
 export async function POST(request: NextRequest) {

@@ -1,5 +1,5 @@
 import { eq, sql } from 'drizzle-orm';
-import { roulette, users, Game } from '@/drizzle/schema';
+import { roulette, users, Roulette } from '@/drizzle/schema';
 import { db } from '@/drizzle/db';
 
 enum GuessType {
@@ -33,7 +33,7 @@ export async function playRoulette(
     const result = Math.floor(Math.random() * 37); // Generate a random number between 0 and 36
 
     let totalPayout = 0;
-    const games: Omit<Game, 'id' | 'createdAt'>[] = [];
+    const games: Omit<Roulette, 'id' | 'createdAt'>[] = [];
 
     for (let i = 0; i < guesses.length; i++) {
         const [won, payout] = processBet(guesses[i], guessTypes[i], betAmounts[i], result);
@@ -53,7 +53,7 @@ export async function playRoulette(
         });
     }
 
-    let insertedGames: Game[] = [];
+    let insertedGames: Roulette[] = [];
 
     await db.transaction(async (tx) => {
         await tx.update(users)
@@ -85,7 +85,7 @@ function processBet(guess: number, guessType: GuessType, betAmount: number, resu
     return [false, 0];
 }
 
-export async function getLastPlayedGames(limit: number = 10): Promise<Game[]> {
+export async function getLastPlayedGames(limit: number = 10): Promise<Roulette[]> {
     return await db.select().from(roulette).orderBy(sql`${roulette.createdAt} DESC`).limit(limit);
 }
 

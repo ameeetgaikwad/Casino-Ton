@@ -4,10 +4,12 @@ import React, { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import { useContract } from "@/hooks/use-contract";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { useTonAddress } from "@tonconnect/ui-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Toaster, toast } from "sonner";
-import { useAccount } from "wagmi";
+// import { useAccount } from "wagmi";
+
 import {
   Table,
   TableBody,
@@ -38,7 +40,7 @@ const FlipAdmin = () => {
     error: contractError,
     getBalance,
   } = useContract("COIN");
-  const { address } = useAccount();
+  const address = useTonAddress();
   const [contractBalance, setContractBalance] = useState("0");
   const [newHouseWallet, setNewHouseWallet] = useState("");
   const [withdrawAmount, setWithdrawAmount] = useState("");
@@ -183,7 +185,7 @@ const FlipAdmin = () => {
       <Toaster />
       <Header />
       <h1 className="text-2xl font-bold mb-4">Flip Contract Admin</h1>
-      <p className="mb-4">Connected Address: {address}</p>
+      {/* <p className="mb-4">Connected Address: {address}</p> */}
       <p className="mb-4">Contract Balance: {houseBalance} USDC</p>
 
       <Card className="mb-4">

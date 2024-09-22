@@ -2,11 +2,12 @@
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { createRef, forwardRef, useImperativeHandle, useState } from "react";
 import { COIN } from "./coin";
-import { schema } from "@/db";
+// import { schema } from "@/db";
 import { Roulette } from "./roulette";
 import { useRouter } from "next/navigation";
+import { GameType } from "@/drizzle/schema";
 
-type GameType = (typeof schema.GAME_TYPE.enumValues)[number];
+// type GameType = (typeof schema.GAME_TYPE.enumValues)[number];
 type Status = "pending" | "lose" | "win";
 export const statusDialogRef = createRef<any>();
 export const statusDialogRefFunc = {
