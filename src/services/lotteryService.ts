@@ -62,13 +62,14 @@ export async function buyTickets(lotteryId: number, numberOfTickets: number, pla
 }
 
 export async function runLottery(lotteryId: number) {
+    console.log('running lottery', lotteryId)
     const lotteryInfo = await db.select().from(lottery).where(eq(lottery.id, lotteryId)).limit(1);
 
     if (!lotteryInfo[0] || lotteryInfo[0].status !== 'CLOSED') {
         throw new Error("Lottery is not closed");
     }
 
-    const randomNumber = Math.floor(Math.random() * (lotteryInfo[0].soldTickets + 1));
+    const randomNumber = Math.floor(Math.random() * (lotteryInfo[0].soldTickets));
 
     const winningTicket = await db.select().from(tickets)
         .where(eq(tickets.lotteryId, lotteryId))
@@ -78,9 +79,10 @@ export async function runLottery(lotteryId: number) {
     if (!winningTicket[0]) {
         throw new Error("No winning ticket found");
     }
-
-    const houseFee = (lotteryInfo[0].prizePool * lotteryConfig.houseFeePercentage) / 100;
-    const winnerPrize = lotteryInfo[0].prizePool - houseFee;
+    console.log('lotteryInfo[0].prizePool', lotteryInfo[0].prizePool, lotteryConfig.houseFeePercentage)
+    const houseFee = (BigInt(lotteryInfo[0].prizePool) * BigInt(lotteryConfig.houseFeePercentage)) / BigInt(100);
+    console.log('houseFee', houseFee)
+    const winnerPrize = BigInt(lotteryInfo[0].prizePool) - houseFee;
 
     await db.transaction(async (tx) => {
         await tx.update(lottery)
@@ -102,7 +104,7 @@ export async function runLottery(lotteryId: number) {
     return {
         lotteryId,
         winner: winningTicket[0].playerAddress,
-        prize: winnerPrize
+        prize: winnerPrize.toString() // Convert BigInt to string
     };
 }
 
@@ -117,7 +119,14 @@ export async function forceCompleteLottery(lotteryId: number) {
 
 export async function getLotteryInfo(lotteryId: number) {
     const lotteryInfo = await db.select().from(lottery).where(eq(lottery.id, lotteryId)).limit(1);
-    return lotteryInfo[0];
+    if (lotteryInfo[0]) {
+        return {
+            ...lotteryInfo[0],
+            prizePool: lotteryInfo[0].prizePool.toString(),
+            ticketPrice: lotteryInfo[0].ticketPrice.toString()
+        };
+    }
+    return null;
 }
 
 export async function getPlayerTickets(playerAddress: string) {
@@ -134,6 +143,12 @@ export async function getAllLotteries() {
 
 export async function getPlayerLotteries(playerAddress: string) {
     const playerTickets = await db.select().from(tickets).where(eq(tickets.playerAddress, playerAddress));
+
+    if (playerTickets.length === 0) {
+        console.log('no tickets')
+        return []
+    }
+
     const lotteryIds = [...new Set(playerTickets.map(ticket => ticket.lotteryId))];
 
     const lotteries = await db.select().from(lottery).where(sql`${lottery.id} IN ${lotteryIds}`);

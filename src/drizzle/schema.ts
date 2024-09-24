@@ -135,7 +135,7 @@ export const roulette = pgTable('roulette', {
     amountBet: bigint('amount_bet', { mode: 'number' }).notNull(),
     guess: integer('guess').notNull(),
     winner: boolean('winner').notNull(),
-    ethInJackpot: integer('eth_in_jackpot').notNull(),
+    USDCInJackpot: integer('usdc_in_jackpot').notNull(),
     guessType: integer('guess_type').notNull(),
     payout: bigint('payout', { mode: 'number' }).notNull(),
     createdAt: timestamp('created_at').defaultNow().notNull()

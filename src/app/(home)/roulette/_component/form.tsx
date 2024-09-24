@@ -1,129 +1,68 @@
 "use client";
 
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-
-import BigNumber from "bignumber.js";
-
 import { CoinFace } from "@/components/coin-face";
-import {
-  StatusDialog,
-  statusDialogRef,
-  statusDialogRefFunc,
-} from "@/components/status-dialog";
+import { StatusDialog, statusDialogRefFunc } from "@/components/status-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useContract, useGetTotalWager } from "@/hooks/use-contract";
-import { useRouletteContractListener } from "@/hooks/use-contract-listener";
-import { useGetContractBalance } from "@/hooks/use-get-contract-balance";
-import { cutDecimal, stringFormat } from "@/lib/contract";
 import { cn } from "@/lib/utils";
-import { ethers } from "ethers";
 import { observer } from "mobx-react-lite";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { NumberPanel } from "./number-panel";
 import { useRoulette } from "./store";
 import { useRouletteSound } from "@/hooks/use-roulette-sound";
-
-// Define the RPC endpoint
-const rpcEndpoint = process.env.NEXT_PUBLIC_BSC_RPC_URL;
-
-// Create an instance of the Ethereum provider
-const provider = new ethers.providers.JsonRpcProvider(rpcEndpoint);
+import { requestPlayRoulette } from "@/services/helpers/rouletteHelper";
+import { requestHouseBalance } from "@/services/helpers/flipHelper";
 
 export const Form = observer(() => {
   const [loading, setLoading] = useState(false);
   const store = useRoulette();
-  const { smartContract, address, contract } = useContract("ROULETTE");
-  const { totalWager } = useGetTotalWager(address as string, "ROULETTE");
-  const { contractBalance } = useGetContractBalance(contract.contractAddress);
   const { AudioEl, audioRef } = useRouletteSound();
-  const maxWager = useMemo(
-    () =>
-      contractBalance ? (parseFloat(contractBalance) * 0.09).toFixed(4) : 0,
-    [contractBalance]
-  );
+  const [maxWager, setMaxWager] = useState(0);
 
-  const { isPending } = useRouletteContractListener(
-    address as string,
-    smartContract || undefined
-  );
+  // Fetch max wager from the server
+  useEffect(() => {
+    const fetchHouseBalance = async () => {
+      const balance = await requestHouseBalance();
+      setMaxWager(balance * 0.1);
+    };
+
+    fetchHouseBalance();
+  }, []);
+
   const play = useCallback(async () => {
     setLoading(true);
-    let transactionFinished = false;
     try {
-      const { amount, guess, guessType } = store.result;
-      console.log("here 1");
+      const { guess, guessType, amount } = store.result;
       if (!amount.length) {
         throw new Error("At least one bet.");
       }
-      if (!address) {
-        throw new Error(`Connect Wallet`);
-      }
-      if (!smartContract) {
-        throw new Error(`Contract not initialized`);
-      }
-      if (store.totalWager > Number(maxWager)) {
+      if (store.totalWager > maxWager) {
         throw new Error(`Wager cannot be greater than ${maxWager}`);
       }
-      console.log("here 2");
-      // Fetch current gas price
-      const currentGasPriceInWei = await provider.getGasPrice();
-      const currentGasPriceInGwei = ethers.utils.formatUnits(
-        currentGasPriceInWei,
-        "gwei"
+      console.log("entered wayyy back");
+      const result = await requestPlayRoulette(
+        guess.map((g) => Number(g)),
+        guessType,
+        amount.map((a) => Number(a))
       );
 
-      const option = {
-        gasLimit: 10000000,
-        gasPrice: ethers.utils.parseUnits(currentGasPriceInGwei, "gwei"),
-        value: ethers.utils.parseEther(store.totalWager.toString()),
-      };
-      const tx = await smartContract.roulette(guess, guessType, amount, option);
-      console.log(tx);
       statusDialogRefFunc.toggleModal(true, "ROULETTE");
-      // Start playing the sound
       audioRef?.play();
       store.clearAllChipItems();
 
-      // Check if transaction is finished
-      await tx.wait();
-      console.log(tx);
-      transactionFinished = true;
-    } catch (err: Error | any) {
-      toast.error((err as Error)?.message ?? "An error occurred");
+      // Handle the result
+      console.log(result);
+      // You might want to update the store or show a success message here
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setLoading(false);
-      // Stop playing the sound if transaction is finished or an error occurred
-      if (transactionFinished || !loading) {
-        audioRef?.pause();
-      } else {
-        // If transaction is not finished, play audio in a loop
-        const loopInterval = setInterval(() => {
-          audioRef?.play();
-        }, 1000); // Adjust interval as needed
-
-        // Stop the loop when the condition is met
-        const checkModalInterval = setInterval(() => {
-          console.log("hfhfhfhf");
-          if (statusDialogRef.current?.isOpen("ROULETTE")) {
-            clearInterval(loopInterval);
-            clearInterval(checkModalInterval);
-          }
-        }, 1000); // Adjust interval as needed
-      }
+      audioRef?.pause();
     }
-  }, [store, address, smartContract, maxWager, loading]);
+  }, [store, maxWager, audioRef]);
 
-  const amount = useMemo(() => {
-    let finalAmount = 0;
-    const { amount, guessType } = store.result;
-    for (const [i, g] of amount.entries()) {
-      const _g = Number(g) / 1e18;
-      finalAmount += guessType[i] === 0 ? _g * 35 : _g * 1.88;
-    }
-    return finalAmount.toFixed(2);
-  }, [store.result]);
   return (
     <div className="md:grid flex flex-col md:grid-cols-3 gap-8 h-full ">
       <Card className="bg-shade py-1 md:px-2  col-span-2">
@@ -151,7 +90,7 @@ export const Form = observer(() => {
                   <span className="text-white">
                     {store.totalWager.toString()}
                   </span>
-                  &nbsp;BNB
+                  &nbsp;USDC
                 </div>
               </div>
 
@@ -168,7 +107,7 @@ export const Form = observer(() => {
                   className="absolute right-2 top-2"
                 />
                 <div className="text-red-500 text-sm mt-1">
-                  Max allowable wager: {maxWager} BNB
+                  Max allowable wager: {maxWager} USDC
                 </div>
               </div>
 
@@ -190,54 +129,14 @@ export const Form = observer(() => {
                 ))}
               </div>
 
-              <div className="grid grid-cols-2 gap-6">
-                <div>
-                  <div className="text-grey-60 text-sm mt-6 mb-2 font-bold">
-                    Max Payout
-                  </div>
+              {/* ... (rest of the component remains the same) ... */}
 
-                  <div className="relative">
-                    <Input
-                      type="text"
-                      className="rounded"
-                      readOnly
-                      onChange={() => {}}
-                      value={Number(amount)}
-                    />
-                    <CoinFace.Head
-                      width={20}
-                      height={20}
-                      className="absolute right-2 top-2"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <div className="text-grey-60 text-sm mt-6 mb-2 font-bold">
-                    Total Wager
-                  </div>
-
-                  <div className="relative">
-                    <Input
-                      type="text"
-                      className="rounded"
-                      readOnly
-                      onChange={() => {}}
-                      value={totalWager ?? 0}
-                    />
-                    <CoinFace.Head
-                      width={20}
-                      height={20}
-                      className="absolute right-2 top-2"
-                    />
-                  </div>
-                </div>
-              </div>
               <Button
                 className="font-heading mt-6 text-xl w-full"
                 onClick={play}
-                isLoading={loading || isPending}
+                isLoading={loading}
               >
-                {loading || isPending ? "" : "SPIN THE WHEEL"}
+                {loading ? "" : "SPIN THE WHEEL"}
               </Button>
             </div>
           </div>

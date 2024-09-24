@@ -1,19 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { playRoulette, getLastPlayedGames, withdrawFunds } from '@/services/rouletteService';
+import { playRoulette, getLastPlayedGames } from '@/services/rouletteService';
+import { protect } from '@/middlewares/authMiddlewares';
 
 export async function POST(request: NextRequest) {
-    const { action } = await request.json();
+    const { action, guesses, guessTypes, betAmounts } = await request.json();
+    console.log("got that post req", guesses, guessTypes, betAmounts);
+    const token = request.headers.get('Authorization')?.replace("Bearer ", "");
+
+    if (!token) {
+        return NextResponse.json({ error: 'No token provided' }, { status: 401 })
+    }
+    const user = await protect(token)
+
+    if (!user) {
+        return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
+    }
 
     switch (action) {
         case 'play': {
-            const { guesses, guessTypes, betAmounts, playerAddress } = await request.json();
-            const result = await playRoulette(guesses, guessTypes, betAmounts, playerAddress);
+            const result = await playRoulette(guesses, guessTypes, betAmounts, user.address);
             return NextResponse.json(result);
-        }
-        case 'withdraw': {
-            const { amount, ownerAddress } = await request.json();
-            await withdrawFunds(amount, ownerAddress);
-            return NextResponse.json({ success: true });
         }
         default:
             return NextResponse.json({ error: 'Invalid action' }, { status: 400 });

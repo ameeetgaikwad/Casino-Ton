@@ -153,7 +153,11 @@ export async function GET(request: NextRequest) {
         case "getPlayerLotteries": {
             const player = searchParams.get("playerAddress");
             if (player) {
+                console.log(player, 'reached player22');
                 const playerLotteries = await getPlayerLotteries(player);
+                if (playerLotteries.length === 0) {
+                    return NextResponse.json([], { status: 200 });
+                }
                 return NextResponse.json(playerLotteries);
             }
             break;

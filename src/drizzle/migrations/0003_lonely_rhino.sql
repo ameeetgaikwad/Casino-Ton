@@ -1,0 +1,1 @@
+ALTER TABLE "roulette" RENAME COLUMN "eth_in_jackpot" TO "usdc_in_jackpot";

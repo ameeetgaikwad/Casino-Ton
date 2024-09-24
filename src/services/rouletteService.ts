@@ -22,13 +22,13 @@ export async function playRoulette(
 
     const totalBetAmount = betAmounts.reduce((a, b) => a + b, 0);
     const userBalance = await db.select({ balance: users.balance }).from(users).where(eq(users.address, playerAddress));
-
+    console.log(userBalance, totalBetAmount);
     if (userBalance[0].balance < totalBetAmount) {
         throw new Error("Insufficient balance");
     }
 
-    const houseEdgeCut = (totalBetAmount * HOUSE_FEE_PERCENTAGE) / 100;
-    const actualBet = totalBetAmount - houseEdgeCut;
+    // const houseEdgeCut = (totalBetAmount * HOUSE_FEE_PERCENTAGE) / 100;
+    const actualBet = totalBetAmount;
 
     const result = Math.floor(Math.random() * 37); // Generate a random number between 0 and 36
 
@@ -47,7 +47,7 @@ export async function playRoulette(
             amountBet: betAmounts[i],
             guess: guesses[i],
             winner: won,
-            ethInJackpot: actualBet,
+            USDCInJackpot: actualBet,
             guessType: guessTypes[i],
             payout: payout
         });
@@ -57,12 +57,12 @@ export async function playRoulette(
 
     await db.transaction(async (tx) => {
         await tx.update(users)
-            .set({ balance: sql`${users.balance}-${totalBetAmount}` })
+            .set({ balance: sql`${users.balance} - ${BigInt(totalBetAmount)}` })
             .where(eq(users.address, playerAddress));
 
         if (totalPayout > 0) {
             await tx.update(users)
-                .set({ balance: sql`${users.balance}+${totalPayout}` })
+                .set({ balance: sql`${users.balance} + ${BigInt(totalPayout)}` })
                 .where(eq(users.address, playerAddress));
         }
 
@@ -85,18 +85,18 @@ function processBet(guess: number, guessType: GuessType, betAmount: number, resu
     return [false, 0];
 }
 
-export async function getLastPlayedGames(limit: number = 10): Promise<Roulette[]> {
+export async function getLastPlayedGames(limit = 10): Promise<Roulette[]> {
     return await db.select().from(roulette).orderBy(sql`${roulette.createdAt} DESC`).limit(limit);
 }
 
-export async function withdrawFunds(amount: number, ownerAddress: string): Promise<void> {
-    const ownerBalance = await db.select({ balance: users.balance }).from(users).where(eq(users.address, ownerAddress));
+// export async function withdrawFunds(amount: number, ownerAddress: string): Promise<void> {
+//     const ownerBalance = await db.select({ balance: users.balance }).from(users).where(eq(users.address, ownerAddress));
 
-    if (ownerBalance[0].balance < amount) {
-        throw new Error("Insufficient balance");
-    }
+//     if (ownerBalance[0].balance < amount) {
+//         throw new Error("Insufficient balance");
+//     }
 
-    await db.update(users)
-        .set({ balance: sql`${users.balance}-${amount}` })
-        .where(eq(users.address, ownerAddress));
-}
+//     await db.update(users)
+//         .set({ balance: sql`${users.balance}-${amount}` })
+//         .where(eq(users.address, ownerAddress));
+// }

@@ -106,7 +106,23 @@ export const requestActiveLotteries = async () => {
     });
 
     const result = await res.json();
-    console.log(result, 'result');
+    console.log(result, 'result of all lotteries');
     return result;
 }
 
+export const requestMyLotteries = async (player: string) => {
+    console.log(player, 'player');
+    const cookies = new Cookies();
+    const token = cookies.get('token');
+    const res = await fetch(`/api/lottery?action=getPlayerLotteries&playerAddress=${player}`, {
+        method: 'GET',
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+    });
+
+    const result = await res.json();
+    console.log(result, 'result of my lotteries');
+    return result;
+}

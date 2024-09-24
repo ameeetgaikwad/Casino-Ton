@@ -16,6 +16,7 @@
 // //   getSecureRandomBytes,
 // // } from "ton-crypto";
 // import { requestDepositUSDC } from "@/services/helpers/depositHelper";
+// import { Button } from "@/components/ui/button";
 
 // export default function Tontest() {
 //   // const client = new TonClient({
@@ -249,13 +250,11 @@
 //     <div>
 //       Test
 //       <TonConnectButton />
-//       <button
-//         type="button"
-//         onClick={sendTransaction}
-//         className="bg-red-500 p-4"
-//       >
-//         Send Transaction
-//       </button>
+//       <div className="flex justify-center items-center h-48">
+//         <Button type="button" onClick={sendTransaction} className="">
+//           Send USDC
+//         </Button>
+//       </div>
 //       {/* <button onClick={signW} className="bg-red-500 p-4 ml-4">
 //         sign
 //       </button>

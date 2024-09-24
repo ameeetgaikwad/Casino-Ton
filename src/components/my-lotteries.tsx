@@ -14,24 +14,61 @@ import { useCopyToClipboard } from "usehooks-ts";
 
 import { useEffect, useState } from "react";
 import { Switch } from "@/components/ui/switch";
-import { requestActiveLotteries } from "@/services/helpers/lotteryHelper";
+import {
+  requestActiveLotteries,
+  requestBuyTickets,
+  requestMyLotteries,
+} from "@/services/helpers/lotteryHelper";
 import type { Lottery } from "@/drizzle/schema";
 import { useTonAddress } from "@tonconnect/ui-react";
 import { Button } from "./ui/button";
+import { toast } from "sonner";
 
 export function MyLotteries() {
   const [_, copy] = useCopyToClipboard();
   const [myLotteriesSelected, setMyLotteriesSelected] = useState(true);
 
-  const [currLotteries, setCurrLotteries] = useState<Lottery[]>();
+  const [allLotteries, setAllLotteries] = useState<Lottery[]>();
+  const [myLotteries, setMyLotteries] = useState<Lottery[]>();
+
+  const currLotteries = myLotteriesSelected ? myLotteries : allLotteries;
+  const address = useTonAddress();
 
   useEffect(() => {
     requestActiveLotteries().then((res) => {
-      setCurrLotteries(res);
+      setAllLotteries(res);
     });
   }, []);
 
-  const address = useTonAddress();
+  useEffect(() => {
+    if (address) {
+      requestMyLotteries(address).then((res) => {
+        setMyLotteries(res);
+      });
+    }
+  }, [address]);
+
+  const handleBuyTickets = async (
+    lotteryId: number,
+    numberOfTickets: number,
+    playerAddress: string
+  ) => {
+    try {
+      toast.loading("Purchasing tickets...");
+      const res = await requestBuyTickets(
+        lotteryId,
+        numberOfTickets,
+        playerAddress
+      );
+      toast.dismiss();
+      toast.success("Tickets purchased successfully");
+      console.log(res, "res");
+    } catch (err) {
+      toast.dismiss();
+      console.log(err, "err");
+      toast.error("Failed to purchase tickets");
+    }
+  };
 
   return (
     <Card className="bg-shade mt-8 text-center">
@@ -64,7 +101,7 @@ export function MyLotteries() {
             </TableRow>
           </TableHeader>
           <TableBody className="font-bold">
-            {currLotteries && currLotteries.length === 0 ? (
+            {currLotteries && currLotteries?.length === 0 ? (
               <TableRow>
                 <TableCell
                   colSpan={7}
@@ -113,7 +150,13 @@ export function MyLotteries() {
                     </div>
                   </TableCell>
                   <TableCell>
-                    <Button className="p-1 text-xs font-light">
+                    <Button
+                      className="p-1 text-xs font-light"
+                      onClick={() => {
+                        handleBuyTickets(record.id, 1, address);
+                      }}
+                      disabled={record.status !== "OPEN"}
+                    >
                       Buy Lottery
                     </Button>
                   </TableCell>

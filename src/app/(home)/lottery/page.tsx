@@ -120,92 +120,92 @@ const RaffleGame = () => {
     console.log(USDTcontract);
   }, [USDTcontract]);
 
-  const initialLoadd = async () => {
-    try {
-      if (error) {
-        throw new Error(error);
-      }
-      //   if (!address) {
-      //     throw new Error(`Connect Wallet`);
-      //   }
-      if (!smartContract) {
-        await initializeProvider();
-        // throw new Error(`Contract not initialized`);
-      }
+  // const initialLoadd = async () => {
+  //   try {
+  //     if (error) {
+  //       throw new Error(error);
+  //     }
+  //     //   if (!address) {
+  //     //     throw new Error(`Connect Wallet`);
+  //     //   }
+  //     if (!smartContract) {
+  //       await initializeProvider();
+  //       // throw new Error(`Contract not initialized`);
+  //     }
 
-      let tx = await smartContract?.getActiveLotteries();
-      console.log("tx", tx);
+  //     let tx = await smartContract?.getActiveLotteries();
+  //     console.log("tx", tx);
 
-      let activeLotteries: any[] = [];
+  //     let activeLotteries: any[] = [];
 
-      let bestLottery: Raffle = {} as Raffle;
+  //     let bestLottery: Raffle = {} as Raffle;
 
-      for (let i = 0; i < tx.length; i++) {
-        const thisLottery = {
-          lotteryId: tx[i][0],
-          amount: parseInt(tx[i][2]._hex, 16),
-          ticketsSold: parseInt(tx[i][4]._hex, 16),
-          totalTickets: parseInt(tx[i][3]._hex, 16),
-          isSoldOut: tx[i][6] != 1 ? true : false,
-          prizePool: parseInt(tx[i][1]._hex, 16),
-        };
+  //     for (let i = 0; i < tx.length; i++) {
+  //       const thisLottery = {
+  //         lotteryId: tx[i][0],
+  //         amount: parseInt(tx[i][2]._hex, 16),
+  //         ticketsSold: parseInt(tx[i][4]._hex, 16),
+  //         totalTickets: parseInt(tx[i][3]._hex, 16),
+  //         isSoldOut: tx[i][6] != 1 ? true : false,
+  //         prizePool: parseInt(tx[i][1]._hex, 16),
+  //       };
 
-        activeLotteries.push(thisLottery);
+  //       activeLotteries.push(thisLottery);
 
-        if (
-          !bestLottery.prizePool ||
-          bestLottery.totalTickets - bestLottery.ticketsSold >
-            thisLottery.totalTickets - thisLottery.ticketsSold
-        ) {
-          bestLottery = thisLottery;
-        }
-      }
-      setTrendingRaffles(activeLotteries);
-      setMegaRaffle(bestLottery);
-      if (!selectedLotteryId) {
-        setSelectedLotteryId(bestLottery.lotteryId);
-      }
+  //       if (
+  //         !bestLottery.prizePool ||
+  //         bestLottery.totalTickets - bestLottery.ticketsSold >
+  //           thisLottery.totalTickets - thisLottery.ticketsSold
+  //       ) {
+  //         bestLottery = thisLottery;
+  //       }
+  //     }
+  //     setTrendingRaffles(activeLotteries);
+  //     setMegaRaffle(bestLottery);
+  //     if (!selectedLotteryId) {
+  //       setSelectedLotteryId(bestLottery.lotteryId);
+  //     }
 
-      tx = await smartContract?.getPlayerLotteries(address);
-      let myLotteriesData: any[] = [];
+  //     tx = await smartContract?.getPlayerLotteries(address);
+  //     let myLotteriesData: any[] = [];
 
-      for (let i = 0; i < tx.length; i++) {
-        myLotteriesData.push({
-          lotteryId: parseInt(tx[i][0]._hex, 16),
-          ticketsPurchased: parseInt(tx[i][1]._hex, 16),
-          ticketPrice: parseInt(tx[i][2]._hex, 16),
-          status: tx[i][3],
-          remainingTickets: parseInt(tx[i][4]._hex, 16),
-          prizePool: parseInt(tx[i][5]._hex, 16),
-          winner: tx[i][6],
-        });
-      }
+  //     for (let i = 0; i < tx.length; i++) {
+  //       myLotteriesData.push({
+  //         lotteryId: parseInt(tx[i][0]._hex, 16),
+  //         ticketsPurchased: parseInt(tx[i][1]._hex, 16),
+  //         ticketPrice: parseInt(tx[i][2]._hex, 16),
+  //         status: tx[i][3],
+  //         remainingTickets: parseInt(tx[i][4]._hex, 16),
+  //         prizePool: parseInt(tx[i][5]._hex, 16),
+  //         winner: tx[i][6],
+  //       });
+  //     }
 
-      setMyLotteries(myLotteriesData);
+  //     setMyLotteries(myLotteriesData);
 
-      tx = await smartContract?.getAllLotteries();
-      let completedLotteries: any[] = [];
-      console.log(tx.toString());
-      for (let i = 0; i < tx.length; i++) {
-        if (tx[i][6] === 2 || tx[i][6] === 3) {
-          completedLotteries.push({
-            lotteryId: parseInt(tx[i][0]._hex, 16),
-            ticketsPurchased: parseInt(tx[i][4]._hex, 16),
-            ticketPrice: parseInt(tx[i][2]._hex, 16),
-            status: tx[i][6],
-            remainingTickets:
-              parseInt(tx[i][3]._hex, 16) - parseInt(tx[i][4]._hex, 16),
-            prizePool: parseInt(tx[i][1]._hex, 16),
-            winner: tx[i][5],
-          });
-        }
-      }
-      console.log(completedLotteries), "jhbjrbf";
-      setAllLotteriesParent(completedLotteries);
-    } catch (err: any) {
-      console.log(err);
-    }
-  };
+  //     tx = await smartContract?.getAllLotteries();
+  //     let completedLotteries: any[] = [];
+  //     console.log(tx.toString());
+  //     for (let i = 0; i < tx.length; i++) {
+  //       if (tx[i][6] === 2 || tx[i][6] === 3) {
+  //         completedLotteries.push({
+  //           lotteryId: parseInt(tx[i][0]._hex, 16),
+  //           ticketsPurchased: parseInt(tx[i][4]._hex, 16),
+  //           ticketPrice: parseInt(tx[i][2]._hex, 16),
+  //           status: tx[i][6],
+  //           remainingTickets:
+  //             parseInt(tx[i][3]._hex, 16) - parseInt(tx[i][4]._hex, 16),
+  //           prizePool: parseInt(tx[i][1]._hex, 16),
+  //           winner: tx[i][5],
+  //         });
+  //       }
+  //     }
+  //     console.log(completedLotteries), "jhbjrbf";
+  //     setAllLotteriesParent(completedLotteries);
+  //   } catch (err: any) {
+  //     console.log(err);
+  //   }
+  // };
 
   // const onBuyTicket = async (lotteryId) => {
   //   if (!address) {

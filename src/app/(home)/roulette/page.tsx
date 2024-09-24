@@ -15,11 +15,11 @@ export default async function Home() {
     <main className=" md:flex flex-grow flex-col p-4 transition-all duration-150 ease-in md:ml-0">
       <RouletteProvider>
         <div className="hidden md:block">
-          {/* <Header
-            lastTenOutcome={transactionHistory.map((o) => ({
-              outcome: o.outcome,
-            }))}
-          /> */}
+          <Header
+          // lastTenOutcome={transactionHistory.map((o) => ({
+          //   outcome: o.outcome,
+          // }))}
+          />
         </div>
         <div className="flex gap-16 md:hidden">
           <TonConnectButton />

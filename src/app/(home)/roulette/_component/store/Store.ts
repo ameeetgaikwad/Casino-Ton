@@ -1,13 +1,13 @@
 import { ethers } from "ethers";
 import { makeAutoObservable } from "mobx";
 import { Pad, pad, pad2 } from "./pad";
-const CHIP_CONFIG = ['0.001', '0.005', '0.010', '0.020', '0.100'] as const;
+const CHIP_CONFIG = ['1', '5', '10', '20', '100'] as const;
 export type ChipType = (typeof CHIP_CONFIG)[number];
 export class Store {
   chip = CHIP_CONFIG;
   pad = pad
   pad2 = pad2
-  selectedChip: ChipType = '0.001'
+  selectedChip: ChipType = '1'
   chipItems: Array<Pad & { chipValue: string }> = []
 
   constructor() {
@@ -48,7 +48,7 @@ export class Store {
   get result() {
     const guess = this.chipItems.map(item => item.value);
     const guessType = this.chipItems.map(item => item.type);
-    const amount = this.chipItems.map(item => ethers.utils.parseEther(item.chipValue).toString());
+    const amount = this.chipItems.map(item => Number(item.chipValue));
     return { guess, amount, guessType }
   }
 
