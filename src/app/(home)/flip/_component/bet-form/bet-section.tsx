@@ -86,7 +86,7 @@ export const BetSelection = ({ form, fiatRate }: BetSelectionProps) => {
                           Wager
                         </FormLabel>
                         <span className="font-bold">
-                          {formatTwoDigit(field.value || 0)} BNB
+                          {formatTwoDigit(field.value || 0)} USDC
                         </span>
                       </div>
                       <FormControl>
@@ -118,7 +118,7 @@ export const BetSelection = ({ form, fiatRate }: BetSelectionProps) => {
                         </div>
                       </FormControl>
                       <div className="text-red-500 text-sm mt-1">
-                        Max allowable wager: {maxWager} BNB
+                        Max allowable wager: {maxWager} USDC
                       </div>
                     </FormItem>
                   );
