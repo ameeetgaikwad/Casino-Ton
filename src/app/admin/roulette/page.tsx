@@ -124,45 +124,45 @@ const RouletteAdmin = () => {
     }
   };
 
-  const handleWithdraw = async () => {
-    try {
-      const amount = ethers.utils.parseEther(withdrawAmount);
-      const tx = await smartContract?.withdraw(amount);
-      await tx.wait();
-      toast.success(`${withdrawAmount} ETH withdrawn successfully!`);
-      setWithdrawAmount("");
-      const newBalance = await getBalance(smartContract?.address);
-      setContractBalance(newBalance);
-    } catch (error) {
-      toast.error((error as any)?.data?.message || "An error occurred");
-      console.error("Error withdrawing funds:", error);
-    }
-  };
+  // const handleWithdraw = async () => {
+  //   try {
+  //     const amount = ethers.utils.parseEther(withdrawAmount);
+  //     const tx = await smartContract?.withdraw(amount);
+  //     await tx.wait();
+  //     toast.success(`${withdrawAmount} ETH withdrawn successfully!`);
+  //     setWithdrawAmount("");
+  //     const newBalance = await getBalance(smartContract?.address);
+  //     setContractBalance(newBalance);
+  //   } catch (error) {
+  //     toast.error((error as any)?.data?.message || "An error occurred");
+  //     console.error("Error withdrawing funds:", error);
+  //   }
+  // };
 
-  const handleWithdrawAll = async () => {
-    try {
-      const tx = await smartContract?.withdrawAll();
-      await tx.wait();
-      toast.success("All funds withdrawn successfully!");
-      const newBalance = await getBalance(smartContract?.address);
-      setContractBalance(newBalance);
-    } catch (error) {
-      toast.error((error as any)?.data?.message || "An error occurred");
-      console.error("Error withdrawing all funds:", error);
-    }
-  };
+  // const handleWithdrawAll = async () => {
+  //   try {
+  //     const tx = await smartContract?.withdrawAll();
+  //     await tx.wait();
+  //     toast.success("All funds withdrawn successfully!");
+  //     const newBalance = await getBalance(smartContract?.address);
+  //     setContractBalance(newBalance);
+  //   } catch (error) {
+  //     toast.error((error as any)?.data?.message || "An error occurred");
+  //     console.error("Error withdrawing all funds:", error);
+  //   }
+  // };
 
-  const handleTransferOwnership = async () => {
-    try {
-      const tx = await smartContract?.transferOwnership(newOwner);
-      await tx.wait();
-      toast.success("Ownership transferred successfully!");
-      setNewOwner("");
-    } catch (error) {
-      toast.error((error as any)?.data?.message || "An error occurred");
-      console.error("Error transferring ownership:", error);
-    }
-  };
+  // const handleTransferOwnership = async () => {
+  //   try {
+  //     const tx = await smartContract?.transferOwnership(newOwner);
+  //     await tx.wait();
+  //     toast.success("Ownership transferred successfully!");
+  //     setNewOwner("");
+  //   } catch (error) {
+  //     toast.error((error as any)?.data?.message || "An error occurred");
+  //     console.error("Error transferring ownership:", error);
+  //   }
+  // };
 
   if (contractError) {
     return <div className="text-red-500">{contractError}</div>;
