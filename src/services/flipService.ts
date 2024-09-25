@@ -1,5 +1,5 @@
 import { eq, sql } from 'drizzle-orm';
-import { flip, users } from '@/drizzle/schema';
+import { flip, serializeBigInt, users } from '@/drizzle/schema';
 import type { Flip } from '@/drizzle/schema';
 import { gameConfig } from '@/config/flip';
 import { db } from '@/drizzle/db';
@@ -136,7 +136,8 @@ export async function getGameCount(): Promise<number> {
 }
 
 export async function getGameEntries(limit: number): Promise<Flip[]> {
-    return db.select().from(flip).orderBy(sql`${flip.createdAt} DESC`).limit(limit);
+    const entries = await db.select().from(flip).orderBy(sql`${flip.createdAt} DESC`).limit(limit);
+    return serializeBigInt(entries);
 }
 
 export async function getHouseBalance(): Promise<number> {

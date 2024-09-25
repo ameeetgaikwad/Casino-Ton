@@ -21,6 +21,7 @@ import {
   requestHouseBalance,
 } from "@/services/helpers/flipHelper";
 import { getHouseBalance } from "@/services/flipService";
+import { getUserBalance } from "@/services/helpers/authHelper";
 
 interface BetSelectionProps {
   form: UseFormReturn<Schema>;
@@ -51,8 +52,8 @@ export const BetSelection = ({ form, fiatRate }: BetSelectionProps) => {
           } else {
             toast.error("You lost. Better luck next time!");
           }
-          // Update house balance
-          fetchHouseBalance();
+          // Update user balance
+          getUserBalance();
         }, 2000);
         audioRef?.play();
       } else {

@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
     const action = searchParams.get('action');
 
     switch (action) {
-        case 'getLastPlayedGames': {
+        case 'last-played': {
             const limit = searchParams.get('limit');
             const games = await getLastPlayedGames(limit ? Number(limit) : undefined);
             return NextResponse.json(games);

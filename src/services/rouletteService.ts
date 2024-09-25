@@ -1,5 +1,5 @@
 import { eq, sql } from 'drizzle-orm';
-import { roulette, users, Roulette } from '@/drizzle/schema';
+import { roulette, users, Roulette, serializeBigInt } from '@/drizzle/schema';
 import { db } from '@/drizzle/db';
 
 enum GuessType {
@@ -86,7 +86,8 @@ function processBet(guess: number, guessType: GuessType, betAmount: number, resu
 }
 
 export async function getLastPlayedGames(limit = 10): Promise<Roulette[]> {
-    return await db.select().from(roulette).orderBy(sql`${roulette.createdAt} DESC`).limit(limit);
+    const games = await db.select().from(roulette).orderBy(sql`${roulette.createdAt} DESC`).limit(limit);
+    return serializeBigInt(games);
 }
 
 // export async function withdrawFunds(amount: number, ownerAddress: string): Promise<void> {

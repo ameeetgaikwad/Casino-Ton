@@ -14,6 +14,7 @@ import { useRoulette } from "./store";
 import { useRouletteSound } from "@/hooks/use-roulette-sound";
 import { requestPlayRoulette } from "@/services/helpers/rouletteHelper";
 import { requestHouseBalance } from "@/services/helpers/flipHelper";
+import { getUserBalance } from "@/services/helpers/authHelper";
 
 export const Form = observer(() => {
   const [loading, setLoading] = useState(false);
@@ -49,6 +50,18 @@ export const Form = observer(() => {
       );
 
       statusDialogRefFunc.toggleModal(true, "ROULETTE");
+      setTimeout(() => {
+        statusDialogRefFunc.toggleModal(false, "COIN");
+        // Display game result
+        if (result.winner) {
+          toast.success(`You won! Payout: ${result.payout} USDC`);
+        } else {
+          toast.error("You lost. Better luck next time!");
+        }
+        // Update house balance
+        getUserBalance();
+      }, 2000);
+
       audioRef?.play();
       store.clearAllChipItems();
 

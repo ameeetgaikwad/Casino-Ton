@@ -7,56 +7,55 @@ import { InferSelectModel } from "drizzle-orm";
 // import { schema } from "@/db";
 import Link from "next/link";
 import { TonConnectButton } from "@tonconnect/ui-react";
+import { Roulette } from "@/drizzle/schema";
 
 interface HeaderProps {
-  // lastTenOutcome: Pick<
-  //   InferSelectModel<typeof schema.transactionHistory>,
-  //   "outcome"
-  // >[];
+  lastTenOutcome: Roulette[];
   isLayout?: boolean;
 }
 
-export const Header = observer(({ isLayout = false }: HeaderProps) => {
-  const { pad } = useRoulette();
-  return (
-    <header className="flex flex-row place-items-start justify-between ">
-      <div className="flex md:flex-row flex-col gap-4 items-center">
-        <h3 className="text-m">Last 10 Results</h3>
-        <div className="flex md:flex-row flex-col gap-1">
-          {/* {lastTenOutcome
-            .map(({ outcome }) => pad.find((p) => p.value == outcome))
-            .filter(Boolean)
-            .map((item, key) => {
-              return (
-                <div
-                  className={cn(
-                    "px-2 py-1 aspect-square grid-cols-1",
-                    "hover:number-hover",
-                    "button-style",
-                    Number(item?.value) === 0
-                      ? ""
-                      : Number(item?.value) % 2 === 0
-                      ? "bg-[#1f2737]"
-                      : "bg-[#c72f40]"
-                  )}
-                  style={{
-                    backgroundColor:
-                      Number(item?.value) === 0 ? item?.color : undefined,
-                  }}
-                  key={key}
-                >
-                  {item?.label}
-                </div>
-              );
-            })} */}
+export const Header = observer(
+  ({ isLayout = false, lastTenOutcome }: HeaderProps) => {
+    const { pad } = useRoulette();
+    return (
+      <header className="flex flex-row place-items-start justify-between ">
+        <div className="flex md:flex-row flex-col gap-4 items-center">
+          <h3 className="text-m">Last 10 Results</h3>
+          <div className="flex md:flex-row flex-col gap-1">
+            {lastTenOutcome.map(({ guess, guessType }, key) => {
+              if (guessType === 0) {
+                return (
+                  <div
+                    className={cn(
+                      "px-2 py-1 aspect-square grid-cols-1",
+                      "hover:number-hover",
+                      "button-style",
+                      Number(guess) === 0
+                        ? ""
+                        : Number(guess) % 2 === 0
+                        ? "bg-[#1f2737]"
+                        : "bg-[#c72f40]"
+                    )}
+                    // style={{
+                    //   backgroundColor:
+                    //     Number(guess) === 0 ? item?.color : undefined,
+                    // }}
+                    key={key}
+                  >
+                    {guess}
+                  </div>
+                );
+              }
+            })}
+          </div>
         </div>
-      </div>
 
-      {!isLayout && (
-        <div className="flex gap-16">
-          <TonConnectButton />
-        </div>
-      )}
-    </header>
-  );
-});
+        {!isLayout && (
+          <div className="flex gap-16">
+            <TonConnectButton />
+          </div>
+        )}
+      </header>
+    );
+  }
+);

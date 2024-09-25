@@ -16,6 +16,9 @@ import MainLayout from "@/components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useParams, usePathname } from "next/navigation";
+import { requestGameEntries } from "@/services/helpers/flipHelper";
+import { useTonAddress } from "@tonconnect/ui-react";
+import { requestLastPlayedGames } from "@/services/helpers/rouletteHelper";
 // import { GameType, getAllTransaction } from "@/db/action";
 
 interface Props {
@@ -23,9 +26,29 @@ interface Props {
 }
 
 export default (props: Props) => {
+  const address = useTonAddress();
   const pathName = usePathname()?.slice(1) ?? "";
   const [history, setHistory] = useState<any>([]);
+  const [flipRecords, setFlipRecords] = useState<any>([]);
+  const [rouletteRecords, setRouletteRecords] = useState<any>([]);
 
+  useEffect(() => {
+    if (address) {
+      const getEntries = async () => {
+        const entries = await requestGameEntries(10);
+        setFlipRecords(entries);
+      };
+      getEntries();
+    }
+  }, []);
+
+  useEffect(() => {
+    const getLastPlayedGames = async () => {
+      const games = await requestLastPlayedGames(10);
+      setRouletteRecords(games);
+    };
+    getLastPlayedGames();
+  }, []);
   // const transactionHistory = async () => {
   //   const history = await getAllTransaction(pathName.toUpperCase() as GameType);
 
@@ -39,22 +62,10 @@ export default (props: Props) => {
   const renderHeader = () => {
     switch (pathName) {
       case "flip":
-        return (
-          <FlipHeader
-            // lastTenOutcome={history.map((o) => ({
-            //   outcome: o.outcome,
-            // }))}
-            isLayout={true}
-          />
-        );
+        return <FlipHeader lastTenOutcome={flipRecords} isLayout={true} />;
       case "roulette":
         return (
-          <RouletteHeader
-            // lastTenOutcome={history.map((o) => ({
-            //   outcome: o.outcome,
-            // }))}
-            isLayout={true}
-          />
+          <RouletteHeader lastTenOutcome={rouletteRecords} isLayout={true} />
         );
     }
   };

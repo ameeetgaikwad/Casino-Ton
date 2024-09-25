@@ -9,14 +9,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Flip, TransactionHistoryI } from "@/drizzle/schema";
+import { Flip, Roulette, TransactionHistoryI } from "@/drizzle/schema";
 import { cn, shortContractAddress } from "@/lib/utils";
 import { toast } from "sonner";
 import { format } from "timeago.js";
 import { useCopyToClipboard } from "usehooks-ts";
 
 interface TransactionHistoryProps {
-  records: Flip[];
+  records: Roulette[];
 }
 
 export function TransactionHistory({ records }: TransactionHistoryProps) {
@@ -70,7 +70,7 @@ export function TransactionHistory({ records }: TransactionHistoryProps) {
                     {record.createdAt &&
                       format(record.createdAt?.toLocaleString())}
                   </TableCell>
-                  <TableCell>{record.status}</TableCell>
+                  <TableCell>{record.winner ? "Win" : "Lose"}</TableCell>
                   <TableCell>
                     <div className="flex items-right justify-right gap-2">
                       <CoinFace.Head width={20} height={20} />
@@ -80,13 +80,13 @@ export function TransactionHistory({ records }: TransactionHistoryProps) {
                   <TableCell>
                     <div className="flex items-right justify-right gap-2">
                       <CoinFace.Head width={20} height={20} />
-                      {record.totalPayout}
+                      {record.payout}
                     </div>
                   </TableCell>
                   <TableCell>
                     <div className="flex items-right justify-right gap-2">
                       <CoinFace.Head width={20} height={20} />
-                      {record.totalProfit}
+                      {record.amountBet - record.payout}
                     </div>
                   </TableCell>
                 </TableRow>

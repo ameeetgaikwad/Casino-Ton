@@ -3,16 +3,18 @@ import { getEthFiatRate } from "@/services/transactionHistoryService";
 // import { getAllTransaction, getEthFiatRate } from "@/db/action";
 import { BetForm } from "./_component/bet-form";
 import { Header } from "./_component/header";
-import { TransactionHistory } from "@/components/transaction-history";
+import { TransactionHistory } from "./_component/transaction-history";
 // import { ConnectButton } from "@/components/connect-button";
-import { TonConnectButton } from "@tonconnect/ui-react";
+import { TonConnectButton, useTonAddress } from "@tonconnect/ui-react";
 import { useEffect, useState } from "react";
+import { requestGameEntries } from "@/services/helpers/flipHelper";
 export const revalidate = 0;
 
 export default async function Home() {
-  // const transactionHistory = await getAllTransaction("COIN");
+  const [transactionRecords, setTransactionRecords] = useState([]);
   const [ethRate, setEthRate] = useState(0);
-  console.log(ethRate, "fr eth rate");
+  const address = useTonAddress();
+
   useEffect(() => {
     const fetchEthRate = async () => {
       const rate = await getEthFiatRate();
@@ -21,10 +23,20 @@ export default async function Home() {
     fetchEthRate();
   }, []);
 
+  useEffect(() => {
+    if (address) {
+      const getEntries = async () => {
+        const entries = await requestGameEntries(10);
+        setTransactionRecords(entries);
+      };
+      getEntries();
+    }
+  }, []);
+
   return (
     <main className="md:flex flex-grow flex-col p-4 transition-all duration-150 ease-in md:ml-0">
       <div className="hidden md:block">
-        <Header />
+        <Header lastTenOutcome={transactionRecords} />
       </div>
       <div className="flex gap-16 md:hidden">
         <TonConnectButton />
@@ -33,9 +45,7 @@ export default async function Home() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 h-full ">
         <BetForm fiatRate={Number(ethRate["USD"] ?? 200)} />
       </div>
-      {/* {transactionHistory.length > 0 && (
-        <TransactionHistory records={transactionHistory} />
-      )} */}
+      <TransactionHistory records={transactionRecords} />
     </main>
   );
 }
