@@ -58,6 +58,7 @@ export default function RootLayout({
           <RainbowProvider>
             <TonConnectUIProvider
               manifestUrl={process.env.NEXT_PUBLIC_MANIFEST_URL}
+              enableAndroidBackHandler={false}
             >
               <AuthWrapper>{children}</AuthWrapper>
             </TonConnectUIProvider>
