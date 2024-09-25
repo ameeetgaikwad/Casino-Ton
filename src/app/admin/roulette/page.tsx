@@ -222,7 +222,7 @@ const RouletteAdmin = () => {
         </CardContent>
       </Card> */}
 
-      <Card className="mb-4">
+      {/* <Card className="mb-4">
         <CardHeader>Last 5 Games</CardHeader>
         <CardContent>
           <Table>
@@ -252,7 +252,7 @@ const RouletteAdmin = () => {
             </TableBody>
           </Table>
         </CardContent>
-      </Card>
+      </Card> */}
     </div>
   );
 };

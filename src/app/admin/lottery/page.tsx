@@ -212,7 +212,9 @@ const AdminDashboard = () => {
         <CardHeader>Start New Lottery</CardHeader>
         <CardContent>
           <div className="mb-2">
-            <label htmlFor="prizePool" className="block mb-1">Prize Pool (USDC)</label>
+            <label htmlFor="prizePool" className="block mb-1">
+              Prize Pool (USDC)
+            </label>
             <Input
               id="prizePool"
               type="text"
@@ -222,7 +224,9 @@ const AdminDashboard = () => {
             />
           </div>
           <div className="mb-2">
-            <label htmlFor="ticketPrice" className="block mb-1">Ticket Price (USDC)</label>
+            <label htmlFor="ticketPrice" className="block mb-1">
+              Ticket Price (USDC)
+            </label>
             <Input
               id="ticketPrice"
               type="text"
@@ -232,7 +236,9 @@ const AdminDashboard = () => {
             />
           </div>
           <div className="mb-2">
-            <label htmlFor="totalTickets" className="block mb-1">Total Tickets</label>
+            <label htmlFor="totalTickets" className="block mb-1">
+              Total Tickets
+            </label>
             <Input
               id="totalTickets"
               type="text"
@@ -249,7 +255,9 @@ const AdminDashboard = () => {
         <CardHeader>Run Lottery</CardHeader>
         <CardContent>
           <div className="w-full flex flex-wrap mb-4">
-            <label htmlFor="runLotteryId" className="block mb-1">Lottery ID</label>
+            <label htmlFor="runLotteryId" className="block mb-1">
+              Lottery ID
+            </label>
             <Input
               id="runLotteryId"
               type="number"
@@ -267,7 +275,9 @@ const AdminDashboard = () => {
         <CardHeader>Force Complete Lottery</CardHeader>
         <CardContent>
           <div className="w-full flex flex-wrap mb-4">
-            <label htmlFor="forceCompleteLotteryId" className="block mb-1">Lottery ID</label>
+            <label htmlFor="forceCompleteLotteryId" className="block mb-1">
+              Lottery ID
+            </label>
             <Input
               id="forceCompleteLotteryId"
               type="number"
@@ -305,7 +315,7 @@ const AdminDashboard = () => {
           <Button onClick={handleSetAdminWallet}>Set Admin Wallet</Button>
         </CardContent>
       </Card> */}
-      <div className="space-y-6">
+      {/* <div className="space-y-6">
         <Card>
           <CardHeader>Past Lotteries</CardHeader>
           <CardContent>
@@ -339,7 +349,7 @@ const AdminDashboard = () => {
             </Table>
           </CardContent>
         </Card>
-      </div>
+      </div> */}
     </div>
   );
 };
