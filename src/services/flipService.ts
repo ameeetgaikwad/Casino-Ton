@@ -5,7 +5,7 @@ import { gameConfig } from '@/config/flip';
 import { db } from '@/drizzle/db';
 import { globalConfig } from '@/config/global';
 
-export async function flipCoin(guess: number, playerAddress: string, amountBet: number): Promise<{ gameId: string } | null> {
+export async function flipCoin(guess: number, playerAddress: string, amountBet: number): Promise<{ gameId: string, result: Flip } | null> {
     console.log('flipCoin', guess, playerAddress, amountBet)
     const userBalance = await db.select({ balance: users.balance }).from(users).where(eq(users.address, playerAddress));
 
@@ -34,15 +34,52 @@ export async function flipCoin(guess: number, playerAddress: string, amountBet: 
         return null;
     }
 
+    let gameId: string;
+    let result: Flip;
+
     await db.transaction(async (tx) => {
+        // Deduct bet amount from player's balance
         await tx.update(users).set({ balance: sql`${users.balance}-${amountBet}` }).where(eq(users.address, playerAddress));
 
+        // Add bet amount to house balance
         await tx.update(users).set({ balance: sql`${users.balance}+${amountBet}` }).where(eq(users.address, globalConfig.houseAddress));
+
+        // Insert new game
+        const insertedGame = await tx.insert(flip).values({ player: playerAddress, amountBet: amountBet, guess: guess, status: 'PENDING' }).returning({ id: flip.id });
+        gameId = insertedGame[0].id;
+
+        // Resolve the game
+        const won: boolean = Math.random() < 0.46;
+        let totalPayout = 0;
+        let totalProfit = 0;
+
+        if (won) {
+            totalPayout = Math.floor((amountBet * gameConfig.winnerBetPercentage) / 100);
+            totalProfit = totalPayout - amountBet;
+
+            // Update player's balance with winnings
+            await tx.update(users).set({ balance: sql`${users.balance}+${totalPayout}` }).where(eq(users.address, playerAddress));
+
+            // Deduct payout from house balance
+            await tx.update(users).set({ balance: sql`${users.balance}-${totalPayout}` }).where(eq(users.address, globalConfig.houseAddress));
+        } else {
+            totalProfit = -amountBet;
+        }
+
+        // Update game result
+        result = (await tx.update(flip)
+            .set({
+                winner: won,
+                totalPayout,
+                totalProfit,
+                status: won ? 'WON' : 'LOST',
+                updatedAt: new Date(),
+            })
+            .where(eq(flip.id, gameId))
+            .returning())[0];
     });
-
-    const gameId = await db.insert(flip).values({ player: playerAddress, amountBet: amountBet, guess: guess, status: 'PENDING' }).returning({ id: flip.id });
-
-    return { gameId: gameId[0].id };
+    // @ts-ignore
+    return { gameId, result };
 }
 
 export async function resolveGame(gameId: string): Promise<Flip | null> {

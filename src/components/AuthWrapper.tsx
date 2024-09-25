@@ -2,7 +2,7 @@
 import { useEffect } from "react";
 import { useTonConnectUI, useTonAddress } from "@tonconnect/ui-react";
 import { toUserFriendlyAddress } from "@tonconnect/sdk";
-import { getJwt } from "@/services/authService";
+import { getJwt } from "@/services/helpers/authHelper";
 import { Cookies } from "react-cookie";
 
 interface AuthWrapperProps {

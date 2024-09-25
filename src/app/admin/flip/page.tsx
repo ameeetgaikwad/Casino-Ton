@@ -171,14 +171,14 @@ const FlipAdmin = () => {
     fetchHouseBalance();
   }, []);
 
-  const handleResolveGame = async () => {
-    try {
-      const response = await requestResolveGame(gameId);
-      console.log(response, "response");
-    } catch (error) {
-      console.error("Error resolving game:", error);
-    }
-  };
+  // const handleResolveGame = async () => {
+  //   try {
+  //     const response = await requestResolveGame(gameId);
+  //     console.log(response, "response");
+  //   } catch (error) {
+  //     console.error("Error resolving game:", error);
+  //   }
+  // };
 
   return (
     <div className="p-8 h-full bg-gray-600">
@@ -188,7 +188,7 @@ const FlipAdmin = () => {
       {/* <p className="mb-4">Connected Address: {address}</p> */}
       <p className="mb-4">Contract Balance: {houseBalance} USDC</p>
 
-      <Card className="mb-4">
+      {/* <Card className="mb-4">
         <CardHeader>Resolve Game</CardHeader>
         <CardContent>
           <div className="flex gap-2">
@@ -201,7 +201,7 @@ const FlipAdmin = () => {
             <Button onClick={handleResolveGame}>Resolve Game</Button>
           </div>
         </CardContent>
-      </Card>
+      </Card> */}
 
       {/* <Card className="mb-4">
         <CardHeader>Withdraw Funds</CardHeader>
@@ -252,11 +252,11 @@ const FlipAdmin = () => {
               {lastGames.map((game, index) => (
                 <TableRow key={index}>
                   <TableCell>{game.address}</TableCell>
-                  <TableCell>{game.amountBet} ETH</TableCell>
+                  <TableCell>{game.amountBet} USDC</TableCell>
                   <TableCell>{game.guess === 0 ? "Heads" : "Tails"}</TableCell>
                   <TableCell>{game.winner ? "Yes" : "No"}</TableCell>
-                  <TableCell>{game.totalPayout} ETH</TableCell>
-                  <TableCell>{game.totalProfit} ETH</TableCell>
+                  <TableCell>{game.totalPayout} USDC</TableCell>
+                  <TableCell>{game.totalProfit} USDC</TableCell>
                 </TableRow>
               ))}
             </TableBody>

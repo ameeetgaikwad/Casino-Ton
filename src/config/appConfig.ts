@@ -9,4 +9,6 @@ export const AppConfig = {
     },
 
     appDomain: process.env.APP_DOMAIN,
+
+    USDC_EXPNENT: 9,
 };

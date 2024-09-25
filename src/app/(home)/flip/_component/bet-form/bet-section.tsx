@@ -39,25 +39,40 @@ export const BetSelection = ({ form, fiatRate }: BetSelectionProps) => {
 
       const response = await requestFlipCoin(selection, amountBet);
 
-      const { gameId } = response;
-      console.log("Game started with ID:", gameId);
+      if (response) {
+        const { gameId, result } = response;
 
-      statusDialogRefFunc.toggleModal(true, "COIN");
-      audioRef?.play();
+        statusDialogRefFunc.toggleModal(true, "COIN");
+        setTimeout(() => {
+          statusDialogRefFunc.toggleModal(false, "COIN");
+          // Display game result
+          if (result.winner) {
+            toast.success(`You won! Payout: ${result.totalPayout} USDC`);
+          } else {
+            toast.error("You lost. Better luck next time!");
+          }
+          // Update house balance
+          fetchHouseBalance();
+        }, 2000);
+        audioRef?.play();
+      } else {
+        toast.error("Failed to start the game. Please try again.");
+      }
     } catch (err) {
       console.log("failed coin flip", err);
       toast.error(err instanceof Error ? err.message : "An error occurred");
+      statusDialogRefFunc.toggleModal(false, "COIN");
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    const fetchHouseBalance = async () => {
-      const balance = await requestHouseBalance();
-      setHouseBalance(balance);
-    };
+  const fetchHouseBalance = async () => {
+    const balance = await requestHouseBalance();
+    setHouseBalance(balance);
+  };
 
+  useEffect(() => {
     fetchHouseBalance();
   }, []);
 

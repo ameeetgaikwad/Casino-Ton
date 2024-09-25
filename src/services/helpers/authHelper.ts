@@ -32,3 +32,19 @@ export const checkJwt = async () => {
     return result
 }
 
+export const getUserBalance = async () => {
+    const cookies = new Cookies();
+    const token = cookies.get('token');
+    const res = await fetch('/api/userBalance', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+        }
+    }
+    )
+    const result = await res.json()
+    console.log(result, 'result')
+    return result
+}
+
