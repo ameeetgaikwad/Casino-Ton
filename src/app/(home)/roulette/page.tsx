@@ -8,6 +8,7 @@ import { ConnectButton } from "@/components/connect-button";
 import { TonConnectButton } from "@tonconnect/ui-react";
 import { useEffect, useState } from "react";
 import { requestLastPlayedGames } from "@/services/helpers/rouletteHelper";
+import { CustomConnectButton } from "@/components/CustomConnectButton";
 export const revalidate = 0;
 
 export default async function Home() {
@@ -25,11 +26,13 @@ export default async function Home() {
   return (
     <main className=" md:flex flex-grow flex-col p-4 transition-all duration-150 ease-in md:ml-0">
       <RouletteProvider>
-        <div className="hidden md:block">
-          <Header lastTenOutcome={transactionRecords} />
-        </div>
-        <div className="flex gap-16 md:hidden">
-          <TonConnectButton />
+        <div className="flex justify-between">
+          <div className="hidden md:block">
+            <Header lastTenOutcome={transactionRecords} />
+          </div>
+          <div className="flex gap-16 md:justify-end">
+            <CustomConnectButton />
+          </div>
         </div>
 
         <h1 className="text-6xl font-heading text-primary mt-4 mb-4">

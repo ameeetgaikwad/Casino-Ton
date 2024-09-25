@@ -94,7 +94,6 @@ export default (props: Props) => {
           </DialogContent>
         </Dialog>
 
-        {/* <TonConnectButton /> */}
         <main className="w-full">
           {props.children}
           <Footer />

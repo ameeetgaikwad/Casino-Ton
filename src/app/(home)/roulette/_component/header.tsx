@@ -8,6 +8,7 @@ import { InferSelectModel } from "drizzle-orm";
 import Link from "next/link";
 import { TonConnectButton } from "@tonconnect/ui-react";
 import { Roulette } from "@/drizzle/schema";
+import { CustomConnectButton } from "@/components/CustomConnectButton";
 
 interface HeaderProps {
   lastTenOutcome: Roulette[];
@@ -49,12 +50,6 @@ export const Header = observer(
             })}
           </div>
         </div>
-
-        {!isLayout && (
-          <div className="flex gap-16">
-            <TonConnectButton />
-          </div>
-        )}
       </header>
     );
   }

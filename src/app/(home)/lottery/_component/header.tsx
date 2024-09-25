@@ -3,6 +3,7 @@ import { ConnectButton } from "@/components/connect-button";
 // import { InferSelectModel, schema } from "@/db";
 import Link from "next/link";
 import { TonConnectButton } from "@tonconnect/ui-react";
+import { CustomConnectButton } from "@/components/CustomConnectButton";
 // interface HeaderProps {
 //   lastTenOutcome: Array<Pick<InferSelectModel<typeof schema.transactionHistory>, "outcome">>;
 // }
@@ -20,7 +21,7 @@ export const Header = () => {
       </div>
 
       <div className="flex gap-16">
-        <TonConnectButton />
+        <CustomConnectButton />
       </div>
     </header>
   );

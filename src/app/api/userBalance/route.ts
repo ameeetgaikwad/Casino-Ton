@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { users } from "@/drizzle/schema"
+import { serializeBigInt, users } from "@/drizzle/schema"
 
 import { eq } from 'drizzle-orm'
 import { protect } from "@/middlewares/authMiddlewares";
@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
 
         const balance = await db.select().from(users).where(eq(users.address, user.address)).limit(1)
 
-        return NextResponse.json({ balance: balance[0].balance })
+        return NextResponse.json({ balance: serializeBigInt(balance[0].balance) })
     } catch (error) {
         console.error('Error in POST request:', error)
         return NextResponse.json({ error: 'An error occurred' }, { status: 500 })

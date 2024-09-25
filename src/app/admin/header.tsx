@@ -1,5 +1,6 @@
 import { CoinFace } from "@/components/coin-face";
 import { ConnectButton } from "@/components/connect-button";
+import { CustomConnectButton } from "@/components/CustomConnectButton";
 // import { InferSelectModel, schema } from "@/db";
 import { TonConnectButton } from "@tonconnect/ui-react";
 // interface HeaderProps {
@@ -19,7 +20,7 @@ export const Header = () => {
       </div>
 
       <div className="flex gap-16">
-        <TonConnectButton />
+        <CustomConnectButton />
       </div>
     </header>
   );

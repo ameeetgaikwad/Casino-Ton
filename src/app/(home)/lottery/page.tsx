@@ -288,7 +288,7 @@ const RaffleGame = () => {
     <div className=" justify-center align-middle items-center  text-white h-full p-4 sm:p-6 lg:p-8 relative">
       <Header />
       {/* Decorative stars */}
-      <div className="absolute top-4 left-4 text-yellow-400 text-2xl">✦</div>
+      {/* <div className="absolute top-4 left-4 text-yellow-400 text-2xl">✦</div> */}
       <div className="absolute bottom-4 right-4 text-yellow-400 text-4xl">
         ✦
       </div>
