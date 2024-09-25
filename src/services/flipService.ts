@@ -29,7 +29,7 @@ export async function flipCoin(guess: number, playerAddress: string, amountBet: 
     // const houseEdgeCut = (amountBet * gameConfig.platformFeePercentage) / 100;
     // const actualBet = amountBet - houseEdgeCut;
 
-    if (amountBet > (houseBalance[0].balance * gameConfig.maxBetPercentage / 100)) {
+    if (amountBet > (houseBalance[0].balance * BigInt(gameConfig.maxBetPercentage) / BigInt(100))) {
         console.log('Bet exceeds maximum allowed')
         return null;
     }
@@ -45,7 +45,12 @@ export async function flipCoin(guess: number, playerAddress: string, amountBet: 
         await tx.update(users).set({ balance: sql`${users.balance}+${amountBet}` }).where(eq(users.address, globalConfig.houseAddress));
 
         // Insert new game
-        const insertedGame = await tx.insert(flip).values({ player: playerAddress, amountBet: amountBet, guess: guess, status: 'PENDING' }).returning({ id: flip.id });
+        const insertedGame = await tx.insert(flip).values({
+            player: playerAddress,
+            amountBet: BigInt(amountBet),
+            guess: guess,
+            status: 'PENDING'
+        }).returning({ id: flip.id });
         gameId = insertedGame[0].id;
 
         // Resolve the game
@@ -70,8 +75,8 @@ export async function flipCoin(guess: number, playerAddress: string, amountBet: 
         result = (await tx.update(flip)
             .set({
                 winner: won,
-                totalPayout,
-                totalProfit,
+                totalPayout: BigInt(totalPayout),
+                totalProfit: BigInt(totalProfit),
                 status: won ? 'WON' : 'LOST',
                 updatedAt: new Date(),
             })
@@ -82,48 +87,48 @@ export async function flipCoin(guess: number, playerAddress: string, amountBet: 
     return { gameId, result };
 }
 
-export async function resolveGame(gameId: string): Promise<Flip | null> {
-    const game = await db.select().from(flip).where(eq(flip.id, gameId)).limit(1);
-    const won: boolean = Math.random() < 0.46
+// export async function resolveGame(gameId: string): Promise<Flip | null> {
+//     const game = await db.select().from(flip).where(eq(flip.id, gameId)).limit(1);
+//     const won: boolean = Math.random() < 0.46
 
-    if (!game[0]) {
-        console.log('Game does not exist')
-        return null;
-    }
+//     if (!game[0]) {
+//         console.log('Game does not exist')
+//         return null;
+//     }
 
-    if (game[0].status !== 'PENDING') {
-        console.log('Game has already been resolved')
-        return null;
-    }
+//     if (game[0].status !== 'PENDING') {
+//         console.log('Game has already been resolved')
+//         return null;
+//     }
 
-    let totalPayout = 0;
-    let totalProfit = 0;
+//     let totalPayout = 0;
+//     let totalProfit = 0;
 
-    if (won) {
-        totalPayout = Math.floor((game[0].amountBet * gameConfig.winnerBetPercentage) / 100);
-        totalProfit = totalPayout - game[0].amountBet;
+//     if (won) {
+//         totalPayout = Math.floor((game[0].amountBet * gameConfig.winnerBetPercentage) / 100);
+//         totalProfit = totalPayout - game[0].amountBet;
 
-        await db.transaction(async (tx) => {
-            await tx.update(users).set({ balance: sql`${users.balance}+${totalPayout}` }).where(eq(users.address, game[0].player));
-        });
-    } else {
-        totalProfit = -game[0].amountBet;
-    }
+//         await db.transaction(async (tx) => {
+//             await tx.update(users).set({ balance: sql`${users.balance}+${totalPayout}` }).where(eq(users.address, game[0].player));
+//         });
+//     } else {
+//         totalProfit = -game[0].amountBet;
+//     }
 
-    const updatedGame = await db
-        .update(flip)
-        .set({
-            winner: won,
-            totalPayout,
-            totalProfit,
-            status: won ? 'WON' : 'LOST',
-            updatedAt: new Date(),
-        })
-        .where(eq(flip.id, gameId))
-        .returning();
+//     const updatedGame = await db
+//         .update(flip)
+//         .set({
+//             winner: won,
+//             totalPayout,
+//             totalProfit,
+//             status: won ? 'WON' : 'LOST',
+//             updatedAt: new Date(),
+//         })
+//         .where(eq(flip.id, gameId))
+//         .returning();
 
-    return updatedGame[0];
-}
+//     return updatedGame[0];
+// }
 
 export async function getGameCount(): Promise<number> {
     const result = await db.select({ count: sql`count(${flip.id})` }).from(flip);

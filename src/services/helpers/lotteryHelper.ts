@@ -97,7 +97,7 @@ export const requestForceCompleteLottery = async (lotteryId: number) => {
 export const requestActiveLotteries = async () => {
     const cookies = new Cookies();
     const token = cookies.get('token');
-    const res = await fetch('/api/lottery?action=getAllLotteries', {
+    const res = await fetch('/api/lottery?action=getActiveLotteries', {
         method: 'GET',
         headers: {
             "Content-Type": "application/json",

@@ -44,12 +44,12 @@ export async function playRoulette(
 
         games.push({
             player: playerAddress,
-            amountBet: betAmounts[i],
+            amountBet: BigInt(betAmounts[i]),
             guess: guesses[i],
             winner: won,
-            USDCInJackpot: actualBet,
+            USDCInJackpot: BigInt(actualBet),
             guessType: guessTypes[i],
-            payout: payout
+            payout: BigInt(payout)
         });
     }
 

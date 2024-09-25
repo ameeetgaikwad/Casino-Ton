@@ -1,6 +1,7 @@
 // app/api/flip/route.ts
 import { type NextRequest, NextResponse } from 'next/server';
-import { flipCoin, getGameCount, getGameEntries, getHouseBalance, resolveGame } from '@/services/flipService';
+import { flipCoin, getGameCount, getGameEntries, getHouseBalance } from '@/services/flipService';
+import { serializeBigInt } from '@/drizzle/schema';
 import { protect, protectAdmin } from '@/middlewares/authMiddlewares';
 
 export async function POST(request: NextRequest) {
@@ -20,28 +21,28 @@ export async function POST(request: NextRequest) {
     if (!result) {
         return NextResponse.json({ error: 'Failed to flip coin' }, { status: 500 })
     }
-    return NextResponse.json(result);
+    return NextResponse.json(serializeBigInt(result));
 }
 
-export async function PUT(request: NextRequest) {
-    const { gameId } = await request.json();
-    console.log("PUT request received", gameId);
-    const token = request.headers.get('Authorization')?.replace("Bearer ", "");
+// export async function PUT(request: NextRequest) {
+//     const { gameId } = await request.json();
+//     console.log("PUT request received", gameId);
+//     const token = request.headers.get('Authorization')?.replace("Bearer ", "");
 
-    if (!token) {
-        return NextResponse.json({ error: 'No token provided' }, { status: 401 })
-    }
-    const user = await protectAdmin(token)
+//     if (!token) {
+//         return NextResponse.json({ error: 'No token provided' }, { status: 401 })
+//     }
+//     const user = await protectAdmin(token)
 
-    if (!user) {
-        return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
-    }
-    const resolvedGame = await resolveGame(gameId);
-    if (!resolvedGame) {
-        return NextResponse.json({ error: 'Failed to resolve game' }, { status: 500 })
-    }
-    return NextResponse.json(resolvedGame);
-}
+//     if (!user) {
+//         return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
+//     }
+//     const resolvedGame = await resolveGame(gameId);
+//     if (!resolvedGame) {
+//         return NextResponse.json({ error: 'Failed to resolve game' }, { status: 500 })
+//     }
+//     return NextResponse.json(resolvedGame);
+// }
 
 export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);

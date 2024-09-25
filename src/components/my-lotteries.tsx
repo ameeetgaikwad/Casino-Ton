@@ -38,7 +38,7 @@ export function MyLotteries() {
     requestActiveLotteries().then((res) => {
       setAllLotteries(res);
     });
-  }, []);
+  }, [address]);
 
   useEffect(() => {
     if (address) {

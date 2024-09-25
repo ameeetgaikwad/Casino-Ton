@@ -10,7 +10,6 @@ export const getJwt = async (address: string) => {
     }
     )
     const result = await res.json()
-    console.log(result, 'result')
     cookies.set('token', result.token)
     return result
 }

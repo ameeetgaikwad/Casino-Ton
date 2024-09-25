@@ -61,7 +61,7 @@ export const transactionHistory = pgTable("transaction_history", {
 export const users = pgTable('users', {
     id: uuid("id").notNull().primaryKey().defaultRandom(),
     address: varchar('address', { length: 255 }).notNull().unique(),
-    balance: bigint('balance', { mode: 'number' }).notNull().default(0),
+    balance: bigint('balance', { mode: 'bigint' }).notNull().default(0n),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
@@ -71,11 +71,11 @@ export const FLIP_STATUS = pgEnum('FLIP_STATUS', ["PENDING", "WON", "LOST", "CAN
 export const flip = pgTable('flip', {
     id: uuid("id").notNull().primaryKey().defaultRandom(),
     player: varchar('player', { length: 255 }).notNull().references(() => users.address),
-    amountBet: bigint('amount_bet', { mode: 'number' }).notNull(),
+    amountBet: bigint('amount_bet', { mode: 'bigint' }).notNull(),
     guess: integer('guess').notNull(),
     winner: boolean('winner'),
-    totalPayout: bigint('total_payout', { mode: 'number' }),
-    totalProfit: bigint('total_profit', { mode: 'number' }),
+    totalPayout: bigint('total_payout', { mode: 'bigint' }),
+    totalProfit: bigint('total_profit', { mode: 'bigint' }),
     status: FLIP_STATUS("status").notNull().default('PENDING'),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
@@ -86,8 +86,8 @@ export const LOTTERY_STATUS = pgEnum('LOTTERY_STATUS', ["NOT_STARTED", "OPEN", "
 
 export const lottery = pgTable('lottery', {
     id: serial('id').primaryKey(),
-    prizePool: bigint('prize_pool', { mode: 'number' }).notNull(),
-    ticketPrice: bigint('ticket_price', { mode: 'number' }).notNull(),
+    prizePool: bigint('prize_pool', { mode: 'bigint' }).notNull(),
+    ticketPrice: bigint('ticket_price', { mode: 'bigint' }).notNull(),
     totalTickets: integer('total_tickets').notNull(),
     soldTickets: integer('sold_tickets').notNull().default(0),
     winner: varchar('winner', { length: 255 }).references(() => users.address),
@@ -101,7 +101,7 @@ export const tickets = pgTable('tickets', {
     lotteryId: integer('lottery_id').notNull().references(() => lottery.id),
     playerAddress: varchar('player_address', { length: 255 }).notNull().references(() => users.address),
     ticketNumber: integer('ticket_number').notNull(),
-    amount: bigint('amount', { mode: 'number' }).notNull(),
+    amount: bigint('amount', { mode: 'bigint' }).notNull(),
     createdAt: timestamp('created_at').notNull().defaultNow(),
 });
 
@@ -111,7 +111,7 @@ export const deposits = pgTable('deposits', {
     id: uuid("id").notNull().primaryKey().defaultRandom(),
     from: varchar('from', { length: 255 }).references(() => users.address),
     to: varchar('to', { length: 255 }).references(() => users.address),
-    value: bigint('value', { mode: 'number' }),
+    value: bigint('value', { mode: 'bigint' }),
     txHash: varchar('tx_hash', { length: 255 }).unique(),
     tId: uuid('t_id').notNull().unique(),
     status: TRANSACTION_STATUS("status").default('PENDING'),
@@ -122,7 +122,7 @@ export const withdrawals = pgTable('withdrawals', {
     id: uuid("id").notNull().primaryKey().defaultRandom(),
     from: varchar('address', { length: 255 }).references(() => users.address),
     to: varchar('address', { length: 255 }).references(() => users.address),
-    value: bigint('value', { mode: 'number' }).notNull(),
+    value: bigint('value', { mode: 'bigint' }).notNull(),
     txHash: varchar('tx_hash', { length: 255 }).notNull().unique(),
     tId: uuid('t_id').notNull().unique(),
     status: TRANSACTION_STATUS("status").default('PENDING'),
@@ -132,12 +132,12 @@ export const withdrawals = pgTable('withdrawals', {
 export const roulette = pgTable('roulette', {
     id: uuid('id').defaultRandom().primaryKey(),
     player: varchar('player', { length: 256 }).notNull(),
-    amountBet: bigint('amount_bet', { mode: 'number' }).notNull(),
+    amountBet: bigint('amount_bet', { mode: 'bigint' }).notNull(),
     guess: integer('guess').notNull(),
     winner: boolean('winner').notNull(),
-    USDCInJackpot: integer('usdc_in_jackpot').notNull(),
+    USDCInJackpot: bigint('usdc_in_jackpot', { mode: 'bigint' }).notNull(),
     guessType: integer('guess_type').notNull(),
-    payout: bigint('payout', { mode: 'number' }).notNull(),
+    payout: bigint('payout', { mode: 'bigint' }).notNull(),
     createdAt: timestamp('created_at').defaultNow().notNull()
 });
 
@@ -159,3 +159,10 @@ export type NewTicket = typeof tickets.$inferInsert;
 export type GameType = (typeof GAME_TYPE.enumValues)[number];
 export type TransactionHistoryI = typeof transactionHistory.$inferSelect;
 export type NewTransactionHistoryI = typeof transactionHistory.$inferInsert;
+
+// Add a custom serializer function
+export function serializeBigInt(obj: any): any {
+    return JSON.parse(JSON.stringify(obj, (_, value) =>
+        typeof value === 'bigint' ? value.toString() : value
+    ));
+}

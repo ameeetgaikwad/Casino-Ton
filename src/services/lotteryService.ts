@@ -1,28 +1,30 @@
-import { eq, sql } from 'drizzle-orm';
-import { lottery, Ticket, tickets, users } from '@/drizzle/schema';
+import { eq, sql, desc } from 'drizzle-orm';
+import { lottery, serializeBigInt, Ticket, tickets, users } from '@/drizzle/schema';
 import { lotteryConfig } from '@/config/lottery';
 import { db } from '@/drizzle/db';
 
 export async function startLottery(prizePool: number, ticketPrice: number, totalTickets: number) {
+
     const newLottery = await db.insert(lottery).values({
-        prizePool,
-        ticketPrice,
+        prizePool: BigInt(prizePool),
+        ticketPrice: BigInt(ticketPrice),
         totalTickets,
         soldTickets: 0,
         status: 'OPEN'
     }).returning();
 
-    return newLottery[0];
+    return serializeBigInt(newLottery[0])
 }
 
 export async function buyTickets(lotteryId: number, numberOfTickets: number, playerAddress: string) {
+
     const lotteryInfo = await db.select().from(lottery).where(eq(lottery.id, lotteryId)).limit(1);
 
     if (!lotteryInfo[0] || lotteryInfo[0].status !== 'OPEN') {
         throw new Error("Lottery is not open");
     }
 
-    const totalPrice = lotteryInfo[0].ticketPrice * numberOfTickets;
+    const totalPrice = lotteryInfo[0].ticketPrice * BigInt(numberOfTickets);
     const userBalance = await db.select({ balance: users.balance }).from(users).where(eq(users.address, playerAddress));
 
     if (userBalance[0].balance < totalPrice) {
@@ -58,7 +60,10 @@ export async function buyTickets(lotteryId: number, numberOfTickets: number, pla
         await db.update(lottery).set({ status: 'CLOSED' }).where(eq(lottery.id, lotteryId));
     }
 
-    return purchasedTickets;
+    return purchasedTickets.map(ticket => ({
+        ...ticket,
+        amount: ticket.amount.toString()
+    }));
 }
 
 export async function runLottery(lotteryId: number) {
@@ -114,7 +119,7 @@ export async function forceCompleteLottery(lotteryId: number) {
         .where(eq(lottery.id, lotteryId))
         .returning();
 
-    return result[0];
+    return serializeBigInt(result[0]);
 }
 
 export async function getLotteryInfo(lotteryId: number) {
@@ -134,7 +139,12 @@ export async function getPlayerTickets(playerAddress: string) {
 }
 
 export async function getActiveLotteries() {
-    return await db.select().from(lottery).where(eq(lottery.status, 'OPEN'));
+    const activeLotteries = await db.select().from(lottery).where(eq(lottery.status, 'OPEN')).orderBy(desc(lottery.createdAt));
+    return activeLotteries.map(lotteryInfo => ({
+        ...lotteryInfo,
+        prizePool: lotteryInfo.prizePool.toString(),
+        ticketPrice: lotteryInfo.ticketPrice.toString()
+    }));
 }
 
 export async function getAllLotteries() {
@@ -151,10 +161,12 @@ export async function getPlayerLotteries(playerAddress: string) {
 
     const lotteryIds = [...new Set(playerTickets.map(ticket => ticket.lotteryId))];
 
-    const lotteries = await db.select().from(lottery).where(sql`${lottery.id} IN ${lotteryIds}`);
+    const lotteries = await db.select().from(lottery).where(sql`${lottery.id} IN ${lotteryIds}`).orderBy(desc(lottery.createdAt));
 
     return lotteries.map(lotteryInfo => ({
         ...lotteryInfo,
+        prizePool: lotteryInfo.prizePool.toString(),
+        ticketPrice: lotteryInfo.ticketPrice.toString(),
         ticketsPurchased: playerTickets.filter(ticket => ticket.lotteryId === lotteryInfo.id).length
     }));
 }

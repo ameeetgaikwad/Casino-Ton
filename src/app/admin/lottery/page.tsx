@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { ethers } from "ethers";
+// import { ethers } from "ethers";
 // import { Button, Input, Card, CardHeader, CardContent, Select } from "@/components/ui/";
 import * as contract from "@/../contract.json";
 import { useContract } from "@/hooks/use-contract";
@@ -211,27 +211,36 @@ const AdminDashboard = () => {
       <Card className="mb-4">
         <CardHeader>Start New Lottery</CardHeader>
         <CardContent>
-          <Input
-            type="text"
-            placeholder="Prize Pool (bnb)"
-            value={prizePool}
-            onChange={(e) => setPrizePool(Number(e.target.value))}
-            className="mb-2"
-          />
-          <Input
-            type="text"
-            placeholder="Ticket Price (bnb)"
-            value={ticketPrice}
-            onChange={(e) => setTicketPrice(Number(e.target.value))}
-            className="mb-2"
-          />
-          <Input
-            type="number"
-            placeholder="Total Tickets"
-            value={totalTickets}
-            onChange={(e) => setTotalTickets(Number(e.target.value))}
-            className="mb-2"
-          />
+          <div className="mb-2">
+            <label htmlFor="prizePool" className="block mb-1">Prize Pool (USDC)</label>
+            <Input
+              id="prizePool"
+              type="text"
+              placeholder="Prize Pool (USDC)"
+              value={prizePool}
+              onChange={(e) => setPrizePool(Number(e.target.value))}
+            />
+          </div>
+          <div className="mb-2">
+            <label htmlFor="ticketPrice" className="block mb-1">Ticket Price (USDC)</label>
+            <Input
+              id="ticketPrice"
+              type="text"
+              placeholder="Ticket Price (USDC)"
+              value={ticketPrice}
+              onChange={(e) => setTicketPrice(Number(e.target.value))}
+            />
+          </div>
+          <div className="mb-2">
+            <label htmlFor="totalTickets" className="block mb-1">Total Tickets</label>
+            <Input
+              id="totalTickets"
+              type="text"
+              placeholder="Total Tickets"
+              value={totalTickets}
+              onChange={(e) => setTotalTickets(Number(e.target.value))}
+            />
+          </div>
           <Button onClick={handleStartLottery}>Start Lottery</Button>
         </CardContent>
       </Card>
@@ -240,7 +249,9 @@ const AdminDashboard = () => {
         <CardHeader>Run Lottery</CardHeader>
         <CardContent>
           <div className="w-full flex flex-wrap mb-4">
+            <label htmlFor="runLotteryId" className="block mb-1">Lottery ID</label>
             <Input
+              id="runLotteryId"
               type="number"
               placeholder="Lottery ID"
               value={runLotteryId}
@@ -256,7 +267,9 @@ const AdminDashboard = () => {
         <CardHeader>Force Complete Lottery</CardHeader>
         <CardContent>
           <div className="w-full flex flex-wrap mb-4">
+            <label htmlFor="forceCompleteLotteryId" className="block mb-1">Lottery ID</label>
             <Input
+              id="forceCompleteLotteryId"
               type="number"
               placeholder="Lottery ID"
               value={forceCompleteLotteryId}
@@ -312,10 +325,10 @@ const AdminDashboard = () => {
                   <TableRow key={lottery.id.toString()}>
                     <TableCell>{lottery.id.toString()}</TableCell>
                     <TableCell>
-                      {ethers.utils.formatEther(lottery.prizePool)} BNB
+                      BNB
                     </TableCell>
                     <TableCell>
-                      {ethers.utils.formatEther(lottery.ticketPrice)} BNB
+                       BNB
                     </TableCell>
                     <TableCell>{lottery.totalTickets.toString()}</TableCell>
                     <TableCell>{lottery.soldTickets.toString()}</TableCell>
