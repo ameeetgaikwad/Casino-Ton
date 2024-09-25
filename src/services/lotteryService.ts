@@ -55,8 +55,7 @@ export async function buyTickets(lotteryId: number, numberOfTickets: number, pla
             .set({ soldTickets: sql`${lottery.soldTickets}+${numberOfTickets}` })
             .where(eq(lottery.id, lotteryId));
     });
-
-    if (lotteryInfo[0].soldTickets === lotteryInfo[0].totalTickets) {
+    if (lotteryInfo[0].soldTickets === lotteryInfo[0].totalTickets-1) {
         await db.update(lottery).set({ status: 'CLOSED' }).where(eq(lottery.id, lotteryId));
     }
 
@@ -69,7 +68,7 @@ export async function buyTickets(lotteryId: number, numberOfTickets: number, pla
 export async function runLottery(lotteryId: number) {
     console.log('running lottery', lotteryId)
     const lotteryInfo = await db.select().from(lottery).where(eq(lottery.id, lotteryId)).limit(1);
-
+    
     if (!lotteryInfo[0] || lotteryInfo[0].status !== 'CLOSED') {
         throw new Error("Lottery is not closed");
     }
