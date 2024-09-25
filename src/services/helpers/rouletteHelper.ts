@@ -24,6 +24,23 @@ export const requestPlayRoulette = async (guess: number[], guessType: number[], 
     return await res.json();
 };
 
+export const requestLastPlayedGames = async (limit: number) => {
+    const cookies = new Cookies();
+    const token = cookies.get('token');
+    const res = await fetch(`/api/roulette?action=last-played&limit=${limit}`, {
+        method: 'GET',
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+
+    if (!res.ok) {
+        throw new Error("Failed to get last played games");
+    }
+
+    return await res.json();
+};
+
 // export const requestHouseBalance = async () => {
 //     const cookies = new Cookies();
 //     const token = cookies.get('token');
