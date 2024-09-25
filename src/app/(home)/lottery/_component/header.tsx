@@ -1,5 +1,4 @@
 import { CoinFace } from "@/components/coin-face";
-import { ConnectButton } from "@/components/connect-button";
 // import { InferSelectModel, schema } from "@/db";
 import Link from "next/link";
 import { TonConnectButton } from "@tonconnect/ui-react";

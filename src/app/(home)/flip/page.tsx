@@ -3,7 +3,7 @@ import { getEthFiatRate } from "@/services/transactionHistoryService";
 import { BetForm } from "./_component/bet-form";
 import { Header } from "./_component/header";
 import { TransactionHistory } from "./_component/transaction-history";
-// import { ConnectButton } from "@/components/connect-button";
+
 import { TonConnectButton, useTonAddress } from "@tonconnect/ui-react";
 import { useEffect, useState } from "react";
 import { requestGameEntries } from "@/services/helpers/flipHelper";

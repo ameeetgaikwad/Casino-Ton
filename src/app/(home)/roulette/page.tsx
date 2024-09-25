@@ -4,7 +4,6 @@ import { TransactionHistory } from "./_component/transaction-history";
 import { Header } from "./_component/header";
 import { Roulette } from "./_component/roulette";
 import { RouletteProvider } from "./_component/store";
-import { ConnectButton } from "@/components/connect-button";
 import { TonConnectButton } from "@tonconnect/ui-react";
 import { useEffect, useState } from "react";
 import { requestLastPlayedGames } from "@/services/helpers/rouletteHelper";

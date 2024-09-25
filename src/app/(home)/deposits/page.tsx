@@ -5,6 +5,7 @@ import { useTonConnectUI, useTonAddress } from "@tonconnect/ui-react";
 import { Button } from "@/components/ui/button";
 import { requestDepositUSDC } from "@/services/helpers/depositHelper";
 import { useState } from "react";
+import { CustomConnectButton } from "@/components/CustomConnectButton";
 
 export default function Deposits() {
   const address = useTonAddress();
@@ -97,6 +98,9 @@ export default function Deposits() {
   return (
     <div className="h-screen">
       <div className="flex flex-col items-center space-y-4 p-6 bg-gray-800 rounded-lg shadow-lg h-full">
+        <div className="flex justify-end w-full">
+          <CustomConnectButton />
+        </div>
         <h2 className="text-2xl font-bold text-white mb-4">Deposit USDC</h2>
         <div className="flex flex-col gap-4">
           <input

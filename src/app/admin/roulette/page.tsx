@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Toaster, toast } from "sonner";
-import { useAccount } from "wagmi";
+// import { useAccount } from "wagmi";
 import {
   Table,
   TableBody,
@@ -19,6 +19,7 @@ import {
 import { useRouter } from "next/navigation";
 import { Header } from "../header";
 import { requestHouseBalance } from "@/services/helpers/flipHelper";
+import { useTonAddress } from "@tonconnect/ui-react";
 
 interface Game {
   address: string;
@@ -36,14 +37,14 @@ const RouletteAdmin = () => {
     error: contractError,
     getBalance,
   } = useContract("ROULETTE");
-  const { address } = useAccount();
+  // const { address } = useAccount();
   const [houseBalance, setHouseBalance] = useState(0);
   const [newHouseWallet, setNewHouseWallet] = useState("");
   const [withdrawAmount, setWithdrawAmount] = useState("");
   const [newOwner, setNewOwner] = useState("");
   const [lastGames, setLastGames] = useState<Game[]>([]);
   const router = useRouter();
-
+  const address = useTonAddress();
   useEffect(() => {
     const fetchHouseBalance = async () => {
       const balance = await requestHouseBalance();

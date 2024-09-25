@@ -11,7 +11,6 @@ import { Switch } from "@/components/ui/switch";
 import { JsonRpcProvider, Web3Provider } from "ethers/providers";
 import { useCallback } from "react";
 import { ethers } from "ethers";
-import { useAccount } from "wagmi";
 import { fr } from "ethers/wordlists";
 import { toast, Toaster } from "sonner";
 import { set } from "mobx";

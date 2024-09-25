@@ -1,5 +1,5 @@
 "use client";
-import { ConnectButton } from "@/components/connect-button";
+
 import { cn } from "@/lib/utils";
 import { observer } from "mobx-react-lite";
 import { useRoulette } from "./store";
