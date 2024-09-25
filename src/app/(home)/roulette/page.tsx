@@ -30,7 +30,7 @@ export default async function Home() {
             <Header lastTenOutcome={transactionRecords} />
           </div>
           <div className="flex gap-16 md:justify-end">
-            <CustomConnectButton />
+            <TonConnectButton />
           </div>
         </div>
 
