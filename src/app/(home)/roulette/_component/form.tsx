@@ -15,6 +15,7 @@ import { useRouletteSound } from "@/hooks/use-roulette-sound";
 import { requestPlayRoulette } from "@/services/helpers/rouletteHelper";
 import { requestHouseBalance } from "@/services/helpers/flipHelper";
 import { getUserBalance } from "@/services/helpers/authHelper";
+import { DepositLinkComponent } from "@/components/depositLinkComponent";
 
 export const Form = observer(() => {
   const [loading, setLoading] = useState(false);
@@ -151,6 +152,9 @@ export const Form = observer(() => {
               >
                 {loading ? "" : "SPIN THE WHEEL"}
               </Button>
+              <div className="flex justify-start mt-2">
+                <DepositLinkComponent />
+              </div>
             </div>
           </div>
         </Card>

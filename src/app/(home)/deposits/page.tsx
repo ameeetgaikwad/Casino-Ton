@@ -4,10 +4,12 @@ import { Address, Cell, beginCell, storeStateInit, toNano } from "ton-core";
 import { useTonConnectUI, useTonAddress } from "@tonconnect/ui-react";
 import { Button } from "@/components/ui/button";
 import { requestDepositUSDC } from "@/services/helpers/depositHelper";
+import { useState } from "react";
 
 export default function Deposits() {
   const address = useTonAddress();
   const [tonConnectUi] = useTonConnectUI();
+  const [jettonAmount, setJettonAmount] = useState(0);
 
   async function getJettonAddressFromWallet() {
     const JETTON_WALLET_CODE = Cell.fromBoc(
@@ -56,7 +58,7 @@ export default function Deposits() {
       .storeStringTail(uuid)
       .endCell();
 
-    const jettonAmount = 8; // Amount of jettons to send
+    // const jettonAmount = 8; // Amount of jettons to send
     const forwardTonAmount = 0.05; // Amount of TON to forward
 
     const body = beginCell()
@@ -93,10 +95,25 @@ export default function Deposits() {
     }
   };
   return (
-    <div>
-      <Button type="button" onClick={sendTransaction} className="">
-        Send USDC
-      </Button>
+    <div className="h-screen">
+      <div className="flex flex-col items-center space-y-4 p-6 bg-gray-800 rounded-lg shadow-lg h-full">
+        <h2 className="text-2xl font-bold text-white mb-4">Deposit USDC</h2>
+        <div className="flex flex-col gap-4">
+          <input
+            type="number"
+            placeholder="Enter USDC amount"
+            className="w-full px-4 py-2 bg-neutral-800 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            onChange={(e) => setJettonAmount(Number(e.target.value))}
+          />
+          <Button
+            type="button"
+            onClick={sendTransaction}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md transition duration-300 ease-in-out"
+          >
+            Deposit USDC
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }

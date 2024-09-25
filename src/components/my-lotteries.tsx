@@ -23,6 +23,7 @@ import type { Lottery } from "@/drizzle/schema";
 import { useTonAddress } from "@tonconnect/ui-react";
 import { Button } from "./ui/button";
 import { toast } from "sonner";
+import { DepositLinkComponent } from "./depositLinkComponent";
 
 export function MyLotteries() {
   const [_, copy] = useCopyToClipboard();
@@ -84,6 +85,9 @@ export function MyLotteries() {
             />
           </div>
           <span>All Lotteries</span>
+        </div>
+        <div className="flex justify-start">
+          <DepositLinkComponent />
         </div>
       </CardHeader>
       <CardContent>

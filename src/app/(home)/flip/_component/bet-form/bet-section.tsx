@@ -22,6 +22,7 @@ import {
 } from "@/services/helpers/flipHelper";
 import { getHouseBalance } from "@/services/flipService";
 import { getUserBalance } from "@/services/helpers/authHelper";
+import { DepositLinkComponent } from "@/components/depositLinkComponent";
 
 interface BetSelectionProps {
   form: UseFormReturn<Schema>;
@@ -151,6 +152,9 @@ export const BetSelection = ({ form, fiatRate }: BetSelectionProps) => {
                 {loading ? "" : "FLIP"}
               </Button>
             </form>
+            <div className="flex justify-start">
+              <DepositLinkComponent />
+            </div>
           </div>
         </div>
       </Card>
