@@ -19,68 +19,63 @@ export const NumberPanel = observer(() => {
   } = useRoulette();
   return (
     <Fragment>
-      <div
-        className="relative grid grid-cols-13 font-medium gap-1 sm:gap-2 "
-        ref={ref}
-      >
-        <RenderChips
-          chips={chipItems}
-          item={pad[0]}
-          style={{ backgroundColor: pad[0].color }}
-          x={60}
-          onClick={() => {
-            appendChipItems(pad[0]);
-          }}
-        />
+      <div className="flex gap-2 font-medium" ref={ref}>
+        {/* Zero */}
+        <div className="flex-shrink-0 w-1/6 sm:w-1/12">
+          <RenderChips
+            chips={chipItems}
+            item={pad[0]}
+            className="w-full h-full bg-green-500 text-white text-lg sm:text-xl md:text-2xl font-bold"
+            onClick={() => appendChipItems(pad[0])}
+          />
+        </div>
 
-        <div className="grid grid-cols-12 col-span-12 gap-1 sm:gap-2">
-          {pad.slice(1).map((item, index) => {
-            return (
+        <div className="flex-grow flex flex-col gap-2">
+          {/* Numbers 1-36 */}
+          <div className="grid grid-cols-3 sm:grid-cols-6 md:grid-cols-12 gap-1 sm:gap-2">
+            {pad.slice(1).map((item, index) => (
               <RenderChips
                 key={index}
                 className={cn(
-                  "aspect-square",
+                  "aspect-square text-lg sm:text-xl md:text-2xl font-bold",
                   Number(item.value) % 2 === 0 ? "bg-[#1f2737]" : "bg-[#c72f40]"
                 )}
                 chips={chipItems}
                 item={item}
-                onClick={() => {
-                  appendChipItems(item);
-                }}
+                onClick={() => appendChipItems(item)}
               />
-            );
-          })}
-        </div>
-        <div></div>
-        <div className="grid grid-cols-13 col-span-12 gap-1 sm:gap-2">
-          <div className="col-span-2"></div>
-          {pad2.map((item, index) => {
-            return (
+            ))}
+          </div>
+
+          {/* Special bets */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-1 sm:gap-2">
+            {pad2.map((item, index) => (
               <RenderChips
-                key={index}
                 style={{ backgroundColor: item.color }}
-                className={cn("aspect-[2.21/1] text-[8px] col-span-2")}
+                key={index}
+                className={cn(
+                  "h-12 sm:h-14 md:h-16 text-sm sm:text-base md:text-lg font-semibold",
+                  item.color
+                )}
                 chips={chipItems}
                 item={item}
-                x={0}
-                y={30}
-                onClick={() => {
-                  appendChipItems(item);
-                }}
+                onClick={() => appendChipItems(item)}
               />
-            );
-          })}
-          <div className="col-span-12 gap-x-2 flex items-center justify-center">
+            ))}
+          </div>
+
+          {/* Action buttons */}
+          <div className="flex justify-center gap-4 mt-2">
             <Button
               variant="ghost"
-              className="text-white p-0 text-[10px] sm:text-xs  col-span-2 w-[100px] h-5 sm:h-8 md:h-10 rounded-[0.5rem] border border-solid border-[#f6f6f6] flex justify-center items-center"
+              className="w-1/3 sm:w-1/4 py-2 text-sm sm:text-base border-solid border-[#f6f6f6] border-[1px]"
               onClick={undoChipItems}
             >
               Undo
             </Button>
             <Button
               variant="ghost"
-              className="text-white p-0 text-[10px] sm:text-xs  col-span-2 w-[100px] h-5 sm:h-8 md:h-10 rounded-[0.5rem] border border-solid border-[#f6f6f6] flex justify-center items-center"
+              className="w-1/3 sm:w-1/4 py-2 text-sm sm:text-base border-solid border-[#f6f6f6] border-[1px]"
               onClick={clearAllChipItems}
             >
               Clear
