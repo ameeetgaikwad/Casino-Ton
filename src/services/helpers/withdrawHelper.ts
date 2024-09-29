@@ -22,7 +22,6 @@ export const requestWithdrawUSDC = async (amount: number) => {
 
 
     const result = await res.json()
-    console.log(result, 'result')
 
     return result
 }
@@ -43,7 +42,6 @@ export const getWithdrawHistory = async () => {
 
 
     const result = await res.json()
-    console.log(result, 'result')
 
     return result
 }   

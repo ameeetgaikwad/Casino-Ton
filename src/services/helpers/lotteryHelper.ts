@@ -25,7 +25,6 @@ export const requestStartLottery = async (prizePool: number, ticketPrice: number
 
 
     const result = await res.json()
-    console.log(result, 'result')
 
     return result
 }
@@ -48,7 +47,6 @@ export const requestBuyTickets = async (lotteryId: number, numberOfTickets: numb
     })
 
     const result = await res.json()
-    console.log(result, 'result')
 
     return result
 }
@@ -71,7 +69,6 @@ export const requestRunLottery = async (lotteryId: number) => {
     })
 
     const result = await res.json()
-    console.log(result, 'result')
 
     return result
 }
@@ -94,7 +91,6 @@ export const requestForceCompleteLottery = async (lotteryId: number) => {
     })
 
     const result = await res.json()
-    console.log(result, 'result')
 
     return result
 }
@@ -111,12 +107,10 @@ export const requestActiveLotteries = async () => {
     });
 
     const result = await res.json();
-    console.log(result, 'result of all lotteries');
     return result;
 }
 
 export const requestMyLotteries = async (player: string) => {
-    console.log(player, 'player');
     const cookies = new Cookies();
     const token = cookies.get('token');
     const res = await fetch(`/api/lottery?action=getPlayerLotteries&playerAddress=${player}`, {
@@ -128,6 +122,5 @@ export const requestMyLotteries = async (player: string) => {
     });
 
     const result = await res.json();
-    console.log(result, 'result of my lotteries');
     return result;
 }

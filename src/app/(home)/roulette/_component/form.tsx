@@ -47,13 +47,11 @@ export const Form = observer(() => {
       if (store.totalWager > maxWager) {
         throw new Error(`Wager cannot be greater than ${maxWager}`);
       }
-      console.log("entered wayyy back");
       const result = await requestPlayRoulette(
         guess.map((g) => Number(g)),
         guessType,
         amount.map((a) => Number(a))
       );
-      console.log(result, "result");
       if (result.game.length === 1) {
         if (result.game[0].winner) {
           toast.success(
@@ -92,7 +90,6 @@ export const Form = observer(() => {
       store.clearAllChipItems();
 
       // Handle the result
-      console.log(result);
       // You might want to update the store or show a success message here
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "An error occurred");

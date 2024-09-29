@@ -17,7 +17,6 @@ export async function POST(request: NextRequest) {
         if (!user) {
             return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
         }
-        console.log('decoded', user)
 
         return NextResponse.json({ token })
     } catch (error) {

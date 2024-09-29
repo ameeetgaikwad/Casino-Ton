@@ -46,7 +46,6 @@ export const StatusDialog = forwardRef((_, ref) => {
     };
   });
   const Comp = gameType === "COIN" ? COIN : Roulette;
-  console.log("hehe", status);
   return (
     <Dialog open={showModal} onOpenChange={() => setShowModal(!showModal)}>
       <DialogContent

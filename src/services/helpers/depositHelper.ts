@@ -22,7 +22,6 @@ export const requestDepositUSDC = async (uuid: string) => {
 
 
     const result = await res.json()
-    console.log(result, 'result')
 
     return result
 }
@@ -43,7 +42,6 @@ export const getDepositHistory = async () => {
 
 
     const result = await res.json()
-    console.log(result, 'result')
 
     return result
 }   

@@ -13,7 +13,6 @@ export async function POST(request: NextRequest) {
         if (!user[0]) {
             const user = await db.insert(users).values({ address: address })
             const token = createAndSendToken(user[0])
-            console.log(user[0])
             return NextResponse.json({ token })
         }
 

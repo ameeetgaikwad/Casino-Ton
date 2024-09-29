@@ -20,7 +20,6 @@ export const requestFlipCoin = async (guess: number, amountBet: number) => {
 
 
     const result = await res.json()
-    console.log(result, 'result')
 
     return result
 }
@@ -43,7 +42,6 @@ export const requestResolveGame = async (gameId: string) => {
     }
 
     const resolvedGame = await res.json();
-    console.log(resolvedGame, 'resolved game');
 
     return resolvedGame;
 }

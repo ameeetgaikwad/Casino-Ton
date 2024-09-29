@@ -63,10 +63,8 @@ export function MyLotteries() {
       );
       toast.dismiss();
       toast.success("Tickets purchased successfully");
-      console.log(res, "res");
     } catch (err) {
       toast.dismiss();
-      console.log(err, "err");
       toast.error("Failed to purchase tickets");
     }
   };

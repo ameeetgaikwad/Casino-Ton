@@ -33,7 +33,6 @@ export default function Deposits() {
       setDepositHistory(history.history);
     });
   }, [address]);
-  console.log(depositHistory, "depositHistory");
   async function getJettonAddressFromWallet() {
     const JETTON_WALLET_CODE = Cell.fromBoc(
       Buffer.from(
@@ -116,7 +115,6 @@ export default function Deposits() {
         validUntil: Math.floor(Date.now() / 1000) + 360, // Valid for 5 minutes
       });
 
-      console.log("Transaction sent successfully:", result);
       toast.dismiss();
       toast.success(
         "USDC deposited successfully! It will take a few minutes to reflect in your balance."
