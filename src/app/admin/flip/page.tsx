@@ -24,6 +24,7 @@ import {
   requestHouseBalance,
   requestResolveGame,
 } from "@/services/helpers/flipHelper";
+import { globalConfig } from "@/config/global";
 
 type GameEntry = {
   address: string;
@@ -185,7 +186,7 @@ const FlipAdmin = () => {
       <Toaster />
       <Header />
       <h1 className="text-2xl font-bold mb-4">Flip Contract Admin</h1>
-      {/* <p className="mb-4">Connected Address: {address}</p> */}
+      <p className="mb-4">Connected Address: {globalConfig.houseAddress}</p>
       <p className="mb-4">Contract Balance: {houseBalance} USDC</p>
 
       {/* <Card className="mb-4">

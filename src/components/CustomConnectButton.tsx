@@ -35,7 +35,11 @@ export const CustomConnectButton = () => {
           tonConnectUI?.connected ? "p-2" : ""
         )}
       >
-        {tonConnectUI?.connected ? `${userBalance} USDC` : ""}
+        {tonConnectUI?.connected
+          ? `${
+              userBalance / 10 ** Number(process.env.NEXT_PUBLIC_USDC_DECIMALS)
+            } USDC`
+          : ""}
       </p>
       <TonConnectButton />
     </div>

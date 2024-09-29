@@ -120,11 +120,11 @@ export const deposits = pgTable('deposits', {
 
 export const withdrawals = pgTable('withdrawals', {
     id: uuid("id").notNull().primaryKey().defaultRandom(),
-    from: varchar('address', { length: 255 }).references(() => users.address),
-    to: varchar('address', { length: 255 }).references(() => users.address),
+    from: varchar('from', { length: 255 }).references(() => users.address),
+    to: varchar('to', { length: 255 }).references(() => users.address),
     value: bigint('value', { mode: 'bigint' }).notNull(),
-    txHash: varchar('tx_hash', { length: 255 }).notNull().unique(),
-    tId: uuid('t_id').notNull().unique(),
+    txHash: varchar('tx_hash', { length: 255 }).unique(),
+    tId: uuid('t_id').unique(),
     status: TRANSACTION_STATUS("status").default('PENDING'),
     createdAt: timestamp('created_at').defaultNow().notNull(),
 });

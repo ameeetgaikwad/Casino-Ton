@@ -74,19 +74,22 @@ export function TransactionHistory({ records }: TransactionHistoryProps) {
                   <TableCell>
                     <div className="flex items-right justify-right gap-2">
                       <CoinFace.Head width={20} height={20} />
-                      {record.amountBet}
+                      {Number(record.amountBet) /
+                        10 ** Number(process.env.NEXT_PUBLIC_USDC_DECIMALS)}
                     </div>
                   </TableCell>
                   <TableCell>
                     <div className="flex items-right justify-right gap-2">
                       <CoinFace.Head width={20} height={20} />
-                      {record.totalPayout}
+                      {Number(record.totalPayout) /
+                        10 ** Number(process.env.NEXT_PUBLIC_USDC_DECIMALS)}
                     </div>
                   </TableCell>
                   <TableCell>
                     <div className="flex items-right justify-right gap-2">
                       <CoinFace.Head width={20} height={20} />
-                      {record.totalProfit}
+                      {(Number(record.totalPayout) - Number(record.amountBet)) /
+                        10 ** Number(process.env.NEXT_PUBLIC_USDC_DECIMALS)}
                     </div>
                   </TableCell>
                 </TableRow>

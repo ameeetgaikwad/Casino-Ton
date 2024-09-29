@@ -32,6 +32,8 @@ import {
   requestRunLottery,
   requestStartLottery,
 } from "@/services/helpers/lotteryHelper";
+import { globalConfig } from "@/config/global";
+import { Cookies } from "react-cookie";
 
 interface Lottery {
   id: number;
@@ -50,6 +52,8 @@ const AdminDashboard = () => {
     error: contractError,
     getBalance,
   } = useContract("LOTTERY");
+  const cookies = new Cookies();
+  const adminPasswordCookies = cookies.get("adminPassword");
   const address = useTonAddress();
   const router = useRouter();
   const [activeLotteries, setActiveLotteries] = useState<Lottery[]>([]);
@@ -138,11 +142,13 @@ const AdminDashboard = () => {
 
   const handleStartLottery = async () => {
     try {
+      toast.loading("Starting lottery...");
       const res = await requestStartLottery(
         prizePool,
         ticketPrice,
         totalTickets
       );
+      toast.dismiss();
       toast.success("Lottery started successfully!");
     } catch (error) {
       toast.error((error as any)?.data?.message || "An error occurred");
@@ -152,7 +158,9 @@ const AdminDashboard = () => {
 
   const handleRunLottery = async () => {
     try {
+      toast.loading("Running lottery...");
       const res = await requestRunLottery(runLotteryId);
+      toast.dismiss();
       toast.success("Lottery run successfully!");
     } catch (error) {
       toast.error((error as any)?.data?.message || "An error occurred");
@@ -162,7 +170,9 @@ const AdminDashboard = () => {
 
   const handleForceCompleteLottery = async () => {
     try {
+      toast.loading("Force completing lottery...");
       const res = await requestForceCompleteLottery(forceCompleteLotteryId);
+      toast.dismiss();
       toast.success("Lottery set to completed successfully!");
     } catch (error) {
       toast.error((error as any)?.data?.message || "An error occurred");
@@ -200,14 +210,53 @@ const AdminDashboard = () => {
   //   return <div>Loading...</div>;
   // }
 
+  const [adminPassword, setAdminPassword] = useState("");
+
+  const handleAdminAuthentication = async () => {
+    cookies.set("adminPassword", adminPassword);
+    window.location.reload();
+  };
+
+  const clearAdminPassword = () => {
+    cookies.remove("adminPassword");
+    setAdminPassword("");
+    window.location.reload();
+  };
   return (
     <div className="h-fit p-8 bg-gray-600">
       <Toaster />
       <Header />
       <h1 className="text-2xl font-bold mb-4">Admin Dashboard</h1>
-      {/* <p className="mb-4">Connected Address: {address}</p> */}
+      <p className="mb-4">Connected Address: {globalConfig.houseAddress}</p>
       <p className="mb-4">Contract Balance: {houseBalance} USDC</p>
-
+      <div>
+        <Card className="mb-4">
+          <CardHeader>Admin Authentication</CardHeader>
+          <CardContent>
+            <div className="mb-2">
+              <label htmlFor="adminPassword" className="block mb-1">
+                Admin Password
+              </label>
+              {adminPasswordCookies?.length <= 0 || !adminPasswordCookies ? (
+                <>
+                  <Input
+                    id="adminPassword"
+                    type="password"
+                    placeholder="Enter admin password"
+                    value={adminPassword}
+                    onChange={(e) => setAdminPassword(e.target.value)}
+                  />
+                  <Button onClick={handleAdminAuthentication} className="mt-2">
+                    Enter Password
+                  </Button>
+                </>
+              ) : (
+                <Button onClick={clearAdminPassword}>Reenter Password</Button>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
       <Card className="mb-4">
         <CardHeader>Start New Lottery</CardHeader>
         <CardContent>

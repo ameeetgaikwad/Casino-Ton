@@ -3,15 +3,37 @@ import { v4 as uuidv4 } from "uuid";
 import { Address, Cell, beginCell, storeStateInit, toNano } from "ton-core";
 import { useTonConnectUI, useTonAddress } from "@tonconnect/ui-react";
 import { Button } from "@/components/ui/button";
-import { requestDepositUSDC } from "@/services/helpers/depositHelper";
-import { useState } from "react";
+import {
+  getDepositHistory,
+  requestDepositUSDC,
+} from "@/services/helpers/depositHelper";
+import { useEffect, useState } from "react";
 import { CustomConnectButton } from "@/components/CustomConnectButton";
+import { toast } from "sonner";
+import { Deposit } from "@/drizzle/schema";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { cn, formatDate, shortContractAddress } from "@/lib/utils";
 
 export default function Deposits() {
   const address = useTonAddress();
   const [tonConnectUi] = useTonConnectUI();
   const [jettonAmount, setJettonAmount] = useState(0);
 
+  const [depositHistory, setDepositHistory] = useState<Deposit[]>([]);
+  useEffect(() => {
+    getDepositHistory().then((history) => {
+      setDepositHistory(history.history);
+    });
+  }, [address]);
+  console.log(depositHistory, "depositHistory");
   async function getJettonAddressFromWallet() {
     const JETTON_WALLET_CODE = Cell.fromBoc(
       Buffer.from(
@@ -46,6 +68,10 @@ export default function Deposits() {
   }
 
   const sendTransaction = async () => {
+    if (jettonAmount === 0) {
+      toast.error("Please enter a valid amount");
+      return;
+    }
     const jettonWalletAddress = await getJettonAddressFromWallet();
 
     if (!tonConnectUi.connected) {
@@ -76,6 +102,7 @@ export default function Deposits() {
       .endCell();
 
     try {
+      toast.loading("Depositing USDC...");
       const res = await requestDepositUSDC(uuid);
 
       const result = await tonConnectUi.sendTransaction({
@@ -90,9 +117,14 @@ export default function Deposits() {
       });
 
       console.log("Transaction sent successfully:", result);
+      toast.dismiss();
+      toast.success(
+        "USDC deposited successfully! It will take a few minutes to reflect in your balance."
+      );
     } catch (error) {
       console.error("Transaction failed:", error);
-      alert("Transaction failed. See console for details.");
+      toast.dismiss();
+      toast.error("Failed to deposit USDC");
     }
   };
   return (
@@ -107,7 +139,15 @@ export default function Deposits() {
             type="number"
             placeholder="Enter USDC amount"
             className="w-full px-4 py-2 bg-neutral-800 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            onChange={(e) => setJettonAmount(Number(e.target.value))}
+            onChange={(e) => {
+              const value = Math.floor(Number(e.target.value));
+              if (value >= 0) {
+                e.target.value = value.toString();
+              } else {
+                e.target.value = "0";
+              }
+              setJettonAmount(Number(e.target.value));
+            }}
           />
           <Button
             type="button"
@@ -116,6 +156,68 @@ export default function Deposits() {
           >
             Deposit USDC
           </Button>
+        </div>
+        <div className="overflow-x-auto md:w-auto w-[80%]">
+          <Card className="bg-shade mt-8 ">
+            <CardHeader>Bet History</CardHeader>
+            <CardContent>
+              <Table className=" border-none">
+                <TableHeader>
+                  <TableRow>
+                    {/* <TableHead className="w-[100px]">Transaction</TableHead> */}
+                    <TableHead>Amount</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Tx Hash</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody className="font-bold">
+                  {depositHistory.length === 0 ? (
+                    <TableRow>
+                      <TableCell
+                        colSpan={8}
+                        className="h-24 text-center  text-xl font-heading text-pretty text-primary"
+                      >
+                        No recoders found
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    depositHistory.map((record, key) => (
+                      <TableRow
+                        key={key}
+                        className={cn(
+                          record.status === "CONFIRMED" && "text-green-500",
+                          record.status === "FAILED" && "text-red-500",
+                          record.status === "PENDING" && "text-yellow-500"
+                        )}
+                      >
+                        <TableCell>
+                          {Number(record.value) /
+                            10 ** Number(process.env.NEXT_PUBLIC_USDC_DECIMALS)}
+                        </TableCell>
+
+                        <TableCell>{record.status}</TableCell>
+                        <TableCell>
+                          {record.createdAt &&
+                            formatDate(record.createdAt?.toLocaleString())}
+                        </TableCell>
+                        <TableCell>
+                          <a
+                            href={`https://testnet.tonviewer.com/transaction/${record.txHash}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="underline"
+                          >
+                            {shortContractAddress(record.txHash ?? "")}
+                          </a>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>

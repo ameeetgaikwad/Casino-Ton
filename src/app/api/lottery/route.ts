@@ -21,6 +21,7 @@ export async function POST(request: NextRequest) {
         lotteryId,
         numberOfTickets,
         playerAddress,
+        adminPassword
     } = await request.json();
 
     switch (action) {
@@ -35,13 +36,13 @@ export async function POST(request: NextRequest) {
                     { status: 401 }
                 );
             }
-            const user = await protectAdmin(token);
+            const user = await protectAdmin(token, adminPassword);
 
             if (!user) {
                 return NextResponse.json({ error: "Invalid token" }, { status: 401 });
             }
 
-            const result = await startLottery(prizePool, ticketPrice, totalTickets);
+            const result = await startLottery(prizePool * 10 ** Number(process.env.USDC_DECIMALS), ticketPrice * 10 ** Number(process.env.USDC_DECIMALS), totalTickets);
             return NextResponse.json(result);
         }
 
@@ -81,7 +82,7 @@ export async function POST(request: NextRequest) {
                     { status: 401 }
                 );
             }
-            const user = await protectAdmin(token);
+            const user = await protectAdmin(token, adminPassword);
 
             if (!user) {
                 return NextResponse.json({ error: "Invalid token" }, { status: 401 });
@@ -102,7 +103,7 @@ export async function POST(request: NextRequest) {
                     { status: 401 }
                 );
             }
-            const user = await protectAdmin(token);
+            const user = await protectAdmin(token, adminPassword);
 
             if (!user) {
                 return NextResponse.json({ error: "Invalid token" }, { status: 401 });

@@ -33,6 +33,7 @@ export const BetSelection = ({ form, fiatRate }: BetSelectionProps) => {
   const [loading, setLoading] = useState(false);
   const { AudioEl, audioRef } = useCoinFip();
   const [houseBalance, setHouseBalance] = useState(0);
+  const [maxWager, setMaxWager] = useState(0);
   const onSubmit = async (value: Schema) => {
     setLoading(true);
     try {
@@ -49,7 +50,12 @@ export const BetSelection = ({ form, fiatRate }: BetSelectionProps) => {
           statusDialogRefFunc.toggleModal(false, "COIN");
           // Display game result
           if (result.winner) {
-            toast.success(`You won! Payout: ${result.totalPayout} USDC`);
+            toast.success(
+              `You won! Payout: ${
+                result.totalPayout /
+                10 ** Number(process.env.NEXT_PUBLIC_USDC_DECIMALS)
+              } USDC`
+            );
           } else {
             toast.error("You lost. Better luck next time!");
           }
@@ -68,10 +74,15 @@ export const BetSelection = ({ form, fiatRate }: BetSelectionProps) => {
       setLoading(false);
     }
   };
-
   const fetchHouseBalance = async () => {
     const balance = await requestHouseBalance();
-    setHouseBalance(balance);
+    setHouseBalance(
+      Number(balance) / 10 ** Number(process.env.NEXT_PUBLIC_USDC_DECIMALS)
+    );
+    setMaxWager(
+      (Number(balance) / 10 ** Number(process.env.NEXT_PUBLIC_USDC_DECIMALS)) *
+        0.1
+    );
   };
 
   useEffect(() => {
@@ -91,8 +102,6 @@ export const BetSelection = ({ form, fiatRate }: BetSelectionProps) => {
                 name="wager"
                 control={form.control}
                 render={({ field }) => {
-                  const maxWager = houseBalance * 0.1; // This should be fetched from the backend
-
                   return (
                     <FormItem>
                       <div className="flex justify-between">
@@ -135,7 +144,7 @@ export const BetSelection = ({ form, fiatRate }: BetSelectionProps) => {
                         </div>
                       </FormControl>
                       <div className="text-red-500 text-sm mt-1">
-                        Max allowable wager: {maxWager} USDC
+                        Max allowable wager: {maxWager.toFixed(2)} USDC
                       </div>
                     </FormItem>
                   );

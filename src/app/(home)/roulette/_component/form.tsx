@@ -27,7 +27,11 @@ export const Form = observer(() => {
   useEffect(() => {
     const fetchHouseBalance = async () => {
       const balance = await requestHouseBalance();
-      setMaxWager(balance * 0.1);
+      setMaxWager(
+        (Number(balance) /
+          10 ** Number(process.env.NEXT_PUBLIC_USDC_DECIMALS)) *
+          0.1
+      );
     };
 
     fetchHouseBalance();
@@ -49,16 +53,37 @@ export const Form = observer(() => {
         guessType,
         amount.map((a) => Number(a))
       );
+      console.log(result, "result");
+      if (result.game.length === 1) {
+        if (result.game[0].winner) {
+          toast.success(
+            `You won! Payout: ${
+              result.game[0].payout /
+              10 ** Number(process.env.NEXT_PUBLIC_USDC_DECIMALS)
+            } USDC`
+          );
+        } else {
+          toast.error("You lost. Better luck next time!");
+        }
+      } else {
+        const isAtleastOneWin = result.game.some((game) => game.winner);
+        if (isAtleastOneWin) {
+          toast.success(
+            `You won! Payout: ${
+              result.game.reduce((total, game) => total + game.payout, 0) /
+              10 ** Number(process.env.NEXT_PUBLIC_USDC_DECIMALS)
+            } USDC`
+          );
+        } else {
+          toast.error("You lost. Better luck next time!");
+        }
+      }
 
       statusDialogRefFunc.toggleModal(true, "ROULETTE");
       setTimeout(() => {
         statusDialogRefFunc.toggleModal(false, "COIN");
         // Display game result
-        if (result.winner) {
-          toast.success(`You won! Payout: ${result.payout} USDC`);
-        } else {
-          toast.error("You lost. Better luck next time!");
-        }
+
         // Update house balance
         getUserBalance();
       }, 2000);
@@ -121,7 +146,7 @@ export const Form = observer(() => {
                   className="absolute right-2 top-2"
                 />
                 <div className="text-red-500 text-sm mt-1">
-                  Max allowable wager: {maxWager} USDC
+                  Max allowable wager: {maxWager.toFixed(2)} USDC
                 </div>
               </div>
 

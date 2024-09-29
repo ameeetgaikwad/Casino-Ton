@@ -20,6 +20,7 @@ import { useRouter } from "next/navigation";
 import { Header } from "../header";
 import { requestHouseBalance } from "@/services/helpers/flipHelper";
 import { useTonAddress } from "@tonconnect/ui-react";
+import { globalConfig } from "@/config/global";
 
 interface Game {
   address: string;
@@ -174,7 +175,7 @@ const RouletteAdmin = () => {
       <Toaster />
       <Header />
       <h1 className="text-2xl font-bold mb-4">Roulette Contract Admin</h1>
-      <p className="mb-4">Connected Address: {address}</p>
+      <p className="mb-4">Connected Address: {globalConfig.houseAddress}</p>
       <p className="mb-4">Contract Balance: {houseBalance} USDC</p>
 
       {/* <Card className="mb-4">

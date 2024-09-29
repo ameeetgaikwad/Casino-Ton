@@ -2,11 +2,11 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { flipCoin, getGameCount, getGameEntries, getHouseBalance } from '@/services/flipService';
 import { serializeBigInt } from '@/drizzle/schema';
-import { protect, protectAdmin } from '@/middlewares/authMiddlewares';
+import { protect } from '@/middlewares/authMiddlewares';
 
 export async function POST(request: NextRequest) {
     const { guess, amountBet } = await request.json();
-    console.log("POST request received", guess, amountBet);
+    console.log("POST request received", guess, amountBet * 10 ** Number(process.env.USDC_DECIMALS));
     const token = request.headers.get('Authorization')?.replace("Bearer ", "");
 
     if (!token) {
@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
     if (!user) {
         return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
     }
-    const result = await flipCoin(guess, user.address, amountBet);
+    const result = await flipCoin(guess, user.address, Number(amountBet) * 10 ** Number(process.env.USDC_DECIMALS));
     if (!result) {
         return NextResponse.json({ error: 'Failed to flip coin' }, { status: 500 })
     }
@@ -53,7 +53,7 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ error: 'No token provided' }, { status: 401 });
     }
 
-    const user = await protectAdmin(token);
+    const user = await protect(token);
 
     if (!user) {
         return NextResponse.json({ error: 'Invalid token' }, { status: 401 });

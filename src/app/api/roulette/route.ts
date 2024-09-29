@@ -4,7 +4,8 @@ import { protect } from '@/middlewares/authMiddlewares';
 
 export async function POST(request: NextRequest) {
     const { action, guesses, guessTypes, betAmounts } = await request.json();
-    console.log("got that post req", guesses, guessTypes, betAmounts);
+    const normalisedBetAmounts = betAmounts.map(amount => Number(amount) * 10 ** Number(process.env.USDC_DECIMALS));
+    console.log("got that post req", guesses, guessTypes, normalisedBetAmounts);
     const token = request.headers.get('Authorization')?.replace("Bearer ", "");
 
     if (!token) {
@@ -18,7 +19,7 @@ export async function POST(request: NextRequest) {
 
     switch (action) {
         case 'play': {
-            const result = await playRoulette(guesses, guessTypes, betAmounts, user.address);
+            const result = await playRoulette(guesses, guessTypes, normalisedBetAmounts, user.address);
             return NextResponse.json(result);
         }
         default:

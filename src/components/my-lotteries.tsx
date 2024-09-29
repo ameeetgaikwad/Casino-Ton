@@ -134,7 +134,8 @@ export function MyLotteries() {
                   <TableCell>
                     <div className="flex items-right justify-right gap-2">
                       <CoinFace.Head width={20} height={20} />
-                      {record.ticketPrice}
+                      {Number(record.ticketPrice) /
+                        10 ** Number(process.env.NEXT_PUBLIC_USDC_DECIMALS)}
                     </div>
                   </TableCell>
                   <TableCell>{record.status}</TableCell>
@@ -144,7 +145,8 @@ export function MyLotteries() {
                   <TableCell>
                     <div className="flex items-right justify-right gap-2">
                       <CoinFace.Head width={20} height={20} />
-                      {record.prizePool}
+                      {Number(record.prizePool) /
+                        10 ** Number(process.env.NEXT_PUBLIC_USDC_DECIMALS)}
                     </div>
                   </TableCell>
 
