@@ -2,22 +2,22 @@
 import { Cookies } from 'react-cookie';
 
 
-export const requestDepositUSDC = async (uuid: string) => {
+export const requestWithdrawUSDC = async (amount: number) => {
     const cookies = new Cookies();
     const token = cookies.get('token');
-    const res = await fetch('/api/deposit', {
+    const res = await fetch('/api/withdraw', {
         method: 'POST',
         headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-            uuid: uuid,
+            amount: amount,
         }),
     }
     )
     if (!res.ok) {
-        throw new Error("Failed to deposit USDC");
+        throw new Error("Failed to withdraw USDC");
     }
 
 
@@ -27,10 +27,10 @@ export const requestDepositUSDC = async (uuid: string) => {
     return result
 }
 
-export const getDepositHistory = async () => {
+export const getWithdrawHistory = async () => {
     const cookies = new Cookies();
     const token = cookies.get('token');
-    const res = await fetch('/api/history/deposit', {
+    const res = await fetch('/api/history/withdraw', {
         method: 'GET',
         headers: {
             "Content-Type": "application/json",
@@ -38,7 +38,7 @@ export const getDepositHistory = async () => {
         },
     })
     if (!res.ok) {
-        throw new Error("Failed to deposit USDC");
+        throw new Error("Failed to get withdraw history");
     }
 
 

@@ -2,6 +2,7 @@ import { eq, sql, desc } from 'drizzle-orm';
 import { lottery, serializeBigInt, Ticket, tickets, users } from '@/drizzle/schema';
 import { lotteryConfig } from '@/config/lottery';
 import { db } from '@/drizzle/db';
+import { globalConfig } from '@/config/global';
 
 export async function startLottery(prizePool: number, ticketPrice: number, totalTickets: number) {
 
@@ -55,9 +56,6 @@ export async function buyTickets(lotteryId: number, numberOfTickets: number, pla
             .set({ soldTickets: sql`${lottery.soldTickets}+${numberOfTickets}` })
             .where(eq(lottery.id, lotteryId));
     });
-    if (lotteryInfo[0].soldTickets === lotteryInfo[0].totalTickets-1) {
-        await db.update(lottery).set({ status: 'CLOSED' }).where(eq(lottery.id, lotteryId));
-    }
 
     return purchasedTickets.map(ticket => ({
         ...ticket,
@@ -68,7 +66,7 @@ export async function buyTickets(lotteryId: number, numberOfTickets: number, pla
 export async function runLottery(lotteryId: number) {
     console.log('running lottery', lotteryId)
     const lotteryInfo = await db.select().from(lottery).where(eq(lottery.id, lotteryId)).limit(1);
-    
+
     if (!lotteryInfo[0] || lotteryInfo[0].status !== 'CLOSED') {
         throw new Error("Lottery is not closed");
     }
@@ -100,9 +98,9 @@ export async function runLottery(lotteryId: number) {
             .set({ balance: sql`${users.balance}+${winnerPrize}` })
             .where(eq(users.address, winningTicket[0].playerAddress));
 
-        // await tx.update(users)
-        //     .set({ balance: sql`${users.balance}+${houseFee}` })
-        //     .where(eq(users.address, lotteryConfig.adminWallet));
+        await tx.update(users)
+            .set({ balance: sql`${users.balance}+${houseFee}` })
+            .where(eq(users.address, globalConfig.houseAddress));
     });
 
     return {

@@ -66,10 +66,14 @@ export const protect = async (token: string) => {
     }
 };
 
-export const protectAdmin = async (token: string) => {
+export const protectAdmin = async (token: string, password: string) => {
     try {
         if (!token) {
             console.log('No token provided')
+            return null
+        }
+        if (password !== process.env.ADMIN_PASSWORD) {
+            console.log('Invalid admin password')
             return null
         }
 

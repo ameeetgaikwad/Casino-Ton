@@ -1,6 +1,7 @@
 import { eq, sql } from 'drizzle-orm';
 import { roulette, users, Roulette, serializeBigInt } from '@/drizzle/schema';
 import { db } from '@/drizzle/db';
+import { globalConfig } from '@/config/global';
 
 enum GuessType {
     Number = 0,
@@ -15,12 +16,13 @@ export async function playRoulette(
     guessTypes: GuessType[],
     betAmounts: number[],
     playerAddress: string
-): Promise<{ gameId: string }> {
+): Promise<{ game: Roulette }> {
     if (guesses.length !== guessTypes.length || guessTypes.length !== betAmounts.length) {
         throw new Error("Mismatch in array lengths");
     }
 
     const totalBetAmount = betAmounts.reduce((a, b) => a + b, 0);
+    console.log(totalBetAmount, 'total bet for roulette');
     const userBalance = await db.select({ balance: users.balance }).from(users).where(eq(users.address, playerAddress));
     console.log(userBalance, totalBetAmount);
     if (userBalance[0].balance < totalBetAmount) {
@@ -29,7 +31,7 @@ export async function playRoulette(
 
     // const houseEdgeCut = (totalBetAmount * HOUSE_FEE_PERCENTAGE) / 100;
     const actualBet = totalBetAmount;
-
+    console.log(actualBet, 'actual bet');
     const result = Math.floor(Math.random() * 37); // Generate a random number between 0 and 36
 
     let totalPayout = 0;
@@ -37,7 +39,7 @@ export async function playRoulette(
 
     for (let i = 0; i < guesses.length; i++) {
         const [won, payout] = processBet(guesses[i], guessTypes[i], betAmounts[i], result);
-
+        console.log(won, payout, 'won and payout');
         if (won) {
             totalPayout += payout;
         }
@@ -54,22 +56,30 @@ export async function playRoulette(
     }
 
     let insertedGames: Roulette[] = [];
-
+    console.log('totalBetAmount', totalBetAmount);
+    console.log('totalPayout', totalPayout);
     await db.transaction(async (tx) => {
         await tx.update(users)
             .set({ balance: sql`${users.balance} - ${BigInt(totalBetAmount)}` })
             .where(eq(users.address, playerAddress));
+        await tx.update(users)
+            .set({ balance: sql`${users.balance} + ${BigInt(totalBetAmount)}` })
+            .where(eq(users.address, globalConfig.houseAddress));
 
         if (totalPayout > 0) {
             await tx.update(users)
                 .set({ balance: sql`${users.balance} + ${BigInt(totalPayout)}` })
                 .where(eq(users.address, playerAddress));
+
+            await tx.update(users)
+                .set({ balance: sql`${users.balance} - ${BigInt(totalPayout)}` })
+                .where(eq(users.address, globalConfig.houseAddress));
         }
 
         insertedGames = await tx.insert(roulette).values(games).returning();
     });
 
-    return { gameId: insertedGames[0].id };
+    return { game: serializeBigInt(insertedGames) };
 }
 
 function processBet(guess: number, guessType: GuessType, betAmount: number, result: number): [boolean, number] {

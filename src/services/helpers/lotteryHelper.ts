@@ -2,7 +2,7 @@ import { Cookies } from 'react-cookie';
 export const requestStartLottery = async (prizePool: number, ticketPrice: number, totalTickets: number) => {
     const cookies = new Cookies();
     const token = cookies.get('token');
-
+    const adminPassword = cookies.get('adminPassword');
     const res = await fetch('/api/lottery', {
         method: 'POST',
         headers: {
@@ -14,6 +14,7 @@ export const requestStartLottery = async (prizePool: number, ticketPrice: number
             ticketPrice: ticketPrice,
             totalTickets: totalTickets,
             action: 'startLottery',
+            adminPassword: adminPassword,
         }),
     }
     )
@@ -55,6 +56,7 @@ export const requestBuyTickets = async (lotteryId: number, numberOfTickets: numb
 export const requestRunLottery = async (lotteryId: number) => {
     const cookies = new Cookies();
     const token = cookies.get('token');
+    const adminPassword = cookies.get('adminPassword');
     const res = await fetch('/api/lottery', {
         method: 'POST',
         headers: {
@@ -64,6 +66,7 @@ export const requestRunLottery = async (lotteryId: number) => {
         body: JSON.stringify({
             lotteryId: lotteryId,
             action: 'runLottery',
+            adminPassword: adminPassword,
         }),
     })
 
@@ -76,6 +79,7 @@ export const requestRunLottery = async (lotteryId: number) => {
 export const requestForceCompleteLottery = async (lotteryId: number) => {
     const cookies = new Cookies();
     const token = cookies.get('token');
+    const adminPassword = cookies.get('adminPassword');
     const res = await fetch('/api/lottery', {
         method: 'POST',
         headers: {
@@ -85,6 +89,7 @@ export const requestForceCompleteLottery = async (lotteryId: number) => {
         body: JSON.stringify({
             lotteryId: lotteryId,
             action: 'forceCompleteLottery',
+            adminPassword: adminPassword,
         }),
     })
 
