@@ -68,7 +68,10 @@ export const Form = observer(() => {
         if (isAtleastOneWin) {
           toast.success(
             `You won! Payout: ${
-              result.game.reduce((total, game) => total + game.payout, 0) /
+              result.game.reduce(
+                (total, game) => Number(total) + Number(game.payout),
+                0
+              ) /
               10 ** Number(process.env.NEXT_PUBLIC_USDC_DECIMALS)
             } USDC`
           );
